@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/recyclerViewPicture"
+        android:layout_width="70dp"
+        android:layout_height="70dp" />
+
+    <TextView
+        android:id="@+id/recyclerViewTypeTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@id/recyclerViewPicture"
+        android:text="TYPE"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/recyclerViewLocationTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/recyclerViewTypeTV"
+        android:layout_marginStart="25dp"
+        android:layout_toEndOf="@id/recyclerViewPicture"
+        android:text="Quick Location" />
+
+    <TextView
+        android:id="@+id/recyclerViewPriceTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/recyclerViewLocationTV"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@id/recyclerViewPicture"
+        android:text="Price" />
+
+</RelativeLayout>
