@@ -14,7 +14,15 @@ import com.openclassrooms.realestatemanager.Models.MyAdapter;
 import com.openclassrooms.realestatemanager.Models.RecyclerViewItem;
 import com.openclassrooms.realestatemanager.R;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MainFragment extends Fragment implements View.OnClickListener {
@@ -25,8 +33,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<RecyclerViewItem> listItems;
-
-    String stringList[] = {"Penthouse", "Man","What", "A", "View"};
+    List<RecyclerViewItem> housesList = new ArrayList<>();
 
     // Declare our interface that will be implemented by any container activity
     public interface OnButtonClickedListener {
@@ -43,18 +50,41 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         View result = inflater.inflate(R.layout.fragment_main, container, false);
 
 
-
         recyclerView = result.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         listItems = new ArrayList<>();
+        RecyclerViewItem houseItem = null;
 
-      //  for (int i = 0; i < stringList.length; i++) {
-            RecyclerViewItem listItemb = new RecyclerViewItem("http://i.imgur.com/DvpvklR.png", "PENTHOUSE", "Los Angeles, CA", "35M$");
 
-            listItems.add(listItemb);
-      //  }
+        // ----------------------------------------- FETCHING DATA FROM JSON ARRAY IN ASSETS FOLDER ------------------------------------------------------
+
+        String json;
+        try {
+            InputStream is = getContext().getAssets().open("houses.json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+
+            json = new String(buffer, StandardCharsets.UTF_8);
+            JSONArray jsonArray = new JSONArray(json);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject obj = jsonArray.getJSONObject(i);
+
+                houseItem = new RecyclerViewItem(obj.getString("id"), obj.getString("mainPicture"), obj.getString("type"), obj.getString("city"), "$" + obj.getString("price"));
+
+                listItems.add(houseItem);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        //   --------------------------------------------- ADDING FETCHED DATA INTO RECYCLERVIEW ---------------------------------------------------------
+
 
         adapter = new MyAdapter(listItems, getContext());
 

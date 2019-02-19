@@ -32,28 +32,16 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
 
     @Override
     public void onButtonClicked(View view) {
-        //Retrieve button tag
-        int buttonTag = Integer.parseInt(view.getTag().toString());
 
-        //Check if DetailFragment is visible (Tablet)
-        if (detailFragment != null && detailFragment.isVisible()) {
-            //TABLET : Update directly TextView
-            detailFragment.updateTextView(buttonTag);
-        } else {
-            //SMARTPHONE : Pass tag to the new intent that will show DetailActivity (and so DetailFragment)
-            Intent i = new Intent(this, DetailActivity.class);
-            i.putExtra(DetailActivity.EXTRA_BUTTON_TAG, buttonTag);
-            startActivity(i);
-        }
+
     }
-
 
 
     // --------------
     // FRAGMENTS
     // --------------
 
-    private void configureAndShowMainFragment(){
+    private void configureAndShowMainFragment() {
 
         mainFragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.frame_layout_main);
 
@@ -65,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
         }
     }
 
-    private void configureAndShowDetailFragment(){
+    private void configureAndShowDetailFragment() {
         detailFragment = (DetailFragment) getSupportFragmentManager().findFragmentById(R.id.frame_layout_detail);
 
         if (detailFragment == null && findViewById(R.id.frame_layout_detail) != null) {

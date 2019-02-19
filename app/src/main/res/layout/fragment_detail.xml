@@ -1,17 +1,163 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.openclassrooms.myfragmentapp.Controllers.Fragments.DetailFragment"
-    android:gravity="center"
-    android:background="#BED4D6">
+    android:background="#BED4D6"
+    tools:context="com.openclassrooms.realestatemanager.Activities.DetailActivity">
+
+    <!-- //////////////////////////// MEDIA \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\  -->
+    <TextView
+        android:id="@+id/media"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Media"
+        android:textSize="30sp" />
+
+    <ImageView
+        android:id="@+id/pictures"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_below="@+id/media" />
+
+    <!-- //////////////////////////// DESCRIPTION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\  -->
 
     <TextView
-        android:id="@+id/fragment_detail_text_view"
+        android:id="@+id/description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/pictures"
+        android:text="Description"
+        android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/descriptionTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/description"
         android:text="I have no details to show you..."
-        android:textColor="#FFF"
-        android:textSize="20sp"/>
+        android:textColor="#6a6a6a"
+        android:textSize="15sp" />
 
-</LinearLayout>
+    <!-- //////////////////////////// CHARACTERISTICS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\  -->
+
+    <!-- ///////// Surface \\\\\\\  -->
+    <TextView
+        android:id="@+id/surface"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/descriptionTV"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="50dp"
+        android:paddingEnd="32dp"
+        android:paddingStart="32dp"
+        android:text="Surface"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/surfaceTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/surface"
+        android:layout_alignStart="@+id/surface"
+        android:layout_alignEnd="@+id/surface"
+        android:text="700m²"
+        android:textAlignment="center" />
+
+    <!-- ///////// Number Of Bathrooms \\\\\\\  -->
+
+    <TextView
+        android:id="@+id/nbrOfBathrooms"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/descriptionTV"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="80dp"
+        android:text="Bathrooms"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/nbrOfBathroomsTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/surface"
+        android:layout_alignStart="@+id/nbrOfBathrooms"
+        android:layout_alignEnd="@+id/nbrOfBathrooms"
+        android:text="3"
+        android:textAlignment="center" />
+
+    <!-- ///////// Number Of Bedrooms \\\\\\\\  -->
+
+    <TextView
+        android:id="@+id/nbrOfBedrooms"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/nbrOfBathroomsTV"
+        android:layout_alignStart="@+id/nbrOfBathrooms"
+        android:layout_alignEnd="@+id/nbrOfBathrooms"
+        android:layout_marginTop="20dp"
+        android:text="Bedrooms"
+        android:textAlignment="center"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/nbrOfBedroomsTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/nbrOfBedrooms"
+        android:layout_alignStart="@+id/nbrOfBathrooms"
+        android:layout_alignEnd="@+id/nbrOfBathrooms"
+        android:text="12"
+        android:textAlignment="center" />
+
+    <!-- ///////// Number Of Rooms \\\\\\\\  -->
+
+    <TextView
+        android:id="@+id/nbrOfRooms"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/nbrOfBedroomsTV"
+        android:layout_alignStart="@+id/nbrOfBedrooms"
+        android:layout_alignEnd="@+id/nbrOfBedrooms"
+        android:layout_marginTop="20dp"
+        android:text="Rooms"
+        android:textAlignment="center"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/nbrOfRoomsTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/nbrOfRooms"
+        android:layout_alignStart="@+id/nbrOfBathrooms"
+        android:layout_alignEnd="@+id/nbrOfBathrooms"
+        android:text="25"
+        android:textAlignment="center" />
+
+    <!-- ///////// Address \\\\\\\\  -->
+
+    <TextView
+        android:id="@+id/address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/surface"
+        android:layout_alignStart="@+id/surface"
+        android:layout_alignEnd="@+id/surface"
+        android:layout_marginTop="40dp"
+        android:paddingEnd="31dp"
+        android:paddingStart="28dp"
+        android:text="Address"
+        android:textAlignment="center"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/addressTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/address"
+        android:layout_alignStart="@+id/address"
+        android:layout_alignEnd="@+id/address"
+        android:text="25"
+        android:textAlignment="center" />
+
+</RelativeLayout>
