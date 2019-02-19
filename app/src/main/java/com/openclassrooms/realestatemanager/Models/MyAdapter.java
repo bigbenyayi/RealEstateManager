@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -16,7 +17,9 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.openclassrooms.realestatemanager.Activities.DetailActivity;
+import com.openclassrooms.realestatemanager.Activities.MainActivity;
 import com.openclassrooms.realestatemanager.Fragments.DetailFragment;
+import com.openclassrooms.realestatemanager.Fragments.MainFragment;
 import com.openclassrooms.realestatemanager.R;
 import com.squareup.picasso.Picasso;
 
@@ -29,6 +32,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private List<RecyclerViewItem> listItems;
     private Context context;
     private DetailFragment detailFragment;
+    private MainFragment mainFragment;
+    public FrameLayout detailLayout;
+    public MainActivity mainActivity;
+
 
 
     public MyAdapter(List<RecyclerViewItem> listItems, Context context) {
@@ -58,14 +65,18 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         viewHolder.recycleLocation.setText(listItem.getLocation());
         viewHolder.recyclePrice.setText(listItem.getPrice());
 
+
         viewHolder.relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent myIntent = new Intent(context, DetailActivity.class);
-//                myIntent.putExtra("id", listItem.getId());
-//                context.startActivity(myIntent);
 
-                //Check if DetailFragment is visible (Tablet)
+                /**
+                 * detailFragment is null so goes to else statement but even if detailFrag.uTV(); gets called it crashes because detailFragment is null
+                 *
+                 * Probably need to find a way like in MainActivity or DEtailActivity where detailFragment takes a value but the conversion for the adapter is weird.
+                 */
+
+           //     Check if DetailFragment is visible (Tablet)
                 if (detailFragment != null && detailFragment.isVisible()) {
                     //TABLET : Update directly TextView
                     detailFragment.updateTextView();
@@ -100,6 +111,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             recycleType = itemView.findViewById(R.id.recyclerViewTypeTV);
             recyclePrice = itemView.findViewById(R.id.recyclerViewPriceTV);
             relativeLayout = itemView.findViewById(R.id.recyclerViewRelativeLayout);
+            detailLayout = itemView.findViewById(R.id.frame_layout_detail);
+
         }
     }
 }

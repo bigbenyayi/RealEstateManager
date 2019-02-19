@@ -23,7 +23,7 @@ public class DetailActivity extends AppCompatActivity {
     // FRAGMENTS
     // --------------
 
-    private void configureAndShowDetailFragment(){
+    public void configureAndShowDetailFragment(){
         // Get FragmentManager (Support) and Try to find existing instance of fragment in FrameLayout container
         detailFragment = (DetailFragment) getSupportFragmentManager().findFragmentById(R.id.frame_layout_detail);
 

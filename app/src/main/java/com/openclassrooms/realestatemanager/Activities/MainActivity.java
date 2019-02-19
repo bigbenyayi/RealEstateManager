@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
     // FRAGMENTS
     // --------------
 
-    private void configureAndShowMainFragment() {
+    public void configureAndShowMainFragment() {
 
         mainFragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.frame_layout_main);
 
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
         }
     }
 
-    private void configureAndShowDetailFragment() {
+    public void configureAndShowDetailFragment() {
         detailFragment = (DetailFragment) getSupportFragmentManager().findFragmentById(R.id.frame_layout_detail);
 
         if (detailFragment == null && findViewById(R.id.frame_layout_detail) != null) {
