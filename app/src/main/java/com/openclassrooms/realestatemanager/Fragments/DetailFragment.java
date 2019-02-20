@@ -127,6 +127,9 @@ public class DetailFragment extends BaseFragment {
         recyclerView.setVisibility(View.INVISIBLE);
         media.setText("Please select a house to see the details");
 
+        if (b != null) {
+            updateTextView();
+        }
         return result;
     }
 

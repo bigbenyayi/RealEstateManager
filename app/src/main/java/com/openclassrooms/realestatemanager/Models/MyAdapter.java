@@ -40,8 +40,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private MainFragment mainFragment;
     public FrameLayout detailLayout;
     public MainActivity mainActivity;
-    List<View>itemViewList = new ArrayList<>();
-
+    List<View> itemViewList = new ArrayList<>();
 
 
     public MyAdapter(List<RecyclerViewItem> listItems, Context context) {
@@ -85,7 +84,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                  *
                  *
                  */
-                configureAndShowDetailFragment();
+                boolean tabletSize = context.getResources().getBoolean(R.bool.isTablet);
+                if (tabletSize) {
+                    configureAndShowDetailFragment();
+                }
 
                 //     Check if DetailFragment is visible (Tablet)
                 if (detailFragment != null && detailFragment.isVisible()) {
@@ -110,7 +112,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                     //SMARTPHONE : Passing tag to the new intent that will show DetailActivity (and so DetailFragment)
                     Intent i = new Intent(context, DetailActivity.class);
                     i.putExtra("id", listItem.getId());
-                    detailFragment.configureHorizontalRecyclerView();
+//                    detailFragment.configureHorizontalRecyclerView();
                     context.startActivity(i);
                 }
             }
@@ -129,6 +131,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         public TextView recyclePrice;
         public TextView recycleType;
         public RelativeLayout relativeLayout;
+        public FrameLayout detailLayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -138,7 +141,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             recycleType = itemView.findViewById(R.id.recyclerViewTypeTV);
             recyclePrice = itemView.findViewById(R.id.recyclerViewPriceTV);
             relativeLayout = itemView.findViewById(R.id.recyclerViewRelativeLayout);
-            detailLayout = itemView.findViewById(R.id.frame_layout_detail);
 
         }
     }
