@@ -1,7 +1,9 @@
 package com.openclassrooms.realestatemanager.Fragments;
 
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -40,11 +42,20 @@ public class DetailFragment extends BaseFragment {
     TextView address;
     ImageView picture;
 
+    TextView desc;
+    TextView surf;
+    TextView roo;
+    TextView bed;
+    TextView bath;
+    TextView add;
+    TextView media;
+
     // --------------
     // BASE METHODS
     // --------------
 
     @Override
+
     protected BaseFragment newInstance() {
         return new DetailFragment();
     }
@@ -74,6 +85,28 @@ public class DetailFragment extends BaseFragment {
         address = result.findViewById(R.id.addressTV);
         picture = result.findViewById(R.id.pictures);
 
+        desc = result.findViewById(R.id.description);
+        surf = result.findViewById(R.id.surface);
+        roo = result.findViewById(R.id.nbrOfRooms);
+        bed = result.findViewById(R.id.nbrOfBedrooms);
+        bath = result.findViewById(R.id.nbrOfBathrooms);
+        add = result.findViewById(R.id.address);
+        media = result.findViewById(R.id.media);
+
+        surface.setVisibility(View.INVISIBLE);
+        rooms.setVisibility(View.INVISIBLE);
+        bedrooms.setVisibility(View.INVISIBLE);
+        bathrooms.setVisibility(View.INVISIBLE);
+        address.setVisibility(View.INVISIBLE);
+        desc.setVisibility(View.INVISIBLE);
+        surf.setVisibility(View.INVISIBLE);
+        roo.setVisibility(View.INVISIBLE);
+        bed.setVisibility(View.INVISIBLE);
+        bath.setVisibility(View.INVISIBLE);
+        add.setVisibility(View.INVISIBLE);
+        description.setVisibility(View.INVISIBLE);
+        media.setText("Please select a house to see the details");
+
         return result;
     }
 
@@ -87,6 +120,9 @@ public class DetailFragment extends BaseFragment {
 
         if (b != null) {
             id = (String) b.get("id");
+        } else {
+            SharedPreferences mPrefs = getContext().getSharedPreferences("SHARED", Context.MODE_PRIVATE);
+            id = mPrefs.getString("id", null);
         }
 
         String json;
@@ -119,11 +155,33 @@ public class DetailFragment extends BaseFragment {
         bedrooms.setText(houseItem.getNbrOfBedrooms());
         bathrooms.setText(houseItem.getNbrOfBathrooms());
         address.setText(houseItem.getAddress());
+
+        desc.setText("Description");
+        surf.setText("Surface");
+        roo.setText("Rooms");
+        bed.setText("Bedrooms");
+        bath.setText("Bathrooms");
+        add.setText("Address");
+        media.setText("Media");
         try {
             Picasso.get().load(houseItem.getPictures().getString(0)).into(picture);
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        surface.setVisibility(View.VISIBLE);
+        rooms.setVisibility(View.VISIBLE);
+        bedrooms.setVisibility(View.VISIBLE);
+        bathrooms.setVisibility(View.VISIBLE);
+        address.setVisibility(View.VISIBLE);
+        desc.setVisibility(View.VISIBLE);
+        surf.setVisibility(View.VISIBLE);
+        roo.setVisibility(View.VISIBLE);
+        bed.setVisibility(View.VISIBLE);
+        bath.setVisibility(View.VISIBLE);
+        add.setVisibility(View.VISIBLE);
+        media.setVisibility(View.VISIBLE);
+        description.setVisibility(View.VISIBLE);
 
 
     }

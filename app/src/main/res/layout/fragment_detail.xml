@@ -10,6 +10,7 @@
         android:id="@+id/media"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="20dp"
         android:text="Media"
         android:textSize="30sp" />
 
@@ -17,7 +18,8 @@
         android:id="@+id/pictures"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_below="@+id/media" />
+        android:layout_below="@+id/media"
+        android:layout_marginStart="20dp" />
 
     <!-- //////////////////////////// DESCRIPTION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\  -->
 
@@ -26,6 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/pictures"
+        android:layout_margin="20dp"
         android:text="Description"
         android:textSize="30sp" />
 
@@ -34,6 +37,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/description"
+        android:layout_marginStart="20dp"
         android:text="I have no details to show you..."
         android:textColor="#6a6a6a"
         android:textSize="15sp" />
@@ -48,8 +52,8 @@
         android:layout_below="@+id/descriptionTV"
         android:layout_marginStart="80dp"
         android:layout_marginTop="50dp"
-        android:paddingEnd="32dp"
         android:paddingStart="32dp"
+        android:paddingEnd="32dp"
         android:text="Surface"
         android:textSize="18sp" />
 
@@ -144,8 +148,8 @@
         android:layout_alignStart="@+id/surface"
         android:layout_alignEnd="@+id/surface"
         android:layout_marginTop="40dp"
-        android:paddingEnd="31dp"
         android:paddingStart="28dp"
+        android:paddingEnd="31dp"
         android:text="Address"
         android:textAlignment="center"
         android:textSize="18sp" />
