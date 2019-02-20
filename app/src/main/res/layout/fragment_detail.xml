@@ -14,20 +14,28 @@
         android:text="Media"
         android:textSize="30sp" />
 
-    <ImageView
-        android:id="@+id/pictures"
-        android:layout_width="150dp"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/horizontalRecyclerView"
+        android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:layout_below="@+id/media"
-        android:layout_marginStart="20dp" />
+        android:layout_below="@+id/media">
 
+    </android.support.v7.widget.RecyclerView>
+    <!--
+        <ImageView
+            android:id="@+id/pictures"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_below="@+id/media"
+            android:layout_marginStart="20dp" />
+    -->
     <!-- //////////////////////////// DESCRIPTION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\  -->
 
     <TextView
         android:id="@+id/description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/pictures"
+        android:layout_below="@+id/horizontalRecyclerView"
         android:layout_margin="20dp"
         android:text="Description"
         android:textSize="30sp" />

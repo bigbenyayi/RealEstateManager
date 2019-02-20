@@ -25,6 +25,8 @@ import com.openclassrooms.realestatemanager.Fragments.MainFragment;
 import com.openclassrooms.realestatemanager.R;
 import com.squareup.picasso.Picasso;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,20 +92,25 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                     //TABLET : Update directly TextView
                     SharedPreferences mPref = context.getSharedPreferences("SHARED", MODE_PRIVATE);
                     mPref.edit().putString("id", listItem.getId()).apply();
+                    detailFragment.configureHorizontalRecyclerView();
                     detailFragment.updateTextView();
 
                     for (View tempItemView : itemViewList) {
+                        TextView price = tempItemView.findViewById(R.id.recyclerViewPriceTV);
 
                         if (itemViewList.get(viewHolder.getAdapterPosition()) == tempItemView) {
                             tempItemView.setBackgroundColor(Color.parseColor("#b380ff"));
+                            price.setTextColor(Color.parseColor("#FAFAFA"));
                         } else {
                             tempItemView.setBackgroundColor(Color.parseColor("#FAFAFA"));
+                            price.setTextColor(context.getResources().getColor(R.color.colorAccent));
                         }
                     }
                 } else {
                     //SMARTPHONE : Passing tag to the new intent that will show DetailActivity (and so DetailFragment)
                     Intent i = new Intent(context, DetailActivity.class);
                     i.putExtra("id", listItem.getId());
+                    detailFragment.configureHorizontalRecyclerView();
                     context.startActivity(i);
                 }
             }

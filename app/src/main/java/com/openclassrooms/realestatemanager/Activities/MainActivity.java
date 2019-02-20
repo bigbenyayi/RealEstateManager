@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
         //Configure and show it
         this.configureAndShowMainFragment();
         this.configureAndShowDetailFragment();
+
     }
 
     // --------------
@@ -32,7 +33,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
 
     @Override
     public void onButtonClicked(View view) {
-
 
     }
 

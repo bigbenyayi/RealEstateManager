@@ -82,7 +82,6 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         //   --------------------------------------------- ADDING FETCHED DATA INTO RECYCLERVIEW ---------------------------------------------------------
 
 

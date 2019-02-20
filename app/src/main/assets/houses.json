@@ -14,6 +14,10 @@
     "pictures": [
       "https://cdn.vox-cdn.com/thumbor/gEgyAL65X16XdgvyW8Vpm-gcWPU=/0x0:1800x642/920x0/filters:focal(0x0:1800x642):format(webp):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/8648425/OWP_MWC_03_PH_01_LEGAL_HD.jpg",
       "https://cdn.vox-cdn.com/thumbor/0JDYKsfBhtZiPaujx0aHw1-dRTc=/0x0:1800x1013/920x0/filters:focal(0x0:1800x1013):format(webp):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/8648427/OWP_MWC_04_PH_Bathroom_Night_01_LegalHD.jpg"
+    ],
+    "rooms": [
+      "balcony view",
+      "bathroom"
     ]
   },
   {
@@ -31,7 +35,16 @@
     "pictures": [
       "https://a0.muscache.com/im/pictures/82fa5438-da0b-4cb6-b213-e3c50560c7fc.jpg?aki_policy=large",
       "https://a0.muscache.com/im/pictures/598f9d03-e082-438e-8306-a53ac3fdff62.jpg?aki_policy=large",
-      "https://a0.muscache.com/im/pictures/2fdccac6-5a66-418c-b6e5-879d4eb30d26.jpg?aki_policy=large"
+      "https://a0.muscache.com/im/pictures/2fdccac6-5a66-418c-b6e5-879d4eb30d26.jpg?aki_policy=large",
+      "https://a0.muscache.com/im/pictures/82fa5438-da0b-4cb6-b213-e3c50560c7fc.jpg?aki_policy=large",
+      "https://a0.muscache.com/im/pictures/598f9d03-e082-438e-8306-a53ac3fdff62.jpg?aki_policy=large"
+    ],
+    "rooms": [
+      "swimming pool",
+      "sunroom",
+      "driveway",
+      "swimming pool",
+      "sunroom"
     ]
   },
   {
@@ -50,6 +63,11 @@
       "https://a0.muscache.com/im/pictures/0dc7b80a-2627-4dae-9e81-4062f4317f1e.jpg?aki_policy=large",
       "https://a0.muscache.com/im/pictures/c13e2aa3-7df7-48d8-a91e-846519169ef6.jpg?aki_policy=large",
       "https://a0.muscache.com/im/pictures/ea083782-d503-4eaa-8520-324d577261bc.jpg?aki_policy=large"
+    ],
+    "rooms": [
+      "outdoor",
+      "living room",
+      "swimming pool"
     ]
   }
 ]
