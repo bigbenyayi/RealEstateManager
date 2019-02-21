@@ -46,8 +46,12 @@ public class DetailFragment extends BaseFragment {
     TextView bedrooms;
     TextView bathrooms;
     TextView address;
-    ImageView picture;
+    TextView realtor;
+    TextView sold;
+    TextView market;
+    TextView pointsOfInterest;
 
+    TextView inter;
     TextView desc;
     TextView surf;
     TextView roo;
@@ -103,7 +107,12 @@ public class DetailFragment extends BaseFragment {
         bedrooms = result.findViewById(R.id.nbrOfBedroomsTV);
         bathrooms = result.findViewById(R.id.nbrOfBathroomsTV);
         address = result.findViewById(R.id.addressTV);
+        pointsOfInterest = result.findViewById(R.id.pointsOfInterestTV);
+        realtor = result.findViewById(R.id.realEstateInCharge);
+        market = result.findViewById(R.id.onTheMarketSinceTV);
+        sold = result.findViewById(R.id.soldTV);
 
+        inter = result.findViewById(R.id.pointsOfInterest);
         desc = result.findViewById(R.id.description);
         surf = result.findViewById(R.id.surface);
         roo = result.findViewById(R.id.nbrOfRooms);
@@ -125,6 +134,11 @@ public class DetailFragment extends BaseFragment {
         add.setVisibility(View.INVISIBLE);
         description.setVisibility(View.INVISIBLE);
         recyclerView.setVisibility(View.INVISIBLE);
+        sold.setVisibility(View.INVISIBLE);
+        realtor.setVisibility(View.INVISIBLE);
+        market.setVisibility(View.INVISIBLE);
+        pointsOfInterest.setVisibility(View.INVISIBLE);
+        inter.setVisibility(View.INVISIBLE);
         media.setText("Please select a house to see the details");
 
         if (b != null) {
@@ -161,7 +175,9 @@ public class DetailFragment extends BaseFragment {
                 JSONObject obj = jsonArray.getJSONObject(i);
                 if (id.equals(obj.getString("id"))) {
                     houseItem = new DetailHouse(obj.getString("description"), obj.getString("surface"), obj.getString("numberOfRooms"),
-                            obj.getString("numberOfBedrooms"), obj.getString("numberOfBathrooms"), obj.getString("location"), obj.getJSONArray("pictures"));
+                            obj.getString("numberOfBedrooms"), obj.getString("numberOfBathrooms"), obj.getString("location"),
+                            obj.getString("realtor"), obj.getString("onMarket"),
+                            obj.getString("sold"), obj.getJSONArray("pointsOfInterest"), obj.getJSONArray("pictures"));
                 }
             }
         } catch (IOException e) {
@@ -170,13 +186,35 @@ public class DetailFragment extends BaseFragment {
             e.printStackTrace();
         }
 
-        assert houseItem != null;
+        //assert houseItem != null;
         description.setText(houseItem.getDescription());
+
         surface.setText(houseItem.getSurface() + "m²");
         rooms.setText(houseItem.getNbrOfRooms());
         bedrooms.setText(houseItem.getNbrOfBedrooms());
         bathrooms.setText(houseItem.getNbrOfBathrooms());
         address.setText(houseItem.getAddress());
+        realtor.setText("Real Estate Agent: " + houseItem.getRealtor());
+        market.setText("On market since: " + houseItem.getOnMarket());
+        sold.setText("Sold: " + houseItem.getSaleDate());
+
+        if (houseItem.getPointsOfInterest() != null) {
+            pointsOfInterest.setText("");
+            for (int i = 0; i < houseItem.getPointsOfInterest().length(); i++) {
+                try {
+                    if (i == houseItem.getPointsOfInterest().length() - 1) {
+                        pointsOfInterest.append((CharSequence) houseItem.getPointsOfInterest().get(i));
+                    } else {
+                        pointsOfInterest.append(houseItem.getPointsOfInterest().get(i) + ", ");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            pointsOfInterest.setVisibility(View.INVISIBLE);
+            inter.setVisibility(View.INVISIBLE);
+        }
 
         desc.setText("Description");
         surf.setText("Surface");
@@ -201,6 +239,11 @@ public class DetailFragment extends BaseFragment {
         add.setVisibility(View.VISIBLE);
         media.setVisibility(View.VISIBLE);
         description.setVisibility(View.VISIBLE);
+        sold.setVisibility(View.VISIBLE);
+        realtor.setVisibility(View.VISIBLE);
+        market.setVisibility(View.VISIBLE);
+        pointsOfInterest.setVisibility(View.VISIBLE);
+        inter.setVisibility(View.VISIBLE);
 
 
     }

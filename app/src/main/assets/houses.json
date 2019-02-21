@@ -11,6 +11,10 @@
     "numberOfBathrooms": "2",
     "numberOfBedrooms": "5",
     "location": "1234 Ben street,\nMiami,\nFlorida,\nUnited States",
+    "realtor": "Benjamin Corben",
+    "onMarket": "21/09/1999",
+    "sold": "21/02/2019",
+    "pointsOfInterest": ["Metro station", "Church"],
     "pictures": [
       "https://cdn.vox-cdn.com/thumbor/gEgyAL65X16XdgvyW8Vpm-gcWPU=/0x0:1800x642/920x0/filters:focal(0x0:1800x642):format(webp):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/8648425/OWP_MWC_03_PH_01_LEGAL_HD.jpg",
       "https://cdn.vox-cdn.com/thumbor/0JDYKsfBhtZiPaujx0aHw1-dRTc=/0x0:1800x1013/920x0/filters:focal(0x0:1800x1013):format(webp):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/8648427/OWP_MWC_04_PH_Bathroom_Night_01_LegalHD.jpg"
@@ -32,6 +36,10 @@
     "numberOfBathrooms": "8",
     "numberOfBedrooms": "13",
     "location": "2290 Einstein Boulevard,\nBeverly Hills,\nCalifornia,\nUnited States",
+    "realtor": "Benjamin Button",
+    "onMarket": "01/12/1949",
+    "sold": "12/05/2015",
+    "pointsOfInterest": ["Park", "Swimming Pool"],
     "pictures": [
       "https://a0.muscache.com/im/pictures/82fa5438-da0b-4cb6-b213-e3c50560c7fc.jpg?aki_policy=large",
       "https://a0.muscache.com/im/pictures/598f9d03-e082-438e-8306-a53ac3fdff62.jpg?aki_policy=large",
@@ -59,6 +67,9 @@
     "numberOfBathrooms": "1",
     "numberOfBedrooms": "5",
     "location": "3033 Wilshire Boulevard,\nCalabasas,\n California,\n United States",
+    "realtor": "Zidane Corben",
+    "onMarket": "18/02/2014",
+    "pointsOfInterest": ["Park", "School"],
     "pictures": [
       "https://a0.muscache.com/im/pictures/0dc7b80a-2627-4dae-9e81-4062f4317f1e.jpg?aki_policy=large",
       "https://a0.muscache.com/im/pictures/c13e2aa3-7df7-48d8-a91e-846519169ef6.jpg?aki_policy=large",

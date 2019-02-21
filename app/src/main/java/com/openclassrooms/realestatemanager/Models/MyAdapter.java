@@ -80,10 +80,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                 /**
                  * detailFragment is null so goes to else statement but even if detailFrag.uTV(); gets called it crashes because detailFragment is null
                  *
-                 * Probably need to find a way like in MainActivity or DEtailActivity where detailFragment takes a value but the conversion for the adapter is weird.
-                 *
-                 *
+                 * Probably need to find a way like in MainActivity or DetailActivity where detailFragment takes a value but the conversion for the adapter is weird.
                  */
+
                 boolean tabletSize = context.getResources().getBoolean(R.bool.isTablet);
                 if (tabletSize) {
                     configureAndShowDetailFragment();
@@ -141,7 +140,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             recycleType = itemView.findViewById(R.id.recyclerViewTypeTV);
             recyclePrice = itemView.findViewById(R.id.recyclerViewPriceTV);
             relativeLayout = itemView.findViewById(R.id.recyclerViewRelativeLayout);
-
         }
     }
 

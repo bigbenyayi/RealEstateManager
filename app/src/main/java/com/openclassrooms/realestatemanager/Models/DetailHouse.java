@@ -11,15 +11,23 @@ public class DetailHouse {
     String nbrOfBedrooms;
     String nbrOfBathrooms;
     String address;
+    String realtor;
+    String onMarket;
+    String saleDate;
+    JSONArray pointsOfInterest;
     JSONArray pictures;
 
-    public DetailHouse(String description, String surface, String nbrOfRooms, String nbrOfBedrooms, String nbrOfBathrooms, String address, JSONArray pictures) {
+    public DetailHouse(String description, String surface, String nbrOfRooms, String nbrOfBedrooms, String nbrOfBathrooms, String address, String realtor, String onMarket, String saleDate, JSONArray pointsOfInterest, JSONArray pictures) {
         this.description = description;
         this.surface = surface;
         this.nbrOfRooms = nbrOfRooms;
         this.nbrOfBedrooms = nbrOfBedrooms;
         this.nbrOfBathrooms = nbrOfBathrooms;
         this.address = address;
+        this.realtor = realtor;
+        this.onMarket = onMarket;
+        this.saleDate = saleDate;
+        this.pointsOfInterest = pointsOfInterest;
         this.pictures = pictures;
     }
 
@@ -49,5 +57,21 @@ public class DetailHouse {
 
     public JSONArray getPictures() {
         return pictures;
+    }
+
+    public String getRealtor() {
+        return realtor;
+    }
+
+    public String getOnMarket() {
+        return onMarket;
+    }
+
+    public String getSaleDate() {
+        return saleDate;
+    }
+
+    public JSONArray getPointsOfInterest() {
+        return pointsOfInterest;
     }
 }

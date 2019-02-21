@@ -36,19 +36,47 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/horizontalRecyclerView"
-        android:layout_margin="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
         android:text="Description"
         android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/realEstateInCharge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/description"
+        android:layout_marginBottom="15dp"
+        android:layout_marginStart="20dp"
+        android:textStyle="bold"
+        android:textSize="16dp"
+        android:text="Real Estate Agent: Alvaro Morata" />
 
     <TextView
         android:id="@+id/descriptionTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/description"
+        android:layout_below="@+id/realEstateInCharge"
         android:layout_marginStart="20dp"
         android:text="I have no details to show you..."
         android:textColor="#6a6a6a"
         android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/onTheMarketSinceTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:text="On the market since: 23/12/18" />
+
+    <TextView
+        android:id="@+id/soldTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/onTheMarketSinceTV"
+        android:layout_alignParentRight="true"
+        android:text="Sold: 26/12/18" />
 
     <!-- //////////////////////////// CHARACTERISTICS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\  -->
 
@@ -60,10 +88,10 @@
         android:layout_below="@+id/descriptionTV"
         android:layout_marginStart="80dp"
         android:layout_marginTop="50dp"
-        android:paddingStart="32dp"
-        android:paddingEnd="32dp"
+        android:paddingStart="35dp"
+        android:paddingEnd="35dp"
         android:text="Surface"
-        android:textSize="18sp" />
+        android:textSize="22sp" />
 
     <TextView
         android:id="@+id/surfaceTV"
@@ -86,7 +114,7 @@
         android:layout_marginTop="50dp"
         android:layout_marginEnd="80dp"
         android:text="Bathrooms"
-        android:textSize="18sp" />
+        android:textSize="22sp" />
 
     <TextView
         android:id="@+id/nbrOfBathroomsTV"
@@ -110,7 +138,7 @@
         android:layout_marginTop="20dp"
         android:text="Bedrooms"
         android:textAlignment="center"
-        android:textSize="18sp" />
+        android:textSize="22sp" />
 
     <TextView
         android:id="@+id/nbrOfBedroomsTV"
@@ -134,7 +162,7 @@
         android:layout_marginTop="20dp"
         android:text="Rooms"
         android:textAlignment="center"
-        android:textSize="18sp" />
+        android:textSize="22sp" />
 
     <TextView
         android:id="@+id/nbrOfRoomsTV"
@@ -160,7 +188,7 @@
         android:paddingEnd="31dp"
         android:text="Address"
         android:textAlignment="center"
-        android:textSize="18sp" />
+        android:textSize="22sp" />
 
     <TextView
         android:id="@+id/addressTV"
@@ -170,6 +198,32 @@
         android:layout_alignStart="@+id/address"
         android:layout_alignEnd="@+id/address"
         android:text="25"
+        android:textAlignment="center" />
+
+    <!-- ///////// Points Of Interest \\\\\\\\  -->
+
+    <TextView
+        android:id="@+id/pointsOfInterest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/addressTV"
+        android:layout_alignStart="@+id/surface"
+        android:layout_alignEnd="@+id/surface"
+        android:layout_marginTop="10dp"
+        android:paddingStart="28dp"
+        android:paddingEnd="31dp"
+        android:text="Nearby interests"
+        android:textAlignment="center"
+        android:textSize="22sp" />
+
+    <TextView
+        android:id="@+id/pointsOfInterestTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/pointsOfInterest"
+        android:layout_alignStart="@+id/address"
+        android:layout_alignEnd="@+id/address"
+        android:text="Park, Library, School, Football center"
         android:textAlignment="center" />
 
 </RelativeLayout>
