@@ -2,22 +2,24 @@ package com.openclassrooms.realestatemanager.Models;
 
 public class RecyclerViewItem {
 
-    String picture;
+    String mainPicture;
     String id;
     String type;
-    String location;
+    String city;
     String price;
 
+    public RecyclerViewItem(){}
+
     public RecyclerViewItem(String id, String picture, String type, String location, String price) {
-        this.picture = picture;
+        this.mainPicture = picture;
         this.type = type;
-        this.location = location;
+        this.city = location;
         this.price = price;
         this.id = id;
     }
 
-    public String getPicture() {
-        return picture;
+    public String getMainPicture() {
+        return mainPicture;
     }
 
     public String getId() {
@@ -28,8 +30,8 @@ public class RecyclerViewItem {
         return type;
     }
 
-    public String getLocation() {
-        return location;
+    public String getCity() {
+        return city;
     }
 
     public String getPrice() {

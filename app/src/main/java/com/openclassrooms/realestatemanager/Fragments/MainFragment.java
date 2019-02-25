@@ -1,18 +1,30 @@
 package com.openclassrooms.realestatemanager.Fragments;
 
 import android.content.Context;
-import android.net.Uri;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
-import com.openclassrooms.realestatemanager.Models.MyAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.openclassrooms.realestatemanager.Activities.DetailActivity;
 import com.openclassrooms.realestatemanager.Models.RecyclerViewItem;
 import com.openclassrooms.realestatemanager.R;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,8 +34,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class MainFragment extends Fragment implements View.OnClickListener {
 
@@ -34,6 +47,11 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     private RecyclerView.Adapter adapter;
     private List<RecyclerViewItem> listItems;
     List<RecyclerViewItem> housesList = new ArrayList<>();
+    private FirestoreRecyclerAdapter<RecyclerViewItem, ProductViewHolder> theAdapter;
+
+    private DetailFragment detailFragment;
+    List<View> itemViewList = new ArrayList<>();
+
 
     // Declare our interface that will be implemented by any container activity
     public interface OnButtonClickedListener {
@@ -54,41 +72,59 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
+        Query query = rootRef.collection("house");
+
         listItems = new ArrayList<>();
         RecyclerViewItem houseItem = null;
 
+        FirestoreRecyclerOptions<RecyclerViewItem> options = new FirestoreRecyclerOptions.Builder<RecyclerViewItem>()
+                .setQuery(query, RecyclerViewItem.class)
+                .build();
 
-        // ----------------------------------------- FETCHING DATA FROM JSON ARRAY IN ASSETS FOLDER ------------------------------------------------------
 
-        String json;
-        try {
-            InputStream is = getContext().getAssets().open("houses.json");
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
-
-            json = new String(buffer, StandardCharsets.UTF_8);
-            JSONArray jsonArray = new JSONArray(json);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject obj = jsonArray.getJSONObject(i);
-
-                houseItem = new RecyclerViewItem(obj.getString("id"), obj.getString("mainPicture"), obj.getString("type"), obj.getString("city"), "$" + obj.getString("price"));
-
-                listItems.add(houseItem);
+        theAdapter = new FirestoreRecyclerAdapter<RecyclerViewItem, ProductViewHolder>(options) {
+            @NonNull
+            @Override
+            public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+                View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.custom_layout, viewGroup, false);
+                itemViewList.add(view);
+                return new ProductViewHolder(view);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        //   --------------------------------------------- ADDING FETCHED DATA INTO RECYCLERVIEW ---------------------------------------------------------
+
+            @Override
+            protected void onBindViewHolder(@NonNull final ProductViewHolder holder, int position, @NonNull final RecyclerViewItem model) {
 
 
-        adapter = new MyAdapter(listItems, getContext());
+                holder.setPrice(model.getPrice());
+                holder.setQuickLocation(model.getCity());
+                holder.setType(model.getType());
+                holder.setPicture(model.getMainPicture());
+
+                holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        holder.setClickAction(model.getId());
+
+                        for (View tempItemView : itemViewList) {
+                            TextView price = tempItemView.findViewById(R.id.recyclerViewPriceTV);
+
+                            if (itemViewList.get(holder.getAdapterPosition()) == tempItemView) {
+                                tempItemView.setBackgroundColor(Color.parseColor("#b380ff"));
+                                price.setTextColor(Color.parseColor("#FAFAFA"));
+                            } else {
+                                tempItemView.setBackgroundColor(Color.parseColor("#FAFAFA"));
+                                price.setTextColor(getResources().getColor(R.color.colorAccent));
+                            }
+                        }
+
+                    }
+                });
+            }
 
 
-        recyclerView.setAdapter(adapter);
+        };
+        recyclerView.setAdapter(theAdapter);
 
         return result;
     }
@@ -111,6 +147,21 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         mCallback.onButtonClicked(v);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        theAdapter.startListening();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        if (theAdapter != null) {
+            theAdapter.stopListening();
+        }
+    }
+
     // --------------
     // FRAGMENT SUPPORT
     // --------------
@@ -123,5 +174,80 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         } catch (ClassCastException e) {
             throw new ClassCastException(e.toString() + " must implement OnButtonClickedListener");
         }
+    }
+
+    private class ProductViewHolder extends RecyclerView.ViewHolder {
+        private View view;
+        public RelativeLayout relativeLayout;
+
+
+        ProductViewHolder(View itemView) {
+            super(itemView);
+            view = itemView;
+            relativeLayout = itemView.findViewById(R.id.recyclerViewRelativeLayout);
+
+        }
+
+        void setPrice(String price) {
+            TextView textView = view.findViewById(R.id.recyclerViewPriceTV);
+            textView.setText(price);
+        }
+
+        void setQuickLocation(String location) {
+            TextView textView = view.findViewById(R.id.recyclerViewLocationTV);
+            textView.setText(location);
+        }
+
+        void setType(String type) {
+            TextView textView = view.findViewById(R.id.recyclerViewTypeTV);
+            textView.setText(type);
+        }
+
+        void setPicture(String picture) {
+            ImageView imageViewRV = view.findViewById(R.id.recyclerViewPicture);
+            Picasso.get().load(picture).into(imageViewRV);
+
+        }
+
+        void setClickAction(String id) {
+            boolean tabletSize = getResources().getBoolean(R.bool.isTablet);
+            if (tabletSize) {
+                configureAndShowDetailFragment();
+            }
+
+            //     Check if DetailFragment is visible (Tablet)
+            if (detailFragment != null && detailFragment.isVisible()) {
+                //TABLET : Update directly TextView
+                SharedPreferences mPref = getActivity().getSharedPreferences("SHARED", MODE_PRIVATE);
+                mPref.edit().putString("id", id).apply();
+                detailFragment.configureHorizontalRecyclerView();
+                detailFragment.updateTextView();
+
+            } else {
+                //SMARTPHONE : Passing tag to the new intent that will show DetailActivity (and so DetailFragment)
+                Intent i = new Intent(getContext(), DetailActivity.class);
+                i.putExtra("id", id);
+//                    detailFragment.configureHorizontalRecyclerView();
+                startActivity(i);
+            }
+
+        }
+
+    }
+
+    public void configureAndShowDetailFragment() {
+        // Get FragmentManager (Support) and Try to find existing instance of fragment in FrameLayout container
+        detailFragment = (DetailFragment) ((AppCompatActivity) getContext()).getSupportFragmentManager().findFragmentById(R.id.frame_layout_detail);
+
+        if (detailFragment == null) {
+            // Create new main fragment
+            detailFragment = new DetailFragment();
+            // Add it to FrameLayout container
+            ((AppCompatActivity) getContext()).getSupportFragmentManager().beginTransaction()
+                    .add(R.id.frame_layout_detail, detailFragment)
+                    .commit();
+        }
+
+
     }
 }

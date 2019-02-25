@@ -16,6 +16,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.openclassrooms.realestatemanager.Activities.MainActivity;
 import com.openclassrooms.realestatemanager.Models.DetailHouse;
 import com.openclassrooms.realestatemanager.Models.HorizontalRecyclerViewItem;
@@ -59,9 +62,12 @@ public class DetailFragment extends BaseFragment {
     TextView bath;
     TextView add;
     TextView media;
+    DetailHouse houseItem = null;
 
+    HorizontalRecyclerViewItem photoItem = null;
     private List<HorizontalRecyclerViewItem> listItems;
     private MyHorizontalAdapter adapter;
+    private CollectionReference notebookRef = FirebaseFirestore.getInstance().collection("house");
 
 
     RecyclerView recyclerView;
@@ -152,7 +158,6 @@ public class DetailFragment extends BaseFragment {
         Intent iin = getActivity().getIntent();
         Bundle b = iin.getExtras();
         String id;
-        DetailHouse houseItem = null;
 
         if (b != null) {
             id = (String) b.get("id");
@@ -161,60 +166,64 @@ public class DetailFragment extends BaseFragment {
             id = mPrefs.getString("id", null);
         }
 
-        String json;
-        try {
-            InputStream is = getContext().getAssets().open("houses.json");
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
 
-            json = new String(buffer, StandardCharsets.UTF_8);
-            JSONArray jsonArray = new JSONArray(json);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject obj = jsonArray.getJSONObject(i);
-                if (id.equals(obj.getString("id"))) {
-                    houseItem = new DetailHouse(obj.getString("description"), obj.getString("surface"), obj.getString("numberOfRooms"),
-                            obj.getString("numberOfBedrooms"), obj.getString("numberOfBathrooms"), obj.getString("location"),
-                            obj.getString("realtor"), obj.getString("onMarket"),
-                            obj.getString("sold"), obj.getJSONArray("pointsOfInterest"), obj.getJSONArray("pictures"));
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
 
-        //assert houseItem != null;
-        description.setText(houseItem.getDescription());
+            for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
 
-        surface.setText(houseItem.getSurface() + "m²");
-        rooms.setText(houseItem.getNbrOfRooms());
-        bedrooms.setText(houseItem.getNbrOfBedrooms());
-        bathrooms.setText(houseItem.getNbrOfBathrooms());
-        address.setText(houseItem.getAddress());
-        realtor.setText("Real Estate Agent: " + houseItem.getRealtor());
-        market.setText("On market since: " + houseItem.getOnMarket());
-        sold.setText("Sold: " + houseItem.getSaleDate());
+                if (id.equals(documentSnapshot.get("id"))) {
 
-        if (houseItem.getPointsOfInterest() != null) {
-            pointsOfInterest.setText("");
-            for (int i = 0; i < houseItem.getPointsOfInterest().length(); i++) {
-                try {
-                    if (i == houseItem.getPointsOfInterest().length() - 1) {
-                        pointsOfInterest.append((CharSequence) houseItem.getPointsOfInterest().get(i));
+                    String descriptionValue = (String) documentSnapshot.get("description");
+                    String surfaceValue = (String) documentSnapshot.get("surface");
+                    String nbrOfRooms = (String) documentSnapshot.get("numberOfRooms");
+                    String nbrOfBedrooms = (String) documentSnapshot.get("numberOfBedrooms");
+                    String nbrOfBathrooms = (String) documentSnapshot.get("numberOfBathrooms");
+                    String location = (String) documentSnapshot.get("location");
+                    String realtorValue = (String) documentSnapshot.get("realtor");
+                    String onMarket = (String) documentSnapshot.get("onMarket");
+                    String soldValue = (String) documentSnapshot.get("sold");
+                    ArrayList<String> pointsOfInterestValue = (ArrayList<String>) documentSnapshot.get("pointOfInterest ");
+                    ArrayList<String> pictures = (ArrayList<String>) documentSnapshot.get("pictures");
+
+                    houseItem = new DetailHouse(descriptionValue, surfaceValue, nbrOfRooms,
+                            nbrOfBedrooms, nbrOfBathrooms, location,
+                            realtorValue, onMarket, soldValue, pointsOfInterestValue, pictures);
+
+                    assert houseItem != null;
+                    description.setText(houseItem.getDescription());
+
+                    surface.setText(houseItem.getSurface() + "m²");
+                    rooms.setText(houseItem.getNbrOfRooms());
+                    bedrooms.setText(houseItem.getNbrOfBedrooms());
+                    bathrooms.setText(houseItem.getNbrOfBathrooms());
+                    address.setText(houseItem.getAddress());
+                    realtor.setText("Real Estate Agent: " + houseItem.getRealtor());
+                    market.setText("On market since: " + houseItem.getOnMarket());
+                    if (soldValue != null) {
+                        sold.setText("Sold: " + houseItem.getSaleDate());
                     } else {
-                        pointsOfInterest.append(houseItem.getPointsOfInterest().get(i) + ", ");
+                        sold.setText("Still available");
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+
+                    if (houseItem.getPointsOfInterest() != null) {
+                        pointsOfInterest.setText("");
+                        for (int i = 0; i < houseItem.getPointsOfInterest().size(); i++) {
+
+                            if (i == houseItem.getPointsOfInterest().size() - 1) {
+                                pointsOfInterest.append((CharSequence) houseItem.getPointsOfInterest().get(i));
+                            } else {
+                                pointsOfInterest.append(houseItem.getPointsOfInterest().get(i) + ", ");
+                            }
+                        }
+                    } else {
+                        pointsOfInterest.setVisibility(View.INVISIBLE);
+                        inter.setVisibility(View.INVISIBLE);
+                    }
+
                 }
             }
-        } else {
-            pointsOfInterest.setVisibility(View.INVISIBLE);
-            inter.setVisibility(View.INVISIBLE);
-        }
+        });
+
 
         desc.setText("Description");
         surf.setText("Surface");
@@ -254,23 +263,11 @@ public class DetailFragment extends BaseFragment {
         recyclerView.setLayoutManager(horizontalLayoutManager);
 
         listItems = new ArrayList<>();
-        HorizontalRecyclerViewItem photoItem = null;
-        String json;
         listItems.clear();
-        try {
-            InputStream is = getContext().getAssets().open("houses.json");
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
 
-            // IF ID FROM INTENT OR SP IS THE SAME AS THE FOR LOOP ONE THEN WE ADD IT FOR EVERY PICTURE IN THE ARRAY
+        notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
 
-            json = new String(buffer, StandardCharsets.UTF_8);
-            JSONArray jsonArray = new JSONArray(json);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject obj = jsonArray.getJSONObject(i);
-
+            for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
                 Intent iin = getActivity().getIntent();
                 Bundle b = iin.getExtras();
                 String id;
@@ -282,24 +279,19 @@ public class DetailFragment extends BaseFragment {
                     id = mPrefs.getString("id", null);
                 }
 
-                if (obj.get("id").equals(id)) {
+                if (id.equals(documentSnapshot.get("id"))) {
+                    ArrayList<String> pictures = (ArrayList<String>) documentSnapshot.get("pictures");
+                    ArrayList<String> rooms = (ArrayList<String>) documentSnapshot.get("rooms");
 
-                    JSONArray picturesArray = obj.getJSONArray("pictures");
-                    JSONArray roomsArray = obj.getJSONArray("rooms");
+                    for (int j = 0; j < pictures.size(); j++) {
 
-                    for (int j = 0; j < picturesArray.length(); j++) {
-
-                        photoItem = new HorizontalRecyclerViewItem((String) picturesArray.get(j), (String) roomsArray.get(j));
+                        photoItem = new HorizontalRecyclerViewItem(pictures.get(j), rooms.get(j));
 
                         listItems.add(photoItem);
                     }
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        });
 
         adapter = new MyHorizontalAdapter(getContext(), listItems);
 
