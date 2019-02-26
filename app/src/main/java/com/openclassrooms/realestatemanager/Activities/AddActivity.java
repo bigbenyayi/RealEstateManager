@@ -15,8 +15,10 @@ import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.openclassrooms.realestatemanager.R;
 
@@ -53,6 +55,8 @@ public class AddActivity extends AppCompatActivity {
     NumberPicker bathroomsNP;
     NumberPicker bedroomsNP;
     NumberPicker roomsNP;
+
+    int intId;
 
 
     @Override
@@ -92,13 +96,27 @@ public class AddActivity extends AppCompatActivity {
         nextButton.setOnClickListener(v -> {
             int n = mPrefs.getInt("addNumber", 0);
             if (n == 3) {
+                CollectionReference notebookRef = FirebaseFirestore.getInstance().collection("house");
+                notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
+
+                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                        String id = (String) documentSnapshot.get("id");
+                        int idInt = Integer.parseInt(id);
+                        intId = 0;
+                        if (idInt > intId){
+                            intId = Integer.parseInt(id);
+                        }
+
+
+                    }
+                });
                 // SAVE EVERYTHING TO FIRESTOOOORE HERE
                 DocumentReference mDocRef = FirebaseFirestore.getInstance().collection("house").document();
 
                 Map<String, Object> dataToSave = new HashMap<>();
                 dataToSave.put("city", cityET.getText().toString());
                 dataToSave.put("description", descriptionET.getText().toString());
-                dataToSave.put("id", "4");
+                dataToSave.put("id", intId + 1);
                 dataToSave.put("location", locationET.getText().toString());
                 dataToSave.put("numberOfBathrooms", String.valueOf(bathroomsNP.getValue()));
                 dataToSave.put("numberOfBedrooms", String.valueOf(bedroomsNP.getValue()));
