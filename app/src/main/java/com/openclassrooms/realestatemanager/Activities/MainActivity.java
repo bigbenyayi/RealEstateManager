@@ -52,8 +52,8 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
                 //mDrawerLayout.openDrawer(GravityCompat.START);
                 break;
             case (R.id.navbar_add):
-//                Intent addIntent = new Intent(this, AddActivity.class);
-//                startActivity(addIntent);
+                Intent addIntent = new Intent(this, AddActivity.class);
+                startActivity(addIntent);
                 break;
             case R.id.navbar_edit:
                 //Edit Activity

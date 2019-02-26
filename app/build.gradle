@@ -57,6 +57,5 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-firestore:4.1.0'
 
 
-
 }
 apply plugin: 'com.google.gms.google-services'
