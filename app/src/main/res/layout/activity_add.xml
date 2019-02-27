@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="25dp"
-        android:text="cara"
+        android:text="Basics"
         android:textAlignment="center"
         android:textColor="@color/colorAccent"
         android:textSize="30sp" />
@@ -191,6 +191,38 @@
         android:layout_margin="15dp"
         android:imeOptions="actionDone"
         android:singleLine="true"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/mainPictureTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cityET"
+        android:text="Upload file"
+        android:textAlignment="center"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/choosePictureButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mainPictureTV"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="50dp"
+        android:text="Choose picture" />
+
+    <ImageView
+        android:id="@+id/mainPicIV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/choosePictureButton"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="30dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
         android:textAlignment="center" />
 
 

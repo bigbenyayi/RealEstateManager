@@ -2,26 +2,41 @@ package com.openclassrooms.realestatemanager.Activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.Build;
+import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.openclassrooms.realestatemanager.R;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +50,10 @@ public class AddActivity extends AppCompatActivity {
     EditText priceET;
     TextView cityTV;
     EditText cityET;
+    Button chooseMainPicButton;
+    TextView uploadFileTV;
+    ImageView mainPicImageView;
+    Uri mainImageUri;
     //Details
     TextView descriptionTV;
     EditText descriptionET;
@@ -56,8 +75,11 @@ public class AddActivity extends AppCompatActivity {
     NumberPicker bedroomsNP;
     NumberPicker roomsNP;
 
-    int intId;
 
+    private CollectionReference mCollectionReference;
+
+    int intId;
+    public static final int PICK_IMAGE_REQUEST = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +90,9 @@ public class AddActivity extends AppCompatActivity {
         setActionDoneOnEditTexts();
         setInitialViews();
         setButtonAction();
+        setImagePickers();
     }
+
 
     private void setButtonAction() {
         SharedPreferences mPrefs = getSharedPreferences("SHARED", MODE_PRIVATE);
@@ -97,13 +121,15 @@ public class AddActivity extends AppCompatActivity {
             int n = mPrefs.getInt("addNumber", 0);
             if (n == 3) {
                 CollectionReference notebookRef = FirebaseFirestore.getInstance().collection("house");
+                mCollectionReference = FirebaseFirestore.getInstance().collection("house");
+
                 notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
 
                     for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
                         String id = (String) documentSnapshot.get("id");
                         int idInt = Integer.parseInt(id);
                         intId = 0;
-                        if (idInt > intId){
+                        if (idInt > intId) {
                             intId = Integer.parseInt(id);
                         }
 
@@ -114,9 +140,10 @@ public class AddActivity extends AppCompatActivity {
                 DocumentReference mDocRef = FirebaseFirestore.getInstance().collection("house").document();
 
                 Map<String, Object> dataToSave = new HashMap<>();
+
                 dataToSave.put("city", cityET.getText().toString());
                 dataToSave.put("description", descriptionET.getText().toString());
-                dataToSave.put("id", intId + 1);
+                dataToSave.put("id", "6");
                 dataToSave.put("location", locationET.getText().toString());
                 dataToSave.put("numberOfBathrooms", String.valueOf(bathroomsNP.getValue()));
                 dataToSave.put("numberOfBedrooms", String.valueOf(bedroomsNP.getValue()));
@@ -126,6 +153,12 @@ public class AddActivity extends AppCompatActivity {
                 dataToSave.put("price", priceET.getText().toString());
                 dataToSave.put("surface", surfaceET.getText().toString());
                 dataToSave.put("type", typeET.getText().toString());
+                dataToSave.put("mainPicture", mainImageUri + "");
+
+                
+
+                mDocRef.set(dataToSave, SetOptions.merge());
+
 
                 //onMarket
                 //mainPic
@@ -133,7 +166,9 @@ public class AddActivity extends AppCompatActivity {
                 //sidePicturesDescription
                 //realtor
 
-                mDocRef.set(dataToSave, SetOptions.merge());
+                //uploadFile();
+
+
                 finish();
 
             } else {
@@ -142,6 +177,22 @@ public class AddActivity extends AppCompatActivity {
                 setCorrectTVs();
             }
         });
+    }
+
+    private String getFileExtension(Uri uri) {
+        ContentResolver cR = getContentResolver();
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        return mimeTypeMap.getExtensionFromMimeType(cR.getType(uri));
+    }
+
+    private void uploadFile() {
+        if (mainPicImageView != null) {
+
+            DocumentReference mDocRef = FirebaseFirestore.getInstance().collection("house").document();
+
+        } else {
+            Toast.makeText(this, "No file selected", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void setInitialViews() {
@@ -175,6 +226,10 @@ public class AddActivity extends AppCompatActivity {
         priceET.setVisibility(View.VISIBLE);
         cityTV.setVisibility(View.VISIBLE);
         cityET.setVisibility(View.VISIBLE);
+        uploadFileTV.setVisibility(View.VISIBLE);
+        mainPicImageView.setVisibility(View.VISIBLE);
+        chooseMainPicButton.setVisibility(View.VISIBLE);
+
 
         nextButton.setText("Next (1/3)");
 
@@ -207,6 +262,9 @@ public class AddActivity extends AppCompatActivity {
         priceET = findViewById(R.id.priceET);
         cityTV = findViewById(R.id.cityTV);
         cityET = findViewById(R.id.cityET);
+        chooseMainPicButton = findViewById(R.id.choosePictureButton);
+        uploadFileTV = findViewById(R.id.mainPictureTV);
+        mainPicImageView = findViewById(R.id.mainPicIV);
 
         //Details
         descriptionTV = findViewById(R.id.descriptionTV);
@@ -291,7 +349,9 @@ public class AddActivity extends AppCompatActivity {
             bathroomsNP.setVisibility(View.INVISIBLE);
             bedroomsNP.setVisibility(View.INVISIBLE);
             roomsNP.setVisibility(View.INVISIBLE);
-
+            uploadFileTV.setVisibility(View.VISIBLE);
+            mainPicImageView.setVisibility(View.VISIBLE);
+            chooseMainPicButton.setVisibility(View.VISIBLE);
 
             typeTV.setVisibility(View.VISIBLE);
             typeET.setVisibility(View.VISIBLE);
@@ -325,6 +385,10 @@ public class AddActivity extends AppCompatActivity {
             bathroomsNP.setVisibility(View.INVISIBLE);
             bedroomsNP.setVisibility(View.INVISIBLE);
             roomsNP.setVisibility(View.INVISIBLE);
+            uploadFileTV.setVisibility(View.INVISIBLE);
+            chooseMainPicButton.setVisibility(View.INVISIBLE);
+            mainPicImageView.setVisibility(View.INVISIBLE);
+
         } else if (mPrefs.getInt("addNumber", 1) == 3) {
             nextButton.setText("Create listing");
             backButton.setText("Back");
@@ -350,6 +414,31 @@ public class AddActivity extends AppCompatActivity {
             bathroomsNP.setVisibility(View.VISIBLE);
             bedroomsNP.setVisibility(View.VISIBLE);
             roomsNP.setVisibility(View.VISIBLE);
+            uploadFileTV.setVisibility(View.INVISIBLE);
+            chooseMainPicButton.setVisibility(View.INVISIBLE);
+            mainPicImageView.setVisibility(View.INVISIBLE);
+
+        }
+    }
+
+    private void setImagePickers() {
+        chooseMainPicButton.setOnClickListener(v -> {
+            Intent myIntent = new Intent();
+            myIntent.setType("image/*");
+            myIntent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(myIntent, PICK_IMAGE_REQUEST);
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            mainImageUri = data.getData();
+
+            Picasso.get().load(mainImageUri).into(mainPicImageView);
+            setCorrectTVs();
         }
     }
 

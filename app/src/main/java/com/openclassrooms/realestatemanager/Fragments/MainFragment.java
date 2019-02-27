@@ -101,24 +101,21 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 holder.setType(model.getType());
                 holder.setPicture(model.getMainPicture());
 
-                holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        holder.setClickAction(model.getId());
+                holder.relativeLayout.setOnClickListener(v -> {
+                    holder.setClickAction(model.getId());
 
-                        for (View tempItemView : itemViewList) {
-                            TextView price = tempItemView.findViewById(R.id.recyclerViewPriceTV);
+                    for (View tempItemView : itemViewList) {
+                        TextView price = tempItemView.findViewById(R.id.recyclerViewPriceTV);
 
-                            if (itemViewList.get(holder.getAdapterPosition()) == tempItemView) {
-                                tempItemView.setBackgroundColor(Color.parseColor("#b380ff"));
-                                price.setTextColor(Color.parseColor("#FAFAFA"));
-                            } else {
-                                tempItemView.setBackgroundColor(Color.parseColor("#FAFAFA"));
-                                price.setTextColor(getResources().getColor(R.color.colorAccent));
-                            }
+                        if (itemViewList.get(holder.getAdapterPosition()) == tempItemView) {
+                            tempItemView.setBackgroundColor(Color.parseColor("#b380ff"));
+                            price.setTextColor(Color.parseColor("#FAFAFA"));
+                        } else {
+                            tempItemView.setBackgroundColor(Color.parseColor("#FAFAFA"));
+                            price.setTextColor(getResources().getColor(R.color.colorAccent));
                         }
-
                     }
+
                 });
             }
 
