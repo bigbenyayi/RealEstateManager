@@ -1,17 +1,23 @@
 package com.openclassrooms.realestatemanager.Activities;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -30,6 +36,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.SetOptions;
+import com.openclassrooms.realestatemanager.Models.SimpleRVAdapter;
 import com.openclassrooms.realestatemanager.R;
 import com.squareup.picasso.Picasso;
 
@@ -37,6 +44,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,7 +82,9 @@ public class AddActivity extends AppCompatActivity {
     NumberPicker bathroomsNP;
     NumberPicker bedroomsNP;
     NumberPicker roomsNP;
-
+    int numberMaxPOI = 0;
+    ArrayList<String> interestsArray = new ArrayList<>();
+    RecyclerView mRecyclerViewPOI;
 
     private CollectionReference mCollectionReference;
 
@@ -149,13 +159,12 @@ public class AddActivity extends AppCompatActivity {
                 dataToSave.put("numberOfBedrooms", String.valueOf(bedroomsNP.getValue()));
                 dataToSave.put("numberOfRooms", String.valueOf(roomsNP.getValue()));
 
-                dataToSave.put("pointOfInterest", pointOfInterestET.getText().toString());
+                dataToSave.put("pointOfInterest", interestsArray.addAll());
                 dataToSave.put("price", priceET.getText().toString());
                 dataToSave.put("surface", surfaceET.getText().toString());
                 dataToSave.put("type", typeET.getText().toString());
                 dataToSave.put("mainPicture", mainImageUri + "");
 
-                
 
                 mDocRef.set(dataToSave, SetOptions.merge());
 
@@ -185,15 +194,6 @@ public class AddActivity extends AppCompatActivity {
         return mimeTypeMap.getExtensionFromMimeType(cR.getType(uri));
     }
 
-    private void uploadFile() {
-        if (mainPicImageView != null) {
-
-            DocumentReference mDocRef = FirebaseFirestore.getInstance().collection("house").document();
-
-        } else {
-            Toast.makeText(this, "No file selected", Toast.LENGTH_SHORT).show();
-        }
-    }
 
     private void setInitialViews() {
         SharedPreferences mPrefs = getSharedPreferences("SHARED", MODE_PRIVATE);
@@ -244,12 +244,9 @@ public class AddActivity extends AppCompatActivity {
         roomsNP.setMinValue(0);
         roomsNP.setMaxValue(40);
 
-        bathroomsNP.setOnValueChangedListener(onValueChangeListener);
-        bedroomsNP.setOnValueChangedListener(onValueChangeListener);
-        roomsNP.setOnValueChangedListener(onValueChangeListener);
-
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void fetchingAllViewFromXML() {
 
         //Fetching all TV and ET
@@ -275,6 +272,33 @@ public class AddActivity extends AppCompatActivity {
         //Cara
         pointOfInterestTV = findViewById(R.id.pointsOfInterestTV);
         pointOfInterestET = findViewById(R.id.pointsOfInterestET);
+        mRecyclerViewPOI = findViewById(R.id.recyclerViewPOI);
+
+        mRecyclerViewPOI.setLayoutManager(new LinearLayoutManager(this));
+
+        pointOfInterestET.setOnTouchListener((v, event) -> {
+            final int DRAWABLE_RIGHT = 2;
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                if (event.getRawX() >= (pointOfInterestET.getRight() - pointOfInterestET.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                    numberMaxPOI++;
+
+                    if (numberMaxPOI <= 5) {
+                        interestsArray.add(pointOfInterestET.getText().toString());
+                        pointOfInterestET.setText("");
+                    } else {
+                        Toast.makeText(this, "You have reached the limit", Toast.LENGTH_SHORT).show();
+                        pointOfInterestET.setText("");
+                    }
+                    mRecyclerViewPOI.setAdapter(new SimpleRVAdapter(interestsArray));
+                    Toast.makeText(this, "Added successfully", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+
+            }
+
+            return false;
+        });
+
         surfaceTV = findViewById(R.id.surfaceTV);
         surfaceET = findViewById(R.id.surfaceET);
         bathroomTV = findViewById(R.id.bathroomsTV);
@@ -322,6 +346,23 @@ public class AddActivity extends AppCompatActivity {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                 locationET.requestFocus();
+            }
+            return true;
+        });
+
+        pointOfInterestET.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                numberMaxPOI++;
+
+                if (numberMaxPOI <= 5) {
+                    interestsArray.add(pointOfInterestET.getText().toString());
+                    pointOfInterestET.setText("");
+                } else {
+                    Toast.makeText(this, "You have reached the limit", Toast.LENGTH_SHORT).show();
+                    pointOfInterestET.setText("");
+                }
+                mRecyclerViewPOI.setAdapter(new SimpleRVAdapter(interestsArray));
+                Toast.makeText(this, "Added successfully", Toast.LENGTH_SHORT).show();
             }
             return true;
         });
@@ -441,9 +482,6 @@ public class AddActivity extends AppCompatActivity {
             setCorrectTVs();
         }
     }
-
-    NumberPicker.OnValueChangeListener onValueChangeListener =
-            (numberPicker, i, i1) -> Toast.makeText(AddActivity.this, "selected number " + numberPicker.getValue(), Toast.LENGTH_SHORT).show();
 }
 
 
