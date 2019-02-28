@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.Nullable;
@@ -44,7 +45,10 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +64,9 @@ public class AddActivity extends AppCompatActivity {
     EditText priceET;
     TextView cityTV;
     EditText cityET;
+    ImageView typeIcon;
+    ImageView priceIcon;
+    ImageView cityIcon;
     Button chooseMainPicButton;
     TextView uploadFileTV;
     ImageView mainPicImageView;
@@ -69,6 +76,8 @@ public class AddActivity extends AppCompatActivity {
     EditText descriptionET;
     TextView locationTV;
     EditText locationET;
+    ImageView descriptionIcon;
+    ImageView locationIcon;
     //Cara
     TextView pointOfInterestTV;
     EditText pointOfInterestET;
@@ -77,6 +86,11 @@ public class AddActivity extends AppCompatActivity {
     TextView bathroomTV;
     TextView bedroomTV;
     TextView roomTV;
+    ImageView surfaceIcon;
+    ImageView bedroomsIcon;
+    ImageView bathroomsIcon;
+    ImageView roomsIcon;
+    ImageView interestsIcon;
     //Buttons
     Button backButton;
     Button nextButton;
@@ -162,8 +176,7 @@ public class AddActivity extends AppCompatActivity {
                 dataToSave.put("numberOfRooms", String.valueOf(roomsNP.getValue()));
 
                 if (mPrefs.getStringSet("interests", null) != null) {
-                    List<String> newArray = new ArrayList<String>();
-                    newArray.addAll(mPrefs.getStringSet("interests", null));
+                    List<String> newArray = new ArrayList<>(mPrefs.getStringSet("interests", null));
                     dataToSave.put("pointOfInterest", newArray);
                     mPrefs.edit().putStringSet("interests", null).apply();
                 } else{
@@ -174,11 +187,15 @@ public class AddActivity extends AppCompatActivity {
                 dataToSave.put("type", typeET.getText().toString());
                 dataToSave.put("mainPicture", mainImageUri + "");
 
+                DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                Date date = new Date();
+
+               dataToSave.put("onMarket", dateFormat.format(date));
+
 
                 mDocRef.set(dataToSave, SetOptions.merge());
 
 
-                //onMarket
                 //mainPic
                 //sidePictures
                 //sidePicturesDescription
@@ -196,13 +213,6 @@ public class AddActivity extends AppCompatActivity {
             }
         });
     }
-
-    private String getFileExtension(Uri uri) {
-        ContentResolver cR = getContentResolver();
-        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-        return mimeTypeMap.getExtensionFromMimeType(cR.getType(uri));
-    }
-
 
     private void setInitialViews() {
         SharedPreferences mPrefs = getSharedPreferences("SHARED", MODE_PRIVATE);
@@ -228,6 +238,13 @@ public class AddActivity extends AppCompatActivity {
         bathroomsNP.setVisibility(View.INVISIBLE);
         bedroomsNP.setVisibility(View.INVISIBLE);
         roomsNP.setVisibility(View.INVISIBLE);
+        locationIcon.setVisibility(View.INVISIBLE);
+        descriptionIcon.setVisibility(View.INVISIBLE);
+        roomsIcon.setVisibility(View.INVISIBLE);
+        bedroomsIcon.setVisibility(View.INVISIBLE);
+        bathroomsIcon.setVisibility(View.INVISIBLE);
+        interestsIcon.setVisibility(View.INVISIBLE);
+        surfaceIcon.setVisibility(View.INVISIBLE);
 
         typeTV.setVisibility(View.VISIBLE);
         typeET.setVisibility(View.VISIBLE);
@@ -238,6 +255,9 @@ public class AddActivity extends AppCompatActivity {
         uploadFileTV.setVisibility(View.VISIBLE);
         mainPicImageView.setVisibility(View.VISIBLE);
         chooseMainPicButton.setVisibility(View.VISIBLE);
+        typeIcon.setVisibility(View.VISIBLE);
+        priceIcon.setVisibility(View.VISIBLE);
+        cityIcon.setVisibility(View.VISIBLE);
 
 
         nextButton.setText("Next (1/3)");
@@ -271,17 +291,28 @@ public class AddActivity extends AppCompatActivity {
         chooseMainPicButton = findViewById(R.id.choosePictureButton);
         uploadFileTV = findViewById(R.id.mainPictureTV);
         mainPicImageView = findViewById(R.id.mainPicIV);
+        cityIcon = findViewById(R.id.cityIcon);
+        priceIcon = findViewById(R.id.priceIcon);
+        typeIcon = findViewById(R.id.houseTypeIcon);
 
         //Details
         descriptionTV = findViewById(R.id.descriptionTV);
         descriptionET = findViewById(R.id.descriptionET);
         locationTV = findViewById(R.id.locationTV);
         locationET = findViewById(R.id.locationET);
+        locationIcon = findViewById(R.id.locationIcon);
+        descriptionIcon = findViewById(R.id.descriptionIcon);
+
 
         //Cara
         pointOfInterestTV = findViewById(R.id.pointsOfInterestTV);
         pointOfInterestET = findViewById(R.id.pointsOfInterestET);
         mRecyclerViewPOI = findViewById(R.id.recyclerViewPOI);
+        surfaceIcon = findViewById(R.id.surfaceIcon);
+        roomsIcon = findViewById(R.id.roomsIcon);
+        bedroomsIcon = findViewById(R.id.bedroomsIcon);
+        bathroomsIcon = findViewById(R.id.bathroomsIcon);
+        interestsIcon = findViewById(R.id.interestsIcon);
 
         mRecyclerViewPOI.setLayoutManager(new LinearLayoutManager(this));
 
@@ -399,9 +430,16 @@ public class AddActivity extends AppCompatActivity {
             bathroomsNP.setVisibility(View.INVISIBLE);
             bedroomsNP.setVisibility(View.INVISIBLE);
             roomsNP.setVisibility(View.INVISIBLE);
+            locationIcon.setVisibility(View.INVISIBLE);
+            descriptionIcon.setVisibility(View.INVISIBLE);
             uploadFileTV.setVisibility(View.VISIBLE);
             mainPicImageView.setVisibility(View.VISIBLE);
             chooseMainPicButton.setVisibility(View.VISIBLE);
+            roomsIcon.setVisibility(View.INVISIBLE);
+            bedroomsIcon.setVisibility(View.INVISIBLE);
+            bathroomsIcon.setVisibility(View.INVISIBLE);
+            interestsIcon.setVisibility(View.INVISIBLE);
+            surfaceIcon.setVisibility(View.INVISIBLE);
 
             typeTV.setVisibility(View.VISIBLE);
             typeET.setVisibility(View.VISIBLE);
@@ -409,6 +447,9 @@ public class AddActivity extends AppCompatActivity {
             priceET.setVisibility(View.VISIBLE);
             cityTV.setVisibility(View.VISIBLE);
             cityET.setVisibility(View.VISIBLE);
+            typeIcon.setVisibility(View.VISIBLE);
+            priceIcon.setVisibility(View.VISIBLE);
+            cityIcon.setVisibility(View.VISIBLE);
 
         } else if (mPrefs.getInt("addNumber", 1) == 2) {
             backButton.setText("Back");
@@ -438,6 +479,16 @@ public class AddActivity extends AppCompatActivity {
             uploadFileTV.setVisibility(View.INVISIBLE);
             chooseMainPicButton.setVisibility(View.INVISIBLE);
             mainPicImageView.setVisibility(View.INVISIBLE);
+            typeIcon.setVisibility(View.INVISIBLE);
+            priceIcon.setVisibility(View.INVISIBLE);
+            cityIcon.setVisibility(View.INVISIBLE);
+            locationIcon.setVisibility(View.VISIBLE);
+            descriptionIcon.setVisibility(View.VISIBLE);
+            roomsIcon.setVisibility(View.INVISIBLE);
+            bedroomsIcon.setVisibility(View.INVISIBLE);
+            bathroomsIcon.setVisibility(View.INVISIBLE);
+            interestsIcon.setVisibility(View.INVISIBLE);
+            surfaceIcon.setVisibility(View.INVISIBLE);
 
         } else if (mPrefs.getInt("addNumber", 1) == 3) {
             nextButton.setText("Create listing");
@@ -467,6 +518,16 @@ public class AddActivity extends AppCompatActivity {
             uploadFileTV.setVisibility(View.INVISIBLE);
             chooseMainPicButton.setVisibility(View.INVISIBLE);
             mainPicImageView.setVisibility(View.INVISIBLE);
+            typeIcon.setVisibility(View.INVISIBLE);
+            priceIcon.setVisibility(View.INVISIBLE);
+            cityIcon.setVisibility(View.INVISIBLE);
+            locationIcon.setVisibility(View.INVISIBLE);
+            descriptionIcon.setVisibility(View.INVISIBLE);
+            roomsIcon.setVisibility(View.VISIBLE);
+            bedroomsIcon.setVisibility(View.VISIBLE);
+            bathroomsIcon.setVisibility(View.VISIBLE);
+            interestsIcon.setVisibility(View.VISIBLE);
+            surfaceIcon.setVisibility(View.VISIBLE);
 
         }
     }
@@ -491,6 +552,13 @@ public class AddActivity extends AppCompatActivity {
             setCorrectTVs();
         }
     }
+
+    private String getFileExtension(Uri uri) {
+        ContentResolver cR = getContentResolver();
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        return mimeTypeMap.getExtensionFromMimeType(cR.getType(uri));
+    }
+
 }
 
 

@@ -12,9 +12,14 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 import com.openclassrooms.realestatemanager.Fragments.DetailFragment;
 import com.openclassrooms.realestatemanager.Fragments.MainFragment;
 import com.openclassrooms.realestatemanager.R;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 public class MainActivity extends AppCompatActivity implements MainFragment.OnButtonClickedListener {
 
@@ -33,6 +38,15 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_dehaze_white_24dp);
+
+
+        FileInputStream serviceAccount =
+                null;
+        try {
+            serviceAccount = new FileInputStream("./serviceAccountKey.json");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     // --------------

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activities.LoginActivity">
+
+    <TextView
+        android:id="@+id/usernameTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/emailET"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="20dp"
+        android:text="Username"
+        android:textColor="@color/colorAccent"
+        android:textSize="30sp" />
+
+    <EditText
+        android:id="@+id/usernameET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/usernameTV"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="50dp" />
+
+
+    <TextView
+        android:id="@+id/passwordTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/usernameET"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="Password"
+        android:textColor="@color/colorAccent"
+        android:textSize="30sp" />
+
+    <EditText
+        android:id="@+id/passwordET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/passwordTV"
+        android:inputType="textPassword" />
+
+    <TextView
+        android:id="@+id/emailTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonLL"
+        android:layout_centerHorizontal="true"
+        android:text="Email"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/colorAccent"
+        android:textSize="30sp" />
+
+    <EditText
+        android:id="@+id/emailET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/emailTV" />
+
+    <LinearLayout
+        android:id="@+id/buttonLL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="2">
+
+        <Button
+            android:id="@+id/loginButton"
+            android:layout_width="0dp"
+            android:layout_height="150dp"
+            android:layout_marginEnd="1dp"
+            android:layout_weight="1"
+            android:background="@color/colorAccent"
+            android:text="Login"
+            android:textColor="#FFF"
+            android:textSize="30sp"
+
+            />
+        <Button
+            android:id="@+id/createAccountButton"
+            android:layout_width="0dp"
+            android:layout_height="150dp"
+            android:layout_marginStart="1dp"
+            android:layout_weight="1"
+            android:background="@color/colorAccent"
+            android:text="New USER"
+            android:textColor="#FFF"
+            android:textSize="30sp" />
+
+
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/validateButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/passwordET"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="90dp"
+        android:background="@color/colorAccent"
+        android:padding="10dp"
+        android:text="Create account"
+        android:textColor="#FFF"
+        android:textSize="20sp" />
+</RelativeLayout>
