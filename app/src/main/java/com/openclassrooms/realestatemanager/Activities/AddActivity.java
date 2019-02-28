@@ -46,7 +46,9 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class AddActivity extends AppCompatActivity {
 
@@ -159,7 +161,14 @@ public class AddActivity extends AppCompatActivity {
                 dataToSave.put("numberOfBedrooms", String.valueOf(bedroomsNP.getValue()));
                 dataToSave.put("numberOfRooms", String.valueOf(roomsNP.getValue()));
 
-                dataToSave.put("pointOfInterest", interestsArray.addAll());
+                if (mPrefs.getStringSet("interests", null) != null) {
+                    List<String> newArray = new ArrayList<String>();
+                    newArray.addAll(mPrefs.getStringSet("interests", null));
+                    dataToSave.put("pointOfInterest", newArray);
+                    mPrefs.edit().putStringSet("interests", null).apply();
+                } else{
+                    dataToSave.put("pointOfInterest", interestsArray);
+                }
                 dataToSave.put("price", priceET.getText().toString());
                 dataToSave.put("surface", surfaceET.getText().toString());
                 dataToSave.put("type", typeET.getText().toString());
@@ -289,7 +298,7 @@ public class AddActivity extends AppCompatActivity {
                         Toast.makeText(this, "You have reached the limit", Toast.LENGTH_SHORT).show();
                         pointOfInterestET.setText("");
                     }
-                    mRecyclerViewPOI.setAdapter(new SimpleRVAdapter(interestsArray));
+                    mRecyclerViewPOI.setAdapter(new SimpleRVAdapter(AddActivity.this, interestsArray));
                     Toast.makeText(this, "Added successfully", Toast.LENGTH_SHORT).show();
                     return true;
                 }
@@ -361,7 +370,7 @@ public class AddActivity extends AppCompatActivity {
                     Toast.makeText(this, "You have reached the limit", Toast.LENGTH_SHORT).show();
                     pointOfInterestET.setText("");
                 }
-                mRecyclerViewPOI.setAdapter(new SimpleRVAdapter(interestsArray));
+                mRecyclerViewPOI.setAdapter(new SimpleRVAdapter(this, interestsArray));
                 Toast.makeText(this, "Added successfully", Toast.LENGTH_SHORT).show();
             }
             return true;
