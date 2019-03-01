@@ -185,6 +185,10 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
                 Intent myIntent = new Intent(this, LoginActivity.class);
                 startActivity(myIntent);
                 break;
+            case R.id.navbar_map:
+
+                //Show map with pins on the house lol
+                break;
 
             default:
                 break;
