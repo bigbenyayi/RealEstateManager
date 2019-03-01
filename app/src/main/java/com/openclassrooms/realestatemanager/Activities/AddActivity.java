@@ -186,6 +186,7 @@ public class AddActivity extends AppCompatActivity {
                 dataToSave.put("surface", surfaceET.getText().toString());
                 dataToSave.put("type", typeET.getText().toString());
                 dataToSave.put("mainPicture", mainImageUri + "");
+                dataToSave.put("realtor", mPrefs.getString("username", "Realtor"));
 
                 DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
                 Date date = new Date();

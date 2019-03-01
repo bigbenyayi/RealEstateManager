@@ -3,4 +3,8 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="alpha_grey">#E6757575</color>
+
+    <!-- colors of the Navigation Drawer -->
+    <color name="navigationDrawerBackground">#de6a5a</color>
 </resources>

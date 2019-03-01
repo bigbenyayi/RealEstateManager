@@ -43,6 +43,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if (mPrefs.getString("username", null) != null){
             Intent myIntent = new Intent(this, MainActivity.class);
+            Toast.makeText(this, "Welcome back, " + mPrefs.getString("username", null), Toast.LENGTH_LONG).show();
             startActivity(myIntent);
         }
 
