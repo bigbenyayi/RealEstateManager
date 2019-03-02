@@ -22,6 +22,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.firestore.DocumentReference;
@@ -35,12 +37,16 @@ import java.io.FileNotFoundException;
 
 public class MainActivity extends AppCompatActivity implements MainFragment.OnButtonClickedListener, NavigationView.OnNavigationItemSelectedListener {
 
+    private static final int SIGN_OUT_TASK = 10;
+    private static final int DELETE_USER_TASK = 20;
+
     //Declare our two fragments
     private MainFragment mainFragment;
     private DetailFragment detailFragment;
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private Toolbar mToolbar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -182,10 +188,17 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
                 mPrefs.edit().putString("username", null).apply();
                 mPrefs.edit().putString("email", null).apply();
 
+                this.signOutUserFromFirebase();
+
                 Intent myIntent = new Intent(this, LoginActivity.class);
                 startActivity(myIntent);
+
+
                 break;
             case R.id.navbar_map:
+
+                Intent myMapIntent = new Intent(this, MapsActivity.class);
+                startActivity(myMapIntent);
 
                 //Show map with pins on the house lol
                 break;
@@ -205,5 +218,27 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
         if (this.mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             this.mDrawerLayout.closeDrawer(GravityCompat.START);
         }
+    }
+
+    private void signOutUserFromFirebase() {
+        AuthUI.getInstance()
+                .signOut(this)
+                .addOnSuccessListener(this, this.updateUIAfterRESTRequestsCompleted(SIGN_OUT_TASK));
+    }
+
+    private OnSuccessListener<Void> updateUIAfterRESTRequestsCompleted(final int origin) {
+        return aVoid -> {
+            switch (origin) {
+                case SIGN_OUT_TASK:
+                    finish();
+                    break;
+                case DELETE_USER_TASK:
+                    finish();
+                    break;
+                default:
+                    break;
+
+            }
+        };
     }
 }

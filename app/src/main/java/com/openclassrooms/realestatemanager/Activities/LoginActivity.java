@@ -15,16 +15,23 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.ErrorCodes;
+import com.firebase.ui.auth.IdpResponse;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.SetOptions;
+import com.openclassrooms.realestatemanager.Models.UserHelper;
 import com.openclassrooms.realestatemanager.R;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +43,7 @@ public class LoginActivity extends AppCompatActivity {
     Boolean emailExists = false;
     String password;
     Boolean forgotYourPasswordBool = false;
+    private static final int RC_SIGN_IN = 123;
 
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -45,187 +53,77 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         SharedPreferences mPrefs = getSharedPreferences("SHARED", MODE_PRIVATE);
-
-
         if (mPrefs.getString("username", null) != null) {
             Intent myIntent = new Intent(this, MainActivity.class);
             Toast.makeText(this, "Welcome back, " + mPrefs.getString("username", null), Toast.LENGTH_LONG).show();
             startActivity(myIntent);
         }
 
-        EditText usernameET = findViewById(R.id.usernameET);
-        TextView usernameTV = findViewById(R.id.usernameTV);
-        EditText passwordET = findViewById(R.id.passwordET);
-        TextView passwordTV = findViewById(R.id.passwordTV);
-        EditText emailET = findViewById(R.id.emailET);
-        TextView emailTV = findViewById(R.id.emailTV);
-        Button createButton = findViewById(R.id.createAccountButton);
-        Button loginButton = findViewById(R.id.loginButton);
         Button validateButton = findViewById(R.id.validateButton);
-        TextView forgotYourPassword = findViewById(R.id.forgotYourPassword);
+        validateButton.setOnClickListener(v -> startActivityForResult(
+                AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setAvailableProviders(
+                                Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build())) //EMAIL
+                        .setIsSmartLockEnabled(false, true)
+                        .setLogo(R.drawable.background_navview)
+                        .build(),
+                RC_SIGN_IN));
 
-        forgotYourPassword.setOnClickListener(v -> {
-            forgotYourPasswordBool = true;
-            passwordET.setVisibility(View.INVISIBLE);
-            usernameET.setVisibility(View.INVISIBLE);
-            passwordTV.setVisibility(View.INVISIBLE);
-            usernameTV.setVisibility(View.INVISIBLE);
+    }
 
-            emailET.setVisibility(View.VISIBLE);
-            emailTV.setVisibility(View.VISIBLE);
-
-
-        });
-
-        emailET.setVisibility(View.VISIBLE);
-        emailTV.setVisibility(View.VISIBLE);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // 4 - Handle SignIn Activity response on activity result
+        this.handleResponseAfterSignIn(requestCode, resultCode, data);
+    }
 
 
-        validateButton.setText("Login");
+    private void handleResponseAfterSignIn(int requestCode, int resultCode, Intent data) {
 
-        createButton.setBackground(null);
-        createButton.setTextColor(Color.parseColor("#696969"));
+        IdpResponse response = IdpResponse.fromResultIntent(data);
 
-        createButton.setOnClickListener(v -> {
-            forgotYourPasswordBool = false;
-
-            loginButton.setBackground(null);
-            loginButton.setTextColor(Color.parseColor("#696969"));
-
-            emailET.setText("");
-            passwordET.setText("");
-            usernameET.setText("");
-
-            createButton.setBackground(getDrawable(R.color.colorAccent));
-            createButton.setTextColor(Color.parseColor("#000000"));
-
-            emailET.setVisibility(View.VISIBLE);
-            emailTV.setVisibility(View.VISIBLE);
-            passwordTV.setVisibility(View.VISIBLE);
-            passwordET.setVisibility(View.VISIBLE);
-            usernameET.setVisibility(View.VISIBLE);
-            usernameTV.setVisibility(View.VISIBLE);
-
-            forgotYourPassword.setVisibility(View.INVISIBLE);
-
-            validateButton.setText("Create account");
-
-            newAccount = true;
-        });
-
-        loginButton.setOnClickListener(v -> {
-            createButton.setBackground(null);
-            createButton.setTextColor(Color.parseColor("#696969"));
-            forgotYourPasswordBool = false;
-
-            emailET.setText("");
-            passwordET.setText("");
-            usernameET.setText("");
-
-            loginButton.setBackground(getDrawable(R.color.colorAccent));
-            loginButton.setTextColor(Color.parseColor("#000000"));
-
-            emailET.setVisibility(View.INVISIBLE);
-            emailTV.setVisibility(View.INVISIBLE);
-            passwordTV.setVisibility(View.VISIBLE);
-            passwordET.setVisibility(View.VISIBLE);
-            usernameET.setVisibility(View.VISIBLE);
-            usernameTV.setVisibility(View.VISIBLE);
-
-            forgotYourPassword.setVisibility(View.VISIBLE);
-
-            validateButton.setText("Login");
-
-            newAccount = false;
-        });
-
-        validateButton.setOnClickListener(v -> {
-            if (newAccount) {
-                CollectionReference notebookRef = FirebaseFirestore.getInstance().collection("user");
-                notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
-
-                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                        if (documentSnapshot.get("email").equals(emailET.getText().toString())) {
-                            emailExists = true;
-                        }
-                    }
-                    if (!emailExists) {
-                        //Create new field in Firestore database with email usernam and password
-                        DocumentReference mDocRef = FirebaseFirestore.getInstance().collection("user").document();
-
-                        Map<String, String> dataToSave = new HashMap<>();
-
-                        dataToSave.put("username", usernameET.getText().toString());
-                        dataToSave.put("password", passwordET.getText().toString());
-                        dataToSave.put("email", emailET.getText().toString());
-
-                        mDocRef.set(dataToSave, SetOptions.merge());
-
-                        mPrefs.edit().putString("username", usernameET.getText().toString()).apply();
-                        mPrefs.edit().putString("email", emailET.getText().toString()).apply();
-
-                        Intent myIntent = new Intent(this, MainActivity.class);
-                        startActivity(myIntent);
-                    } else {
-                        Toast.makeText(this, "This email has already been used", Toast.LENGTH_SHORT).show();
-                        emailET.setText("");
-                        passwordET.setText("");
-                        usernameET.setText("");
-                    }
-                });
-            } else {
-                CollectionReference notebookRef = FirebaseFirestore.getInstance().collection("user");
-                notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
-
-                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                        if (usernameET.getText().toString().equals(documentSnapshot.get("username"))) {
-
-                            if (passwordET.getText().toString().equals(documentSnapshot.get("password"))) {
-                                Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
-
-                                mPrefs.edit().putString("username", usernameET.getText().toString()).apply();
-                                mPrefs.edit().putString("email", emailET.getText().toString()).apply();
-
-                                Intent myIntent = new Intent(this, MainActivity.class);
-                                startActivity(myIntent);
-                            }
-                        }
-                    }
-                });
+        if (requestCode == RC_SIGN_IN) {
+            if (resultCode == RESULT_OK) { // SUCCESS
+                this.createUserInFirestore();
+                startWelcomeActivity();
             }
-            if (forgotYourPasswordBool) {
+        }
+    }
 
-                CollectionReference notebookRef = FirebaseFirestore.getInstance().collection("user");
-                notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
+    protected FirebaseUser getCurrentUser(){ return FirebaseAuth.getInstance().getCurrentUser(); }
 
-                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                        if (emailET.getText().toString().equals(documentSnapshot.get("email"))) {
+    protected Boolean isCurrentUserLogged(){ return (this.getCurrentUser() != null); }
 
-                            password = (String) documentSnapshot.get("password");
-                        }
-                    }
+    private void createUserInFirestore(){
 
-                    String[] TO = {"corbenbenjamin@gmail.com"};
-                    String[] CC = {emailET.getText().toString()};
-                    Intent emailIntent = new Intent(Intent.ACTION_SEND);
-                    emailIntent.setData(Uri.parse("mailto:"));
-                    emailIntent.setType("text/plain");
+        if (this.getCurrentUser() != null){
 
+            String username = this.getCurrentUser().getDisplayName();
+            String uid = this.getCurrentUser().getUid();
 
-                    emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
-                    emailIntent.putExtra(Intent.EXTRA_CC, CC);
-                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Password");
-                    emailIntent.putExtra(Intent.EXTRA_TEXT, "Your password is: " + password);
+            UserHelper.createUser(uid, username);
+        }
+    }
 
-                    try {
-                        startActivity(Intent.createChooser(emailIntent, "Send mail..."));
-                        finish();
-                    } catch (android.content.ActivityNotFoundException ex) {
-                        Toast.makeText(this,
-                                "There is no email client installed.", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        });
+    private void startWelcomeActivity(){
+
+        FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        DocumentReference mDocRef = FirebaseFirestore.getInstance().document("user/" + currentFirebaseUser.getUid());
+
+        Map<String, Object> dataToSave = new HashMap<>();
+        dataToSave.put("username", currentFirebaseUser.getDisplayName());
+        dataToSave.put("email", currentFirebaseUser.getEmail());
+        mDocRef.set(dataToSave, SetOptions.merge());
+
+        SharedPreferences mPrefs = getSharedPreferences("SHARED", MODE_PRIVATE);
+        mPrefs.edit().putString("username", currentFirebaseUser.getDisplayName()).apply();
+        mPrefs.edit().putString("email", currentFirebaseUser.getEmail()).apply();
+
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+
     }
 }

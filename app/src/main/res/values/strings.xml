@@ -7,4 +7,5 @@
     <bool name="isTablet">false</bool>
     <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
     <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
+    <string name="title_activity_maps">Map</string>
 </resources>

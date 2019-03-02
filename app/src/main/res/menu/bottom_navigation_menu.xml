@@ -9,14 +9,15 @@
             android:title="Settings"
             app:showAsAction="ifRoom" />
         <item
-            android:id="@+id/navbar_logout"
-            android:icon="@drawable/ic_logout_black_24dp"
-            android:title="Logout"
-            app:showAsAction="ifRoom" />
-        <item
             android:id="@+id/navbar_map"
             android:icon="@drawable/ic_map_black_24dp"
             android:title="View on map"
             app:showAsAction="ifRoom" />
+        <item
+            android:id="@+id/navbar_logout"
+            android:icon="@drawable/ic_logout_black_24dp"
+            android:title="Logout"
+            app:showAsAction="ifRoom" />
+
     </group>
 </menu>
