@@ -15,13 +15,29 @@
       },
       "oauth_client": [
         {
+          "client_id": "738489631349-8uotvcmnvbj1cb1780144u7thj8t9hg3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.openclassrooms.realestatemanager",
+            "certificate_hash": "137e54589df3988d1251303b59ca193f3e9c5905"
+          }
+        },
+        {
+          "client_id": "738489631349-qogt2t4qmg28k11nnjt6u8t1flq09p5j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.openclassrooms.realestatemanager",
+            "certificate_hash": "b9d6dfe8a131804c57965588c2c0f6d52dfabd44"
+          }
+        },
+        {
           "client_id": "738489631349-g122cdsdrof3bgbrpledccuoitc4q8q3.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDPAXddjs2oYwrG7aeyY-CBS3j8pXFiWUU"
+          "current_key": "AIzaSyBs4Z7c78K-TBXfIl-p2dxBHSrp2aPo0to"
         }
       ],
       "services": {
@@ -29,8 +45,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "738489631349-g122cdsdrof3bgbrpledccuoitc4q8q3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2
