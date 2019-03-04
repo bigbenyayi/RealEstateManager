@@ -61,8 +61,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
         mNavigationView.setNavigationItemSelectedListener(this);
 
 
-
-
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_dehaze_white_24dp);
@@ -178,7 +176,8 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
 
         switch (id) {
             case R.id.navbar_settings:
-                Toast.makeText(this, "Settings activity", Toast.LENGTH_SHORT).show();
+                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                startActivity(settingsIntent);
 
                 break;
 

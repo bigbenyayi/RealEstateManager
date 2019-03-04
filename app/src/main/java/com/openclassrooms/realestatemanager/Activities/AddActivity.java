@@ -6,18 +6,13 @@ import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Icon;
+import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -27,24 +22,27 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.openclassrooms.realestatemanager.Models.HorizontalRecyclerViewItem;
+import com.openclassrooms.realestatemanager.Models.MyHorizontalAdapter;
 import com.openclassrooms.realestatemanager.Models.SimpleRVAdapter;
 import com.openclassrooms.realestatemanager.R;
 import com.squareup.picasso.Picasso;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.file.Paths;
+import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -52,9 +50,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.UUID;
 
 public class AddActivity extends AppCompatActivity {
+
 
     TextView title;
     //Basics
@@ -78,6 +77,12 @@ public class AddActivity extends AppCompatActivity {
     EditText locationET;
     ImageView descriptionIcon;
     ImageView locationIcon;
+    TextView sidePicturesTV;
+    Button addAPictureButton;
+    ImageView addAPictureIV;
+    EditText pictureDescriptionET;
+    Button addButton;
+    RecyclerView horizontalRecyclerViewAdd;
     //Cara
     TextView pointOfInterestTV;
     EditText pointOfInterestET;
@@ -91,6 +96,7 @@ public class AddActivity extends AppCompatActivity {
     ImageView bathroomsIcon;
     ImageView roomsIcon;
     ImageView interestsIcon;
+    ProgressBar progressBar;
     //Buttons
     Button backButton;
     Button nextButton;
@@ -99,13 +105,23 @@ public class AddActivity extends AppCompatActivity {
     NumberPicker bedroomsNP;
     NumberPicker roomsNP;
     int numberMaxPOI = 0;
+    String url;
+    String urlAdd;
     ArrayList<String> interestsArray = new ArrayList<>();
     RecyclerView mRecyclerViewPOI;
+    ArrayList<HorizontalRecyclerViewItem> listOfPicturesAndDesc = new ArrayList<>();
+    ArrayList<String> arrayOfPics = new ArrayList<>();
+    ArrayList<String> arrayOfDesc = new ArrayList<>();
+
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    private MyHorizontalAdapter adapter;
+
 
     private CollectionReference mCollectionReference;
 
     int intId;
     public static final int PICK_IMAGE_REQUEST = 1;
+    public static final int PICK_IMAGE_REQUEST_ADD = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,8 +133,60 @@ public class AddActivity extends AppCompatActivity {
         setInitialViews();
         setButtonAction();
         setImagePickers();
-    }
 
+        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        horizontalRecyclerViewAdd.setLayoutManager(horizontalLayoutManager);
+
+        addAPictureButton.setOnClickListener(v -> {
+            Intent myIntent = new Intent();
+            myIntent.setType("image/*");
+            myIntent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(myIntent, PICK_IMAGE_REQUEST_ADD);
+        });
+        addButton.setOnClickListener(v -> {
+            addAPictureIV.getDrawable();
+            pictureDescriptionET.getText().toString();
+
+            addAPictureIV.setDrawingCacheEnabled(true);
+            addAPictureIV.buildDrawingCache();
+            Bitmap bitmap = addAPictureIV.getDrawingCache();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+            addAPictureIV.setDrawingCacheEnabled(false);
+            byte[] data = baos.toByteArray();
+
+            String path = "firememes/" + UUID.randomUUID() + ".png";
+            StorageReference firememeRef = storage.getReference(path);
+            StorageMetadata metadata = new StorageMetadata.Builder()
+                    .setCustomMetadata("text", descriptionET.getText().toString())
+                    .build();
+
+
+            addAPictureButton.setEnabled(false);
+            addButton.setEnabled(false);
+            progressBar.setVisibility(View.VISIBLE);
+
+            UploadTask uploadTask = firememeRef.putBytes(data, metadata);
+            uploadTask.addOnSuccessListener(AddActivity.this, taskSnapshot -> taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(uri -> {
+
+                // SAVE EVERYTHING TO FIRESTOOOORE HERE
+                urlAdd = uri.toString();
+                listOfPicturesAndDesc.add(new HorizontalRecyclerViewItem(urlAdd, pictureDescriptionET.getText().toString()));
+                arrayOfPics.add(urlAdd);
+                arrayOfDesc.add(pictureDescriptionET.getText().toString());
+                addAPictureIV.setImageResource(0);
+                pictureDescriptionET.setText("");
+
+                adapter = new MyHorizontalAdapter(AddActivity.this, listOfPicturesAndDesc);
+
+                horizontalRecyclerViewAdd.setAdapter(adapter);
+
+                progressBar.setVisibility(View.GONE);
+                addAPictureButton.setEnabled(true);
+                addButton.setEnabled(true);
+            }));
+        });
+    }
 
     private void setButtonAction() {
         SharedPreferences mPrefs = getSharedPreferences("SHARED", MODE_PRIVATE);
@@ -161,48 +229,67 @@ public class AddActivity extends AppCompatActivity {
 
 
                     }
+                    mainPicImageView.setDrawingCacheEnabled(true);
+                    mainPicImageView.buildDrawingCache();
+                    Bitmap bitmap = mainPicImageView.getDrawingCache();
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                    mainPicImageView.setDrawingCacheEnabled(false);
+                    byte[] data = baos.toByteArray();
+
+                    String path = "firememes/" + UUID.randomUUID() + ".png";
+                    StorageReference firememeRef = storage.getReference(path);
+                    StorageMetadata metadata = new StorageMetadata.Builder()
+                            .setCustomMetadata("text", typeET.getText().toString())
+                            .build();
+
+                    UploadTask uploadTask = firememeRef.putBytes(data, metadata);
+
+                    uploadTask.addOnSuccessListener(taskSnapshot -> {
+                        taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(uri -> {
+
+                            // SAVE EVERYTHING TO FIRESTOOOORE HERE
+
+                            url = uri.toString();
+                            Toast.makeText(AddActivity.this, url, Toast.LENGTH_SHORT).show();
+                            DocumentReference mDocRef = FirebaseFirestore.getInstance().collection("house").document();
+
+                            Map<String, Object> dataToSave = new HashMap<>();
+
+                            dataToSave.put("city", cityET.getText().toString());
+                            dataToSave.put("description", descriptionET.getText().toString());
+                            dataToSave.put("id", String.valueOf(intId + 1));
+                            dataToSave.put("location", locationET.getText().toString());
+                            dataToSave.put("numberOfBathrooms", String.valueOf(bathroomsNP.getValue()));
+                            dataToSave.put("numberOfBedrooms", String.valueOf(bedroomsNP.getValue()));
+                            dataToSave.put("numberOfRooms", String.valueOf(roomsNP.getValue()));
+                            dataToSave.put("mainPicture", url);
+                            dataToSave.put("pictures", arrayOfPics);
+                            dataToSave.put("rooms", arrayOfDesc);
+
+                            if (mPrefs.getStringSet("interests", null) != null) {
+                                List<String> newArray = new ArrayList<>(mPrefs.getStringSet("interests", null));
+                                dataToSave.put("pointOfInterest", newArray);
+                                mPrefs.edit().putStringSet("interests", null).apply();
+                            } else {
+                                dataToSave.put("pointOfInterest", interestsArray);
+                            }
+                            dataToSave.put("price", priceET.getText().toString());
+                            dataToSave.put("surface", surfaceET.getText().toString());
+                            dataToSave.put("type", typeET.getText().toString());
+                            dataToSave.put("realtor", mPrefs.getString("username", "Realtor"));
+
+                            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                            Date date = new Date();
+
+                            dataToSave.put("onMarket", dateFormat.format(date));
+
+
+                            mDocRef.set(dataToSave, SetOptions.merge());
+                        });
+                    });
+
                 });
-                // SAVE EVERYTHING TO FIRESTOOOORE HERE
-                DocumentReference mDocRef = FirebaseFirestore.getInstance().collection("house").document();
-
-                Map<String, Object> dataToSave = new HashMap<>();
-
-                dataToSave.put("city", cityET.getText().toString());
-                dataToSave.put("description", descriptionET.getText().toString());
-                dataToSave.put("id", "6");
-                dataToSave.put("location", locationET.getText().toString());
-                dataToSave.put("numberOfBathrooms", String.valueOf(bathroomsNP.getValue()));
-                dataToSave.put("numberOfBedrooms", String.valueOf(bedroomsNP.getValue()));
-                dataToSave.put("numberOfRooms", String.valueOf(roomsNP.getValue()));
-
-                if (mPrefs.getStringSet("interests", null) != null) {
-                    List<String> newArray = new ArrayList<>(mPrefs.getStringSet("interests", null));
-                    dataToSave.put("pointOfInterest", newArray);
-                    mPrefs.edit().putStringSet("interests", null).apply();
-                } else{
-                    dataToSave.put("pointOfInterest", interestsArray);
-                }
-                dataToSave.put("price", priceET.getText().toString());
-                dataToSave.put("surface", surfaceET.getText().toString());
-                dataToSave.put("type", typeET.getText().toString());
-                dataToSave.put("mainPicture", mainImageUri + "");
-                dataToSave.put("realtor", mPrefs.getString("username", "Realtor"));
-
-                DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-                Date date = new Date();
-
-               dataToSave.put("onMarket", dateFormat.format(date));
-
-
-                mDocRef.set(dataToSave, SetOptions.merge());
-
-
-                //mainPic
-                //sidePictures
-                //sidePicturesDescription
-                //realtor
-
-                //uploadFile();
 
 
                 finish();
@@ -255,11 +342,18 @@ public class AddActivity extends AppCompatActivity {
         cityET.setVisibility(View.VISIBLE);
         uploadFileTV.setVisibility(View.VISIBLE);
         mainPicImageView.setVisibility(View.VISIBLE);
+        Picasso.get().load("https://maps.googleapis.com/maps/api/staticmap?center=Berkeley,CA&zoom=14&size=400x400&key=AIzaSyCK4wzbd9vuzvZ9DoIzQZv51TUs-MkQ7eI").into(mainPicImageView);
         chooseMainPicButton.setVisibility(View.VISIBLE);
         typeIcon.setVisibility(View.VISIBLE);
         priceIcon.setVisibility(View.VISIBLE);
         cityIcon.setVisibility(View.VISIBLE);
-
+        sidePicturesTV.setVisibility(View.INVISIBLE);
+        addAPictureButton.setVisibility(View.INVISIBLE);
+        addAPictureIV.setVisibility(View.INVISIBLE);
+        pictureDescriptionET.setVisibility(View.INVISIBLE);
+        addButton.setVisibility(View.INVISIBLE);
+        horizontalRecyclerViewAdd.setVisibility(View.INVISIBLE);
+        progressBar.setVisibility(View.INVISIBLE);
 
         nextButton.setText("Next (1/3)");
 
@@ -303,6 +397,13 @@ public class AddActivity extends AppCompatActivity {
         locationET = findViewById(R.id.locationET);
         locationIcon = findViewById(R.id.locationIcon);
         descriptionIcon = findViewById(R.id.descriptionIcon);
+        sidePicturesTV = findViewById(R.id.sidePicturesTV);
+        addAPictureButton = findViewById(R.id.addAPictureButton);
+        addAPictureIV = findViewById(R.id.sidePicturesIV);
+        pictureDescriptionET = findViewById(R.id.photoDescriptionET);
+        addButton = findViewById(R.id.addButton);
+        horizontalRecyclerViewAdd = findViewById(R.id.horizontalRecyclerViewAdd);
+        progressBar = findViewById(R.id.progressBar);
 
 
         //Cara
@@ -451,6 +552,13 @@ public class AddActivity extends AppCompatActivity {
             typeIcon.setVisibility(View.VISIBLE);
             priceIcon.setVisibility(View.VISIBLE);
             cityIcon.setVisibility(View.VISIBLE);
+            sidePicturesTV.setVisibility(View.INVISIBLE);
+            addAPictureButton.setVisibility(View.INVISIBLE);
+            addAPictureIV.setVisibility(View.INVISIBLE);
+            pictureDescriptionET.setVisibility(View.INVISIBLE);
+            addButton.setVisibility(View.INVISIBLE);
+            horizontalRecyclerViewAdd.setVisibility(View.INVISIBLE);
+            progressBar.setVisibility(View.INVISIBLE);
 
         } else if (mPrefs.getInt("addNumber", 1) == 2) {
             backButton.setText("Back");
@@ -490,6 +598,12 @@ public class AddActivity extends AppCompatActivity {
             bathroomsIcon.setVisibility(View.INVISIBLE);
             interestsIcon.setVisibility(View.INVISIBLE);
             surfaceIcon.setVisibility(View.INVISIBLE);
+            sidePicturesTV.setVisibility(View.VISIBLE);
+            addAPictureButton.setVisibility(View.VISIBLE);
+            addAPictureIV.setVisibility(View.VISIBLE);
+            pictureDescriptionET.setVisibility(View.VISIBLE);
+            addButton.setVisibility(View.VISIBLE);
+            horizontalRecyclerViewAdd.setVisibility(View.VISIBLE);
 
         } else if (mPrefs.getInt("addNumber", 1) == 3) {
             nextButton.setText("Create listing");
@@ -529,6 +643,12 @@ public class AddActivity extends AppCompatActivity {
             bathroomsIcon.setVisibility(View.VISIBLE);
             interestsIcon.setVisibility(View.VISIBLE);
             surfaceIcon.setVisibility(View.VISIBLE);
+            sidePicturesTV.setVisibility(View.INVISIBLE);
+            addAPictureButton.setVisibility(View.INVISIBLE);
+            addAPictureIV.setVisibility(View.INVISIBLE);
+            pictureDescriptionET.setVisibility(View.INVISIBLE);
+            addButton.setVisibility(View.INVISIBLE);
+            horizontalRecyclerViewAdd.setVisibility(View.INVISIBLE);
 
         }
     }
@@ -552,12 +672,10 @@ public class AddActivity extends AppCompatActivity {
             Picasso.get().load(mainImageUri).into(mainPicImageView);
             setCorrectTVs();
         }
-    }
-
-    private String getFileExtension(Uri uri) {
-        ContentResolver cR = getContentResolver();
-        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-        return mimeTypeMap.getExtensionFromMimeType(cR.getType(uri));
+        if (requestCode == PICK_IMAGE_REQUEST_ADD && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Picasso.get().load(data.getData()).into(addAPictureIV);
+            setCorrectTVs();
+        }
     }
 
 }

@@ -1,21 +1,36 @@
 package com.openclassrooms.realestatemanager.Activities;
 
+import android.location.Address;
+import android.location.Geocoder;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.openclassrooms.realestatemanager.R;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private CollectionReference notebookRef = FirebaseFirestore.getInstance().collection("house");
+    List<Address> addresses;
+    Geocoder geocoder;
+    ArrayList<LatLng> locations = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +42,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+
+        geocoder = new Geocoder(this, Locale.getDefault());
+
+
+        notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
+
+            for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                try {
+                    addresses = geocoder.getFromLocationName((String) documentSnapshot.get("location"), 1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                locations.add(new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude()));
+                Log.d("location", String.valueOf(addresses.get(0).getLatitude() + "," + addresses.get(0).getLongitude()));
+            }
+            AddPinsOnMap();
+
+        });
+
+
     }
+
 
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
@@ -57,9 +94,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+    }
+
+    private void AddPinsOnMap() {
+        for (int i = 0; i < locations.size(); i++) {
+            mMap.addMarker(new MarkerOptions().position(locations.get(i)));
+        }
     }
 }

@@ -180,7 +180,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/title"
         android:layout_centerHorizontal="true"
-        android:text="House desctription:"
+        android:text="House description:"
         android:textSize="20sp" />
 
     <EditText
@@ -190,8 +190,6 @@
         android:layout_below="@id/descriptionTV"
         android:layout_margin="15dp"
         android:imeOptions="actionDone"
-        android:minHeight="100dp"
-        android:singleLine="true"
         android:textAlignment="center" />
 
     <ImageView
@@ -223,6 +221,73 @@
         android:imeOptions="actionDone"
         android:singleLine="true"
         android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/sidePicturesTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/locationET"
+        android:layout_centerHorizontal="true"
+        android:text="Additional pictures: "
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/addAPictureButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/sidePicturesTV"
+        android:layout_centerHorizontal="true"
+        android:text="Add a picture" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="@android:style/Widget.ProgressBar.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/sidePicturesIV"
+        android:layout_alignTop="@+id/sidePicturesIV"
+        android:layout_alignBottom="@+id/sidePicturesIV"
+        android:textAlignment="center"
+        android:layout_alignParentEnd="true"
+         />
+
+    <ImageView
+        android:id="@+id/sidePicturesIV"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/addAPictureButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp" />
+
+    <EditText
+        android:id="@+id/photoDescriptionET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/sidePicturesIV"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:hint="Image description"
+        android:imeOptions="actionDone"
+        android:singleLine="true"
+        android:textAlignment="center" />
+
+    <Button
+        android:id="@+id/addButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/photoDescriptionET"
+        android:layout_centerHorizontal="true"
+        android:background="@color/colorAccent"
+        android:text="Add" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/horizontalRecyclerViewAdd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/backButton"
+        android:layout_below="@+id/addButton"
+        android:layout_marginTop="10dp" />
+
 
     <!-- CHARACTARISTIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIICS -->
 
