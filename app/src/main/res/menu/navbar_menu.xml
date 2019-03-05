@@ -2,18 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/navbar_search"
-        android:icon="@drawable/ic_search_white_24dp"
-        android:title="Search"
-        app:showAsAction="ifRoom" />
-    <item
         android:id="@+id/navbar_edit"
         android:icon="@drawable/ic_edit_white_24dp"
         android:title="Edit"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/navbar_add"
-        android:icon="@drawable/ic_add_white_24dp"
-        android:title="Add"
         app:showAsAction="ifRoom" />
 </menu>

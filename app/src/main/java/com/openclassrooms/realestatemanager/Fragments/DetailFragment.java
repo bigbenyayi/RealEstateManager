@@ -4,24 +4,45 @@ package com.openclassrooms.realestatemanager.Fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.SetOptions;
+import com.openclassrooms.realestatemanager.Activities.MapsActivity;
 import com.openclassrooms.realestatemanager.Models.DetailHouse;
 import com.openclassrooms.realestatemanager.Models.HorizontalRecyclerViewItem;
 import com.openclassrooms.realestatemanager.Models.MyHorizontalAdapter;
+import com.openclassrooms.realestatemanager.Models.MyHorizontalPictureAdapter;
 import com.openclassrooms.realestatemanager.R;
+import com.squareup.picasso.Picasso;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static android.app.Activity.RESULT_OK;
 
 
 public class DetailFragment extends BaseFragment {
@@ -36,6 +57,19 @@ public class DetailFragment extends BaseFragment {
     TextView sold;
     TextView market;
     TextView pointsOfInterest;
+    Button addAPicButton;
+    ImageView chosenPicIV;
+    EditText pictureDescET;
+    Button addButton;
+    EditText realtorET;
+    EditText descriptionET;
+    EditText surfaceET;
+    EditText addressET;
+    EditText interestsET;
+    EditText bathroomsET;
+    EditText bedroomsET;
+    EditText roomsET;
+
 
     TextView inter;
     TextView desc;
@@ -46,14 +80,24 @@ public class DetailFragment extends BaseFragment {
     TextView add;
     TextView media;
     DetailHouse houseItem = null;
+    Button seeOnMapButton;
+    public static final int PICK_IMAGE_REQUEST = 1;
+    Uri mainImageUri;
+
+    private MapsFragment mapsFragment;
+
 
     HorizontalRecyclerViewItem photoItem = null;
     private List<HorizontalRecyclerViewItem> listItems;
     private MyHorizontalAdapter adapter;
+    private MyHorizontalPictureAdapter myOtherAdapter;
     private CollectionReference notebookRef = FirebaseFirestore.getInstance().collection("house");
+    boolean isTablet;
 
 
     RecyclerView recyclerView;
+    RecyclerView editRecyclerView;
+    private Toolbar mToolbar;
 
 
     // --------------
@@ -83,6 +127,18 @@ public class DetailFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.fragment_detail, container, false);
         recyclerView = result.findViewById(R.id.horizontalRecyclerView);
+        editRecyclerView = result.findViewById(R.id.horizontalPictureRecyclerView);
+        isTablet = getResources().getBoolean(R.bool.isTablet);
+        mToolbar = result.findViewById(R.id.toolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_24dp);
+
+        setHasOptionsMenu(true);
+
+        if (isTablet) {
+            mToolbar.setVisibility(View.INVISIBLE);
+        }
 
         Intent iin = getActivity().getIntent();
         Bundle b = iin.getExtras();
@@ -100,6 +156,16 @@ public class DetailFragment extends BaseFragment {
         realtor = result.findViewById(R.id.realEstateInCharge);
         market = result.findViewById(R.id.onTheMarketSinceTV);
         sold = result.findViewById(R.id.soldTV);
+        seeOnMapButton = result.findViewById(R.id.seeOnMapButton);
+        addAPicButton = result.findViewById(R.id.addAPictureButton);
+        addAPicButton.setVisibility(View.INVISIBLE);
+        addAPicButton.setText("Add a picture");
+        pictureDescET = result.findViewById(R.id.pictureDescriptionET);
+        pictureDescET.setVisibility(View.INVISIBLE);
+        chosenPicIV = result.findViewById(R.id.pictureChosenIV);
+        chosenPicIV.setVisibility(View.INVISIBLE);
+        addButton = result.findViewById(R.id.addButton);
+        addButton.setVisibility(View.INVISIBLE);
 
         inter = result.findViewById(R.id.pointsOfInterest);
         desc = result.findViewById(R.id.description);
@@ -109,6 +175,23 @@ public class DetailFragment extends BaseFragment {
         bath = result.findViewById(R.id.nbrOfBathrooms);
         add = result.findViewById(R.id.address);
         media = result.findViewById(R.id.media);
+
+        realtorET = result.findViewById(R.id.realEstateInChargeET);
+        descriptionET = result.findViewById(R.id.descriptionET);
+        surfaceET = result.findViewById(R.id.surfaceET);
+        addressET = result.findViewById(R.id.addressET);
+        interestsET = result.findViewById(R.id.pointsOfInterestET);
+        bathroomsET = result.findViewById(R.id.nbrOfBathroomsET);
+        bedroomsET = result.findViewById(R.id.nbrOfBedroomsET);
+        roomsET = result.findViewById(R.id.nbrOfRoomsET);
+        realtorET.setVisibility(View.INVISIBLE);
+        descriptionET.setVisibility(View.INVISIBLE);
+        surfaceET.setVisibility(View.INVISIBLE);
+        addressET.setVisibility(View.INVISIBLE);
+        interestsET.setVisibility(View.INVISIBLE);
+        bathroomsET.setVisibility(View.INVISIBLE);
+        bedroomsET.setVisibility(View.INVISIBLE);
+        roomsET.setVisibility(View.INVISIBLE);
 
         surface.setVisibility(View.INVISIBLE);
         rooms.setVisibility(View.INVISIBLE);
@@ -128,6 +211,8 @@ public class DetailFragment extends BaseFragment {
         market.setVisibility(View.INVISIBLE);
         pointsOfInterest.setVisibility(View.INVISIBLE);
         inter.setVisibility(View.INVISIBLE);
+        seeOnMapButton.setVisibility(View.INVISIBLE);
+
         media.setText("Please select a house to see the details");
 
         if (b != null) {
@@ -203,8 +288,14 @@ public class DetailFragment extends BaseFragment {
                         inter.setVisibility(View.INVISIBLE);
                     }
 
+
                 }
             }
+            seeOnMapButton.setOnClickListener(v -> {
+                Intent mapsIntent = new Intent(getContext(), MapsActivity.class);
+                mapsIntent.putExtra("focus", houseItem.getAddress());
+                startActivity(mapsIntent);
+            });
         });
 
 
@@ -236,6 +327,13 @@ public class DetailFragment extends BaseFragment {
         market.setVisibility(View.VISIBLE);
         pointsOfInterest.setVisibility(View.VISIBLE);
         inter.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.INVISIBLE);
+        if (isTablet) {
+            configureAndDisplayMiniMap();
+        } else {
+            seeOnMapButton.setVisibility(View.VISIBLE);
+
+        }
 
 
     }
@@ -243,7 +341,10 @@ public class DetailFragment extends BaseFragment {
     public void configureHorizontalRecyclerView() {
 
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager horizontalPictureLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+
         recyclerView.setLayoutManager(horizontalLayoutManager);
+        editRecyclerView.setLayoutManager(horizontalPictureLayoutManager);
 
         listItems = new ArrayList<>();
         listItems.clear();
@@ -277,9 +378,138 @@ public class DetailFragment extends BaseFragment {
         });
 
         adapter = new MyHorizontalAdapter(getContext(), listItems);
-
+        myOtherAdapter = new MyHorizontalPictureAdapter(getContext(), listItems);
+        editRecyclerView.setAdapter(myOtherAdapter);
         recyclerView.setAdapter(adapter);
     }
 
+    public void configureAndDisplayMiniMap() {
 
+        mapsFragment = (MapsFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.miniMapFrameLayout);
+
+        if (mapsFragment == null) {
+            mapsFragment = new MapsFragment();
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .add(R.id.miniMapFrameLayout, mapsFragment)
+                    .commit();
+        }
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case (android.R.id.home):
+                getActivity().onBackPressed();
+                break;
+            case R.id.navbar_edit:
+                //item.setIcon(R.drawable.ic_location_on_black_24dp);
+                //Intent addIntent = new Intent(getContext(), AddActivity.class);
+                //startActivity(addIntent);
+                pictureDescET.setVisibility(View.VISIBLE);
+                addButton.setVisibility(View.VISIBLE);
+                addAPicButton.setVisibility(View.VISIBLE);
+                chosenPicIV.setVisibility(View.VISIBLE);
+                realtorET.setVisibility(View.VISIBLE);
+                descriptionET.setVisibility(View.VISIBLE);
+                surfaceET.setVisibility(View.VISIBLE);
+                addressET.setVisibility(View.VISIBLE);
+                interestsET.setVisibility(View.VISIBLE);
+                bathroomsET.setVisibility(View.VISIBLE);
+                bedroomsET.setVisibility(View.VISIBLE);
+                roomsET.setVisibility(View.VISIBLE);
+
+                surface.setVisibility(View.INVISIBLE);
+                rooms.setVisibility(View.INVISIBLE);
+                bedrooms.setVisibility(View.INVISIBLE);
+                bathrooms.setVisibility(View.INVISIBLE);
+                address.setVisibility(View.INVISIBLE);
+                description.setVisibility(View.INVISIBLE);
+                recyclerView.setVisibility(View.INVISIBLE);
+                sold.setVisibility(View.INVISIBLE);
+                sold.setVisibility(View.INVISIBLE);
+                realtor.setVisibility(View.INVISIBLE);
+                market.setVisibility(View.INVISIBLE);
+                pointsOfInterest.setVisibility(View.INVISIBLE);
+                inter.setVisibility(View.INVISIBLE);
+                seeOnMapButton.setText("UPDATE");
+
+                addButton.setEnabled(false);
+                addButton.setOnClickListener(v -> {
+                    listItems.add(new HorizontalRecyclerViewItem(mainImageUri.toString(), pictureDescET.getText().toString()));
+                    myOtherAdapter = new MyHorizontalPictureAdapter(getContext(), listItems);
+                    editRecyclerView.setAdapter(myOtherAdapter);
+                    pictureDescET.setText("");
+                    chosenPicIV.setImageResource(0);
+
+                    seeOnMapButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            DocumentReference mDocRef = FirebaseFirestore.getInstance().collection("house").document();
+
+                            Map<String, Object> dataToSave = new HashMap<>();
+
+                            dataToSave.put("description", descriptionET.getText().toString());
+                            dataToSave.put("numberOfBathrooms", String.valueOf(bathroomsET.getText().toString()));
+                            dataToSave.put("numberOfBedrooms", String.valueOf(bedroomsET.getText().toString()));
+                            dataToSave.put("numberOfRooms", String.valueOf(rooms.getText().toString()));
+                            dataToSave.put("pictures", );
+                            dataToSave.put("rooms", arrayOfDesc);
+
+                            if (mPrefs.getStringSet("interests", null) != null) {
+                                List<String> newArray = new ArrayList<>(mPrefs.getStringSet("interests", null));
+                                dataToSave.put("pointOfInterest", newArray);
+                                mPrefs.edit().putStringSet("interests", null).apply();
+                            } else {
+                                dataToSave.put("pointOfInterest", interestsArray);
+                            }
+                            dataToSave.put("price", priceET.getText().toString());
+                            dataToSave.put("surface", surfaceET.getText().toString());
+                            dataToSave.put("type", typeET.getText().toString());
+                            dataToSave.put("realtor", mPrefs.getString("username", "Realtor"));
+
+                            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                            Date date = new Date();
+
+                            dataToSave.put("onMarket", dateFormat.format(date));
+
+
+                            mDocRef.set(dataToSave, SetOptions.merge());
+                        }
+                    });
+                });
+
+                addAPicButton.setOnClickListener(v -> {
+                    Intent myIntent = new Intent();
+                    myIntent.setType("image/*");
+                    myIntent.setAction(Intent.ACTION_GET_CONTENT);
+                    startActivityForResult(myIntent, PICK_IMAGE_REQUEST);
+                });
+                break;
+        }
+        return true;
+    }
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        getActivity().getMenuInflater().inflate(R.menu.navbar_menu, menu);
+
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            mainImageUri = data.getData();
+
+            chosenPicIV.setVisibility(View.VISIBLE);
+            Picasso.get().load(mainImageUri).into(chosenPicIV);
+            addAPicButton.setText("Change picture");
+            addButton.setEnabled(true);
+        }
+    }
 }

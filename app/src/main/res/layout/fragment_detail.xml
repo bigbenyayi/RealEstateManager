@@ -5,11 +5,24 @@
     android:background="#BED4D6"
     tools:context="com.openclassrooms.realestatemanager.Activities.DetailActivity">
 
+    <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/toolbar"
+        colorControlNormal="@android:color/white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/ToolbarTheme"
+        app:titleTextColor="#FAFAFA" />
+
+
     <!-- //////////////////////////// MEDIA \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\  -->
     <TextView
         android:id="@+id/media"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar"
         android:layout_margin="20dp"
         android:text="Media"
         android:textSize="30sp" />
@@ -18,9 +31,49 @@
         android:id="@+id/horizontalRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:layout_below="@+id/media">
+        android:layout_below="@+id/media" />
 
-    </android.support.v7.widget.RecyclerView>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/horizontalPictureRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_below="@+id/addButton" />
+
+    <Button
+        android:id="@+id/addAPictureButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/media"
+        android:layout_centerHorizontal="true"
+        android:background="@color/colorAccent"
+        android:padding="10dp"
+        android:text="Add a picture" />
+
+    <ImageView
+        android:id="@+id/pictureChosenIV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/addAPictureButton"
+        android:layout_alignBottom="@+id/addAPictureButton"
+        android:layout_toEndOf="@+id/addAPictureButton" />
+
+    <EditText
+        android:id="@+id/pictureDescriptionET"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/addAPictureButton"
+        android:layout_centerHorizontal="true"
+        android:hint="Picture description" />
+
+    <Button
+        android:id="@+id/addButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/pictureDescriptionET"
+        android:layout_toEndOf="@+id/pictureDescriptionET"
+        android:background="@color/colorAccent"
+        android:text="ADD" />
+
     <!--
         <ImageView
             android:id="@+id/pictures"
@@ -46,14 +99,35 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/description"
-        android:layout_marginBottom="15dp"
         android:layout_marginStart="20dp"
-        android:textStyle="bold"
-        android:textSize="16dp"
-        android:text="Real Estate Agent: Alvaro Morata" />
+        android:layout_marginBottom="15dp"
+        android:text="Real Estate Agent: Alvaro Morata"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/realEstateInChargeET"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/horizontalPictureRecyclerView"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="15dp"
+        android:text="Real Estate Agent: Alvaro Morata"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/descriptionTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/realEstateInCharge"
+        android:layout_marginStart="20dp"
+        android:text="I have no details to show you..."
+        android:textColor="#6a6a6a"
+        android:textSize="15sp" />
+
+    <EditText
+        android:id="@+id/descriptionET"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/realEstateInCharge"
@@ -66,7 +140,7 @@
         android:id="@+id/onTheMarketSinceTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/toolbar"
         android:layout_alignParentRight="true"
         android:text="On the market since: 23/12/18" />
 
@@ -87,7 +161,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/descriptionTV"
         android:layout_marginStart="80dp"
-        android:layout_marginTop="50dp"
         android:paddingStart="35dp"
         android:paddingEnd="35dp"
         android:text="Surface"
@@ -95,6 +168,16 @@
 
     <TextView
         android:id="@+id/surfaceTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/surface"
+        android:layout_alignStart="@+id/surface"
+        android:layout_alignEnd="@+id/surface"
+        android:text="700m²"
+        android:textAlignment="center" />
+
+    <EditText
+        android:id="@+id/surfaceET"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/surface"
@@ -118,6 +201,16 @@
 
     <TextView
         android:id="@+id/nbrOfBathroomsTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/surface"
+        android:layout_alignStart="@+id/nbrOfBathrooms"
+        android:layout_alignEnd="@+id/nbrOfBathrooms"
+        android:text="3"
+        android:textAlignment="center" />
+
+    <EditText
+        android:id="@+id/nbrOfBathroomsET"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/surface"
@@ -150,6 +243,16 @@
         android:text="12"
         android:textAlignment="center" />
 
+    <EditText
+        android:id="@+id/nbrOfBedroomsET"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/nbrOfBedrooms"
+        android:layout_alignStart="@+id/nbrOfBathrooms"
+        android:layout_alignEnd="@+id/nbrOfBathrooms"
+        android:text="12"
+        android:textAlignment="center" />
+
     <!-- ///////// Number Of Rooms \\\\\\\\  -->
 
     <TextView
@@ -166,6 +269,16 @@
 
     <TextView
         android:id="@+id/nbrOfRoomsTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/nbrOfRooms"
+        android:layout_alignStart="@+id/nbrOfBathrooms"
+        android:layout_alignEnd="@+id/nbrOfBathrooms"
+        android:text="25"
+        android:textAlignment="center" />
+
+    <EditText
+        android:id="@+id/nbrOfRoomsET"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/nbrOfRooms"
@@ -200,6 +313,16 @@
         android:text="25"
         android:textAlignment="center" />
 
+    <EditText
+        android:id="@+id/addressET"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/address"
+        android:layout_alignStart="@+id/address"
+        android:layout_alignEnd="@+id/address"
+        android:text="25"
+        android:textAlignment="center" />
+
     <!-- ///////// Points Of Interest \\\\\\\\  -->
 
     <TextView
@@ -225,5 +348,35 @@
         android:layout_alignEnd="@+id/address"
         android:text="Park, Library, School, Football center"
         android:textAlignment="center" />
+
+    <EditText
+        android:id="@+id/pointsOfInterestET"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/pointsOfInterest"
+        android:layout_alignStart="@+id/address"
+        android:layout_alignEnd="@+id/address"
+        android:text="Park, Library, School, Football center"
+        android:textAlignment="center" />
+
+    <FrameLayout
+        android:id="@+id/miniMapFrameLayout"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="20dp" />
+
+
+    <Button
+        android:id="@+id/seeOnMapButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="5dp"
+        android:background="@color/colorAccent"
+        android:padding="10dp"
+        android:text="See on map" />
 
 </RelativeLayout>
