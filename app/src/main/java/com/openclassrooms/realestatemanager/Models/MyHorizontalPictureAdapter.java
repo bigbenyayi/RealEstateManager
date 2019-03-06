@@ -3,9 +3,11 @@ package com.openclassrooms.realestatemanager.Models;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.opengl.ETC1;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,14 +18,22 @@ import android.widget.TextView;
 import com.openclassrooms.realestatemanager.R;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MyHorizontalPictureAdapter extends RecyclerView.Adapter<MyHorizontalPictureAdapter.ViewHolder> {
 
     private LayoutInflater mInflater;
     private List<HorizontalRecyclerViewItem> listItems;
+    private ArrayList<String> photoItems = new ArrayList<>();
+    private ArrayList<String> descItems = new ArrayList<>();
     public static final int PICK_IMAGE_REQUEST = 1;
     Context mContext;
+    Set<String> set = new HashSet<>();
+    Set<String> setDesc = new HashSet<>();
 
 
     // data is passed into the constructor
@@ -50,14 +60,39 @@ public class MyHorizontalPictureAdapter extends RecyclerView.Adapter<MyHorizonta
         Picasso.get().load(listItem.getPictureUrl()).into(holder.mImageView);
         holder.mEditText.setText(listItem.getRoom());
 
+        photoItems.add(listItem.getPictureUrl());
+        descItems.add(listItem.getRoom());
+
+        SharedPreferences mPref = mContext.getSharedPreferences("SHARED", Context.MODE_PRIVATE);
+        mPref.edit().putBoolean("boolean", false).apply();
+
 
         holder.mImageView.setOnClickListener(v -> {
 
             listItems.remove(position);
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, listItems.size());
+            photoItems.remove(position);
+            notifyItemRangeChanged(position, photoItems.size());
+            descItems.remove(position);
+            notifyItemRangeChanged(position, descItems.size());
+
+            set.clear();
+            setDesc.clear();
+
+            for (int i = 0; i < listItems.size(); i++) {
+
+                set.add(listItems.get(i).getPictureUrl());
+                setDesc.add(listItems.get(i).getRoom());
+
+            }
+            mPref.edit().putStringSet("pictures", set).apply();
+            mPref.edit().putStringSet("description", setDesc).apply();
+            mPref.edit().putBoolean("boolean", true).apply();
 
         });
+
+
     }
 
     // total number of rows
