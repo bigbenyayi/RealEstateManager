@@ -411,7 +411,7 @@
         android:id="@+id/recyclerViewPOI"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/LL9"
+        android:layout_below="@+id/horizontalPictureRecyclerView"
         android:layout_centerHorizontal="true"
         android:textAlignment="center" />
 

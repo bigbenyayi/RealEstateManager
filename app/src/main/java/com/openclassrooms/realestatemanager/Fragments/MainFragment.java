@@ -211,11 +211,11 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             if (tabletSize) {
                 configureAndShowDetailFragment();
             }
+            SharedPreferences mPref = getActivity().getSharedPreferences("SHARED", MODE_PRIVATE);
 
             //     Check if DetailFragment is visible (Tablet)
             if (detailFragment != null && detailFragment.isVisible()) {
                 //TABLET : Update directly TextView
-                SharedPreferences mPref = getActivity().getSharedPreferences("SHARED", MODE_PRIVATE);
                 mPref.edit().putString("id", id).apply();
                 detailFragment.configureHorizontalRecyclerView();
                 detailFragment.updateTextView();
@@ -224,6 +224,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 //SMARTPHONE : Passing tag to the new intent that will show DetailActivity (and so DetailFragment)
                 Intent i = new Intent(getContext(), DetailActivity.class);
                 i.putExtra("id", id);
+                mPref.edit().putString("id", id).apply();
+
 //                    detailFragment.configureHorizontalRecyclerView();
                 startActivity(i);
             }

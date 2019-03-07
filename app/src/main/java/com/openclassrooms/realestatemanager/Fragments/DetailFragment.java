@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,9 +20,12 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsoluteLayout;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +39,7 @@ import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.openclassrooms.realestatemanager.Activities.AddActivity;
+import com.openclassrooms.realestatemanager.Activities.EditActivity;
 import com.openclassrooms.realestatemanager.Activities.MapsActivity;
 import com.openclassrooms.realestatemanager.Models.DetailHouse;
 import com.openclassrooms.realestatemanager.Models.HorizontalRecyclerViewItem;
@@ -84,12 +89,13 @@ public class DetailFragment extends BaseFragment {
     EditText bathroomsET;
     EditText bedroomsET;
     EditText roomsET;
-    int numberMaxPOI = 0;
     RecyclerView mRecyclerViewPOI;
     String addUrl;
     Boolean editing = false;
+    int numberMaxPOI = 0;
 
     FirebaseStorage storage = FirebaseStorage.getInstance();
+    ArrayList<String> pointsOfInterestValue = new ArrayList<>();
 
     TextView inter;
     TextView desc;
@@ -232,7 +238,7 @@ public class DetailFragment extends BaseFragment {
         sold.setVisibility(View.INVISIBLE);
         realtor.setVisibility(View.INVISIBLE);
         market.setVisibility(View.INVISIBLE);
-        pointsOfInterest.setVisibility(View.INVISIBLE);
+        pointsOfInterest.setVisibility(View.VISIBLE);
         inter.setVisibility(View.INVISIBLE);
         seeOnMapButton.setVisibility(View.INVISIBLE);
 
@@ -273,8 +279,11 @@ public class DetailFragment extends BaseFragment {
                     String realtorValue = (String) documentSnapshot.get("realtor");
                     String onMarket = (String) documentSnapshot.get("onMarket");
                     String soldValue = (String) documentSnapshot.get("sold");
-                    ArrayList<String> pointsOfInterestValue = (ArrayList<String>) documentSnapshot.get("pointOfInterest");
+                    pointsOfInterestValue = (ArrayList<String>) documentSnapshot.get("pointOfInterest");
                     ArrayList<String> pictures = (ArrayList<String>) documentSnapshot.get("pictures");
+
+                    mRecyclerViewPOI.setAdapter(new SimpleRVAdapter(getContext(), pointsOfInterestValue));
+                    Log.d("interestsValueFirst", pointsOfInterestValue.toString());
 
                     houseItem = new DetailHouse(descriptionValue, surfaceValue, nbrOfRooms,
                             nbrOfBedrooms, nbrOfBathrooms, location,
@@ -369,6 +378,7 @@ public class DetailFragment extends BaseFragment {
         recyclerView.setLayoutManager(horizontalLayoutManager);
         editRecyclerView.setLayoutManager(horizontalPictureLayoutManager);
 
+
         listItems = new ArrayList<>();
         listItems.clear();
 
@@ -431,246 +441,17 @@ public class DetailFragment extends BaseFragment {
                 getActivity().onBackPressed();
                 break;
             case R.id.navbar_edit:
-                //Intent addIntent = new Intent(getContext(), AddActivity.class);
-                //startActivity(addIntent);
-
-                if (!editing) {
-//                    item.setIcon(R.drawable.ic_clear_black_24dp);
-                    description.setVisibility(View.INVISIBLE);
-//                    realtorET.setHint("Real Estate Agent");
-
-                    pictureDescET.setVisibility(View.VISIBLE);
-                    description.setVisibility(View.INVISIBLE);
-                    addButton.setVisibility(View.VISIBLE);
-                    addAPicButton.setVisibility(View.VISIBLE);
-                    chosenPicIV.setVisibility(View.VISIBLE);
-//                    realtorET.setVisibility(View.VISIBLE);
-//                    realtorET.setHint("Real Estate Agent");
-//                    descriptionET.setVisibility(View.VISIBLE);
-                    surfaceET.setVisibility(View.VISIBLE);
-                    addressET.setVisibility(View.VISIBLE);
-                    interestsET.setVisibility(View.VISIBLE);
-                    bathroomsET.setVisibility(View.VISIBLE);
-                    bedroomsET.setVisibility(View.VISIBLE);
-                    roomsET.setVisibility(View.VISIBLE);
-                    editRecyclerView.setVisibility(View.VISIBLE);
-                    desc.setVisibility(View.INVISIBLE);
-
-                    surface.setVisibility(View.INVISIBLE);
-                    rooms.setVisibility(View.INVISIBLE);
-                    bedrooms.setVisibility(View.INVISIBLE);
-                    bathrooms.setVisibility(View.INVISIBLE);
-                    address.setVisibility(View.INVISIBLE);
-                    description.setVisibility(View.INVISIBLE);
-                    recyclerView.setVisibility(View.INVISIBLE);
-                    sold.setVisibility(View.INVISIBLE);
-                    sold.setVisibility(View.INVISIBLE);
-                    realtor.setVisibility(View.INVISIBLE);
-                    market.setVisibility(View.INVISIBLE);
-                    pointsOfInterest.setVisibility(View.INVISIBLE);
-                    inter.setVisibility(View.INVISIBLE);
-                    seeOnMapButton.setText("UPDATE");
-                    editing = true;
-
-                    surfaceET.setText(houseItem.getSurface().replace("m²", ""));
-                    bathroomsET.setText(houseItem.getNbrOfBathrooms());
-                    roomsET.setText(houseItem.getNbrOfRooms());
-                    bedroomsET.setText(houseItem.getNbrOfBedrooms());
-                    addressET.setText(houseItem.getAddress());
-                    pointsOfInterest.setText("");
-                } else {
-//                    item.setIcon(R.drawable.ic_edit_white_24dp);
-                    surface.setVisibility(View.VISIBLE);
-                    rooms.setVisibility(View.VISIBLE);
-                    bedrooms.setVisibility(View.VISIBLE);
-                    bathrooms.setVisibility(View.VISIBLE);
-                    address.setVisibility(View.VISIBLE);
-                    description.setVisibility(View.VISIBLE);
-                    recyclerView.setVisibility(View.VISIBLE);
-                    sold.setVisibility(View.VISIBLE);
-                    sold.setVisibility(View.VISIBLE);
-                    realtor.setVisibility(View.VISIBLE);
-                    market.setVisibility(View.VISIBLE);
-                    pointsOfInterest.setVisibility(View.VISIBLE);
-                    inter.setVisibility(View.VISIBLE);
-                    seeOnMapButton.setText("See on map");
-
-                    pictureDescET.setVisibility(View.INVISIBLE);
-                    addButton.setVisibility(View.INVISIBLE);
-                    addAPicButton.setVisibility(View.INVISIBLE);
-                    chosenPicIV.setVisibility(View.INVISIBLE);
-//                    realtorET.setVisibility(View.INVISIBLE);
-//                    descriptionET.setVisibility(View.INVISIBLE);
-                    surfaceET.setVisibility(View.INVISIBLE);
-                    addressET.setVisibility(View.INVISIBLE);
-                    interestsET.setVisibility(View.INVISIBLE);
-                    bathroomsET.setVisibility(View.INVISIBLE);
-                    bedroomsET.setVisibility(View.INVISIBLE);
-                    roomsET.setVisibility(View.INVISIBLE);
-                    editRecyclerView.setVisibility(View.INVISIBLE);
-                    editing = false;
-                }
-
-
-                interestsET.setOnTouchListener((ve, event) -> {
-                    final int DRAWABLE_RIGHT = 2;
-                    if (event.getAction() == MotionEvent.ACTION_UP) {
-                        if (event.getRawX() >= (interestsET.getRight() - interestsET.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
-                            numberMaxPOI++;
-
-                            if (numberMaxPOI <= 5) {
-                                interestsArray.add(interestsET.getText().toString());
-                                interestsET.setText("");
-                            } else {
-                                Toast.makeText(getContext(), "You have reached the limit", Toast.LENGTH_SHORT).show();
-                                interestsET.setText("");
-                            }
-                            mRecyclerViewPOI.setAdapter(new SimpleRVAdapter(getContext(), interestsArray));
-
-                            Toast.makeText(getContext(), "Added successfully", Toast.LENGTH_SHORT).show();
-                            return true;
-                        }
-
-                    }
-
-                    return false;
-                });
-
-
-                for (int i = 0; i < houseItem.getPointsOfInterest().size() - 1; i++) {
-                    interestsArray.add(houseItem.getPointsOfInterest().get(i));
-                }
-                mRecyclerViewPOI.setAdapter(new SimpleRVAdapter(getContext(), interestsArray));
-
-                addButton.setEnabled(false);
-                addButton.setOnClickListener(v -> {
-                    listItems.add(new HorizontalRecyclerViewItem(mainImageUri.toString(), pictureDescET.getText().toString()));
-                    seeOnMapButton.setEnabled(false);
-                    addButton.setEnabled(false);
-
-                    myOtherAdapter = new MyHorizontalPictureAdapter(getContext(), listItems);
-                    editRecyclerView.setAdapter(myOtherAdapter);
-                    editRecyclerView.setAdapter(myOtherAdapter);
-
-                    chosenPicIV.setDrawingCacheEnabled(true);
-                    chosenPicIV.buildDrawingCache();
-                    Bitmap bitmap = chosenPicIV.getDrawingCache();
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-                    chosenPicIV.setDrawingCacheEnabled(false);
-                    byte[] data = baos.toByteArray();
-
-                    String path = "firememes/" + UUID.randomUUID() + ".png";
-                    StorageReference firememeRef = storage.getReference(path);
-                    StorageMetadata metadata = new StorageMetadata.Builder().build();
-
-                    UploadTask uploadTask = firememeRef.putBytes(data, metadata);
-
-                    uploadTask.addOnSuccessListener(taskSnapshot -> {
-                        taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(uri -> {
-
-                            // SAVE EVERYTHING TO FIRESTOOOORE HERE
-
-                            addUrl = uri.toString();
-                            photoItems.add(addUrl);
-                            roomItems.add(pictureDescET.getText().toString());
-                            pictureDescET.setText("");
-                            seeOnMapButton.setEnabled(true);
-                            chosenPicIV.setImageResource(0);
-                            addButton.setEnabled(true);
-                        });
-                    });
-                });
-                seeOnMapButton.setOnClickListener(v1 -> {
-
-
-                    Map<String, Object> dataToSave = new HashMap<>();
-                    SharedPreferences mPrefs = getContext().getSharedPreferences("SHARED", Context.MODE_PRIVATE);
-
-
-                    notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
-
-                        for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                            Intent iin = getActivity().getIntent();
-                            Bundle b = iin.getExtras();
-                            String id;
-
-                            if (b != null) {
-                                id = (String) b.get("id");
-                            } else {
-                                id = mPrefs.getString("id", null);
-                            }
-
-                            if (id.equals(documentSnapshot.get("id"))) {
-
-                                interestsArray = (ArrayList<String>) documentSnapshot.get("pointOfInterest");
-                                mRecyclerViewPOI.setAdapter(new SimpleRVAdapter(getContext(), interestsArray));
-
-//                                dataToSave.put("description", descriptionET.getText().toString());
-                                dataToSave.put("numberOfBathrooms", String.valueOf(bathroomsET.getText().toString()));
-                                dataToSave.put("numberOfBedrooms", String.valueOf(bedroomsET.getText().toString()));
-                                dataToSave.put("numberOfRooms", String.valueOf(rooms.getText().toString()));
-                                dataToSave.put("pictures", photoItems);
-                                dataToSave.put("rooms", roomItems);
-
-
-                                if (mPrefs.getBoolean("boolean", false)) {
-                                    List<String> newArray = new ArrayList<>(mPrefs.getStringSet("pictures", null));
-                                    List<String> newDescArray = new ArrayList<>(mPrefs.getStringSet("description", null));
-                                    dataToSave.put("pictures", newArray);
-                                    dataToSave.put("rooms", newDescArray);
-
-                                    mPrefs.edit().putStringSet("interests", null).apply();
-                                    mPrefs.edit().putBoolean("boolean", false).apply();
-                                    mPrefs.edit().putStringSet("description", null).apply();
-
-                                } else {
-                                    dataToSave.put("pictures", photoItems);
-                                    dataToSave.put("rooms", roomItems);
-                                }
-                                dataToSave.put("surface", surfaceET.getText().toString());
-//                                dataToSave.put("realtor", realtorET.getText().toString());
-
-                                notebookRef.document(documentSnapshot.getId()).set(dataToSave, SetOptions.merge());
-
-                            }
-                        }
-
-
-                    });
-                });
-
-
-                addAPicButton.setOnClickListener(v -> {
-                    Intent myIntent = new Intent();
-                    myIntent.setType("image/*");
-                    myIntent.setAction(Intent.ACTION_GET_CONTENT);
-                    startActivityForResult(myIntent, PICK_IMAGE_REQUEST);
-                });
+                Intent addIntent = new Intent(getContext(), EditActivity.class);
+                startActivity(addIntent);
                 break;
         }
         return true;
     }
-
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         getActivity().getMenuInflater().inflate(R.menu.navbar_menu, menu);
 
         super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            mainImageUri = data.getData();
-
-            chosenPicIV.setVisibility(View.VISIBLE);
-            Picasso.get().load(mainImageUri).into(chosenPicIV);
-            addAPicButton.setText("Change picture");
-            addButton.setEnabled(true);
-        }
     }
 }

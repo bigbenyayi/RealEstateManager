@@ -7,6 +7,8 @@ import android.content.SharedPreferences;
 import android.opengl.ETC1;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +36,7 @@ public class MyHorizontalPictureAdapter extends RecyclerView.Adapter<MyHorizonta
     Context mContext;
     Set<String> set = new HashSet<>();
     Set<String> setDesc = new HashSet<>();
+    private static ViewHolder globalHolder;
 
 
     // data is passed into the constructor
@@ -56,7 +59,7 @@ public class MyHorizontalPictureAdapter extends RecyclerView.Adapter<MyHorizonta
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final HorizontalRecyclerViewItem listItem = listItems.get(position);
-
+        globalHolder = holder;
         Picasso.get().load(listItem.getPictureUrl()).into(holder.mImageView);
         holder.mEditText.setText(listItem.getRoom());
 
@@ -92,8 +95,33 @@ public class MyHorizontalPictureAdapter extends RecyclerView.Adapter<MyHorizonta
 
         });
 
+        holder.mEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                descItems.remove(position);
+                descItems.add(position, holder.mEditText.getText().toString());
+                setDesc.clear();
+
+                setDesc.addAll(descItems);
+                mPref.edit().putStringSet("description", setDesc).apply();
+
+            }
+        });
+
 
     }
+
 
     // total number of rows
     @Override
