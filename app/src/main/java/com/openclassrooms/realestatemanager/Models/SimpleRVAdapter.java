@@ -53,6 +53,11 @@ public class SimpleRVAdapter extends RecyclerView.Adapter<SimpleRVAdapter.ViewHo
 
             mPref.edit().putStringSet("interests", set).apply();
         });
+        SharedPreferences mPref = mContext.getSharedPreferences("SHARED", Context.MODE_PRIVATE);
+        Set<String> set = new HashSet<>(listItems);
+
+        mPref.edit().putStringSet("interests", set).apply();
+
     }
 
     // total number of rows

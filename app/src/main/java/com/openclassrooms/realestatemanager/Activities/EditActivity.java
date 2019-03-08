@@ -141,15 +141,7 @@ public class EditActivity extends AppCompatActivity {
         setButtonAction();
         setImagePickers();
 
-        if (sold) {
-            soldButton.setText("Sold!");
-            soldButton.setBackgroundColor(getResources().getColor(R.color.colorAccent));
-        } else {
-            soldButton.setText("Sold?");
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                soldButton.setBackgroundColor(Color.parseColor("#696969"));
-            }
-        }
+
 
         soldButton.setOnClickListener(v -> {
             if (sold) {
@@ -294,7 +286,6 @@ public class EditActivity extends AppCompatActivity {
                         for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
                             if (id.equals(documentSnapshot.get("id"))) {
 
-
                                 Map<String, Object> dataToSave = new HashMap<>();
 
                                 dataToSave.put("city", cityET.getText().toString());
@@ -408,6 +399,60 @@ public class EditActivity extends AppCompatActivity {
 
         roomsNP.setMinValue(0);
         roomsNP.setMaxValue(40);
+
+        notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
+            Intent iin = getIntent();
+            Bundle b = iin.getExtras();
+            String id;
+
+            if (b != null) {
+                id = (String) b.get("id");
+            } else {
+                id = mPrefs.getString("id", null);
+            }
+
+            for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+
+
+                if (id.equals(documentSnapshot.get("id"))) {
+                    typeET.setText((String) documentSnapshot.get("type"));
+                    sold = documentSnapshot.get("sold") != null;
+                    if (sold) {
+                        soldButton.setText("Sold!");
+                        soldButton.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                    } else {
+                        soldButton.setText("Sold?");
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            soldButton.setBackgroundColor(Color.parseColor("#696969"));
+                        }
+                    }
+                    priceET.setText((String) documentSnapshot.get("price"));
+                    ArrayList<String> size = (ArrayList) documentSnapshot.get("pictures");
+                    ArrayList<String> size2 = (ArrayList) documentSnapshot.get("rooms");
+                    for (int i = 0; i<size.size(); i++){
+                        listOfPicturesAndDesc.add(new HorizontalRecyclerViewItem(size.get(i), size2.get(i)));
+                    }
+                    adapter = new MyHorizontalPictureAdapter(this, listOfPicturesAndDesc);
+                    horizontalRecyclerViewAdd.setAdapter(adapter);
+
+
+                    cityET.setText((String) documentSnapshot.get("city"));
+                    Picasso.get().load((String) documentSnapshot.get("mainPicture")).into(mainPicImageView);
+                    descriptionET.setText((String) documentSnapshot.get("description"));
+                    locationET.setText((String) documentSnapshot.get("location"));
+                    //RECYCLER
+                    surfaceET.setText((String) documentSnapshot.get("surface"));
+                    surfaceET.setText(surfaceET.getText().toString().replace("m²", ""));
+
+                    bathroomsNP.setValue(Integer.valueOf((String) documentSnapshot.get("numberOfBathrooms")));
+                    bedroomsNP.setValue(Integer.valueOf((String) documentSnapshot.get("numberOfBedrooms")));
+                    roomsNP.setValue(Integer.valueOf((String) documentSnapshot.get("numberOfRooms")));
+                    mRecyclerViewPOI.setAdapter(new SimpleRVAdapter(this, (List<String>) documentSnapshot.get("pointOfInterest")));
+
+
+                }
+            }
+        });
 
     }
 
@@ -574,50 +619,7 @@ public class EditActivity extends AppCompatActivity {
     }
 
     private void setCorrectTVs() {
-        notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
-            Intent iin = getIntent();
-            Bundle b = iin.getExtras();
-            String id;
 
-            if (b != null) {
-                id = (String) b.get("id");
-            } else {
-                SharedPreferences mPrefs = getSharedPreferences("SHARED", Context.MODE_PRIVATE);
-                id = mPrefs.getString("id", null);
-            }
-
-            for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-
-
-                if (id.equals(documentSnapshot.get("id"))) {
-                    typeET.setText((String) documentSnapshot.get("type"));
-                    sold = documentSnapshot.get("sold") != null;
-                    priceET.setText((String) documentSnapshot.get("price"));
-                    ArrayList<String> size = (ArrayList) documentSnapshot.get("pictures");
-                    ArrayList<String> size2 = (ArrayList) documentSnapshot.get("rooms");
-                    for (int i = 0; i<size.size(); i++){
-                        listOfPicturesAndDesc.add(new HorizontalRecyclerViewItem(size.get(i), size2.get(i)));
-                    }
-                    adapter = new MyHorizontalPictureAdapter(this, listOfPicturesAndDesc);
-               //     horizontalRecyclerViewAdd.setAdapter(adapter);
-
-                    cityET.setText((String) documentSnapshot.get("city"));
-                    Picasso.get().load((String) documentSnapshot.get("mainPicture")).into(mainPicImageView);
-                    descriptionET.setText((String) documentSnapshot.get("description"));
-                    locationET.setText((String) documentSnapshot.get("location"));
-                    //RECYCLER
-                    surfaceET.setText((String) documentSnapshot.get("surface"));
-                    surfaceET.setText(surfaceET.getText().toString().replace("m²", ""));
-
-                    bathroomsNP.setValue(Integer.valueOf((String) documentSnapshot.get("numberOfBathrooms")));
-                    bedroomsNP.setValue(Integer.valueOf((String) documentSnapshot.get("numberOfBedrooms")));
-                    roomsNP.setValue(Integer.valueOf((String) documentSnapshot.get("numberOfRooms")));
-                    mRecyclerViewPOI.setAdapter(new SimpleRVAdapter(this, (List<String>) documentSnapshot.get("pointOfInterest")));
-
-
-                }
-            }
-        });
 
         TextView title = findViewById(R.id.title);
         SharedPreferences mPrefs = getSharedPreferences("SHARED", MODE_PRIVATE);
@@ -718,7 +720,7 @@ public class EditActivity extends AppCompatActivity {
             mRecyclerViewPOI.setVisibility(View.INVISIBLE);
 
         } else if (mPrefs.getInt("addNumber", 1) == 3) {
-            nextButton.setText("Create listing");
+            nextButton.setText("Edit listing");
             backButton.setText("Back");
 
             title.setText("Characteristics");
