@@ -121,7 +121,9 @@ public class MyHorizontalPictureAdapter extends RecyclerView.Adapter<MyHorizonta
 
 
     }
-
+    public ArrayList<String> getUpdatedlist(){
+        return descItems;
+    }
 
     // total number of rows
     @Override

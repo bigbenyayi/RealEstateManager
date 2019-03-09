@@ -256,12 +256,8 @@ public class DetailFragment extends BaseFragment {
         Bundle b = iin.getExtras();
         String id;
 
-        if (b != null) {
             id = (String) b.get("id");
-        } else {
-            SharedPreferences mPrefs = getContext().getSharedPreferences("SHARED", Context.MODE_PRIVATE);
-            id = mPrefs.getString("id", null);
-        }
+
 
 
         notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
@@ -306,6 +302,10 @@ public class DetailFragment extends BaseFragment {
                     }
 
                     if (houseItem.getPointsOfInterest() != null) {
+                        Log.d("house", String.valueOf(houseItem.getPointsOfInterest()));
+                        if (houseItem.getPointsOfInterest().size() > 0) {
+                            Log.d("house", houseItem.getPointsOfInterest().get(0));
+                        }
                         pointsOfInterest.setText("");
                         for (int i = 0; i < houseItem.getPointsOfInterest().size(); i++) {
 
@@ -313,11 +313,14 @@ public class DetailFragment extends BaseFragment {
                                 pointsOfInterest.append(houseItem.getPointsOfInterest().get(i));
                             } else {
                                 pointsOfInterest.append(houseItem.getPointsOfInterest().get(i) + ", ");
+
                             }
                         }
                     } else {
                         pointsOfInterest.setVisibility(View.INVISIBLE);
                         inter.setVisibility(View.INVISIBLE);
+                        Log.d("house", houseItem.getPointsOfInterest().get(0) + "ELSEEEEEE");
+
                     }
 
 

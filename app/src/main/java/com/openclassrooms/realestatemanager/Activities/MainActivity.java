@@ -99,15 +99,15 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
                 Intent addIntent = new Intent(this, AddActivity.class);
                 startActivity(addIntent);
                 break;
-            case R.id.navbar_edit:
-                //Edit Activity
-                break;
             case R.id.navbar_search:
-                //AlertDialog Search Thing
+                openSearchAlertDialog();
                 break;
         }
 
         return true;
+    }
+
+    private void openSearchAlertDialog() {
     }
 
     private void configureNavigationView() {

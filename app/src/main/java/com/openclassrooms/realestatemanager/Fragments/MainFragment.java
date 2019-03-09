@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -100,6 +101,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 holder.setQuickLocation(model.getCity());
                 holder.setType(model.getType());
                 holder.setPicture(model.getMainPicture());
+
+                Log.d("addAdebugger", model.getMainPicture() + "lol");
 
                 holder.relativeLayout.setOnClickListener(v -> {
                     holder.setClickAction(model.getId());

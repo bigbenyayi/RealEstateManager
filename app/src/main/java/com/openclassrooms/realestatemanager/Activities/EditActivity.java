@@ -36,6 +36,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.openclassrooms.realestatemanager.Models.FirebaseRequestHandler;
 import com.openclassrooms.realestatemanager.Models.HorizontalRecyclerViewItem;
 import com.openclassrooms.realestatemanager.Models.MyHorizontalAdapter;
 import com.openclassrooms.realestatemanager.Models.MyHorizontalPictureAdapter;
@@ -298,7 +299,8 @@ public class EditActivity extends AppCompatActivity {
                                     dataToSave.put("mainPicture", url);
                                 }
                                 dataToSave.put("pictures", arrayOfPics);
-                                dataToSave.put("rooms", arrayOfDesc);
+                                dataToSave.put("rooms", adapter.getUpdatedlist());
+
                                 if (soldStatusChanged) {
                                     if (sold) {
                                         dataToSave.put("sold", dateFormat.format(date));
@@ -437,7 +439,17 @@ public class EditActivity extends AppCompatActivity {
 
 
                     cityET.setText((String) documentSnapshot.get("city"));
-                    Picasso.get().load((String) documentSnapshot.get("mainPicture")).into(mainPicImageView);
+
+//                    StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl();
+
+                    Picasso picassoInstance = new  Picasso.Builder(this.getApplicationContext())
+                            .addRequestHandler(new FirebaseRequestHandler())
+                            .build();
+                    picassoInstance.load((String) documentSnapshot.get("mainPicture"))
+                            .fit().centerInside()
+                            .into(mainPicImageView);
+
+                 //   Picasso.get().load((String) documentSnapshot.get("mainPicture")).into(mainPicImageView);
                     descriptionET.setText((String) documentSnapshot.get("description"));
                     locationET.setText((String) documentSnapshot.get("location"));
                     //RECYCLER
@@ -453,7 +465,6 @@ public class EditActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     @SuppressLint("ClickableViewAccessibility")
