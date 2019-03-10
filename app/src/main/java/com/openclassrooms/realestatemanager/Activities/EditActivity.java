@@ -20,10 +20,12 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,6 +59,10 @@ import java.util.UUID;
 public class EditActivity extends AppCompatActivity {
 
     TextView title;
+    RelativeLayout basicRL;
+    RelativeLayout detailRL;
+    RelativeLayout charaRL;
+
     //Basics
     TextView typeTV;
     EditText typeET;
@@ -87,7 +93,6 @@ public class EditActivity extends AppCompatActivity {
     Button soldButton;
     //Cara
     TextView pointOfInterestTV;
-    EditText pointOfInterestET;
     TextView surfaceTV;
     EditText surfaceET;
     TextView bathroomTV;
@@ -100,6 +105,9 @@ public class EditActivity extends AppCompatActivity {
     ImageView interestsIcon;
     ProgressBar progressBar;
     Boolean mainPicGetsChanged = false;
+    CheckBox restaurantCB;
+    CheckBox schoolCB;
+    CheckBox parkCB;
     //Buttons
     Button backButton;
     Button nextButton;
@@ -111,7 +119,6 @@ public class EditActivity extends AppCompatActivity {
     String url;
     String urlAdd;
     ArrayList<String> interestsArray = new ArrayList<>();
-    RecyclerView mRecyclerViewPOI;
     ArrayList<HorizontalRecyclerViewItem> listOfPicturesAndDesc = new ArrayList<>();
     ArrayList<String> arrayOfPics = new ArrayList<>();
     ArrayList<String> arrayOfDesc = new ArrayList<>();
@@ -141,7 +148,6 @@ public class EditActivity extends AppCompatActivity {
         setInitialViews();
         setButtonAction();
         setImagePickers();
-
 
 
         soldButton.setOnClickListener(v -> {
@@ -272,58 +278,61 @@ public class EditActivity extends AppCompatActivity {
                             });
                         });
                     }
-                        // SAVE EVERYTHING TO FIRESTOOOORE HERE
+                    // SAVE EVERYTHING TO FIRESTOOOORE HERE
 
-                        DocumentReference mDocRef = FirebaseFirestore.getInstance().collection("house").document();
-                        Intent iin = getIntent();
-                        Bundle b = iin.getExtras();
-                        String id;
+                    DocumentReference mDocRef = FirebaseFirestore.getInstance().collection("house").document();
+                    Intent iin = getIntent();
+                    Bundle b = iin.getExtras();
+                    String id;
 
-                        if (b != null) {
-                            id = (String) b.get("id");
-                        } else {
-                            id = mPrefs.getString("id", null);
-                        }
-                        for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                            if (id.equals(documentSnapshot.get("id"))) {
+                    if (b != null) {
+                        id = (String) b.get("id");
+                    } else {
+                        id = mPrefs.getString("id", null);
+                    }
+                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                        if (id.equals(documentSnapshot.get("id"))) {
 
-                                Map<String, Object> dataToSave = new HashMap<>();
+                            Map<String, Object> dataToSave = new HashMap<>();
 
-                                dataToSave.put("city", cityET.getText().toString());
-                                dataToSave.put("description", descriptionET.getText().toString());
-                                dataToSave.put("location", locationET.getText().toString());
-                                dataToSave.put("numberOfBathrooms", String.valueOf(bathroomsNP.getValue()));
-                                dataToSave.put("numberOfBedrooms", String.valueOf(bedroomsNP.getValue()));
-                                dataToSave.put("numberOfRooms", String.valueOf(roomsNP.getValue()));
-                                if (mainPicGetsChanged) {
-                                    dataToSave.put("mainPicture", url);
-                                }
-                                dataToSave.put("pictures", arrayOfPics);
-                                dataToSave.put("rooms", adapter.getUpdatedlist());
-
-                                if (soldStatusChanged) {
-                                    if (sold) {
-                                        dataToSave.put("sold", dateFormat.format(date));
-                                    } else {
-                                        dataToSave.put("sold", null);
-                                    }
-                                }
-
-                                if (mPrefs.getStringSet("interests", null) != null) {
-                                    List<String> newArray = new ArrayList<>(mPrefs.getStringSet("interests", null));
-                                    dataToSave.put("pointOfInterest", newArray);
-                                    mPrefs.edit().putStringSet("interests", null).apply();
-                                } else {
-                                    dataToSave.put("pointOfInterest", interestsArray);
-                                }
-                                dataToSave.put("price", priceET.getText().toString());
-                                dataToSave.put("surface", surfaceET.getText().toString());
-                                dataToSave.put("type", typeET.getText().toString());
-
-
-                                notebookRef.document(documentSnapshot.getId()).set(dataToSave, SetOptions.merge());
+                            dataToSave.put("city", cityET.getText().toString());
+                            dataToSave.put("description", descriptionET.getText().toString());
+                            dataToSave.put("location", locationET.getText().toString());
+                            dataToSave.put("numberOfBathrooms", String.valueOf(bathroomsNP.getValue()));
+                            dataToSave.put("numberOfBedrooms", String.valueOf(bedroomsNP.getValue()));
+                            dataToSave.put("numberOfRooms", String.valueOf(roomsNP.getValue()));
+                            if (mainPicGetsChanged) {
+                                dataToSave.put("mainPicture", url);
                             }
+                            dataToSave.put("pictures", arrayOfPics);
+                            dataToSave.put("rooms", adapter.getUpdatedlist());
+
+                            if (soldStatusChanged) {
+                                if (sold) {
+                                    dataToSave.put("sold", dateFormat.format(date));
+                                } else {
+                                    dataToSave.put("sold", null);
+                                }
+                            }
+
+
+                            interestsArray.clear();
+                            if (schoolCB.isChecked()){
+                                interestsArray.add("School");
+                            }if (restaurantCB.isChecked()){
+                                interestsArray.add("Restaurant");
+                            }if (parkCB.isChecked()){
+                                interestsArray.add("Park");
+                            }
+                            dataToSave.put("pointOfInterest", interestsArray);
+                            dataToSave.put("price", priceET.getText().toString());
+                            dataToSave.put("surface", surfaceET.getText().toString());
+                            dataToSave.put("type", typeET.getText().toString());
+
+
+                            notebookRef.document(documentSnapshot.getId()).set(dataToSave, SetOptions.merge());
                         }
+                    }
                 });
 
                 finish();
@@ -345,49 +354,9 @@ public class EditActivity extends AppCompatActivity {
 
         title.setText("Basics");
 
-        descriptionTV.setVisibility(View.INVISIBLE);
-        descriptionET.setVisibility(View.INVISIBLE);
-        locationTV.setVisibility(View.INVISIBLE);
-        locationET.setVisibility(View.INVISIBLE);
-        pointOfInterestTV.setVisibility(View.INVISIBLE);
-        pointOfInterestET.setVisibility(View.INVISIBLE);
-        surfaceTV.setVisibility(View.INVISIBLE);
-        surfaceET.setVisibility(View.INVISIBLE);
-        bathroomTV.setVisibility(View.INVISIBLE);
-        bedroomTV.setVisibility(View.INVISIBLE);
-        roomTV.setVisibility(View.INVISIBLE);
-        bathroomsNP.setVisibility(View.INVISIBLE);
-        bedroomsNP.setVisibility(View.INVISIBLE);
-        roomsNP.setVisibility(View.INVISIBLE);
-        locationIcon.setVisibility(View.INVISIBLE);
-        descriptionIcon.setVisibility(View.INVISIBLE);
-        roomsIcon.setVisibility(View.INVISIBLE);
-        bedroomsIcon.setVisibility(View.INVISIBLE);
-        bathroomsIcon.setVisibility(View.INVISIBLE);
-        interestsIcon.setVisibility(View.INVISIBLE);
-        surfaceIcon.setVisibility(View.INVISIBLE);
-        soldButton.setVisibility(View.VISIBLE);
-
-        typeTV.setVisibility(View.VISIBLE);
-        typeET.setVisibility(View.VISIBLE);
-        priceTV.setVisibility(View.VISIBLE);
-        priceET.setVisibility(View.VISIBLE);
-        cityTV.setVisibility(View.VISIBLE);
-        cityET.setVisibility(View.VISIBLE);
-        uploadFileTV.setVisibility(View.VISIBLE);
-        mainPicImageView.setVisibility(View.VISIBLE);
-        Picasso.get().load("https://maps.googleapis.com/maps/api/staticmap?center=Berkeley,CA&zoom=14&size=400x400&key=AIzaSyCK4wzbd9vuzvZ9DoIzQZv51TUs-MkQ7eI").into(mainPicImageView);
-        chooseMainPicButton.setVisibility(View.VISIBLE);
-        typeIcon.setVisibility(View.VISIBLE);
-        priceIcon.setVisibility(View.VISIBLE);
-        cityIcon.setVisibility(View.VISIBLE);
-        sidePicturesTV.setVisibility(View.INVISIBLE);
-        addAPictureButton.setVisibility(View.INVISIBLE);
-        addAPictureIV.setVisibility(View.INVISIBLE);
-        pictureDescriptionET.setVisibility(View.INVISIBLE);
-        addButton.setVisibility(View.INVISIBLE);
-        horizontalRecyclerViewAdd.setVisibility(View.INVISIBLE);
-        progressBar.setVisibility(View.INVISIBLE);
+        basicRL.setVisibility(View.VISIBLE);
+        charaRL.setVisibility(View.INVISIBLE);
+        detailRL.setVisibility(View.INVISIBLE);
 
         nextButton.setText("Next (1/3)");
 
@@ -431,7 +400,7 @@ public class EditActivity extends AppCompatActivity {
                     priceET.setText((String) documentSnapshot.get("price"));
                     ArrayList<String> size = (ArrayList) documentSnapshot.get("pictures");
                     ArrayList<String> size2 = (ArrayList) documentSnapshot.get("rooms");
-                    for (int i = 0; i<size.size(); i++){
+                    for (int i = 0; i < size.size(); i++) {
                         listOfPicturesAndDesc.add(new HorizontalRecyclerViewItem(size.get(i), size2.get(i)));
                     }
                     adapter = new MyHorizontalPictureAdapter(this, listOfPicturesAndDesc);
@@ -442,14 +411,14 @@ public class EditActivity extends AppCompatActivity {
 
 //                    StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl();
 
-                    Picasso picassoInstance = new  Picasso.Builder(this.getApplicationContext())
+                    Picasso picassoInstance = new Picasso.Builder(this.getApplicationContext())
                             .addRequestHandler(new FirebaseRequestHandler())
                             .build();
                     picassoInstance.load((String) documentSnapshot.get("mainPicture"))
                             .fit().centerInside()
                             .into(mainPicImageView);
 
-                 //   Picasso.get().load((String) documentSnapshot.get("mainPicture")).into(mainPicImageView);
+                    //   Picasso.get().load((String) documentSnapshot.get("mainPicture")).into(mainPicImageView);
                     descriptionET.setText((String) documentSnapshot.get("description"));
                     locationET.setText((String) documentSnapshot.get("location"));
                     //RECYCLER
@@ -459,9 +428,19 @@ public class EditActivity extends AppCompatActivity {
                     bathroomsNP.setValue(Integer.valueOf((String) documentSnapshot.get("numberOfBathrooms")));
                     bedroomsNP.setValue(Integer.valueOf((String) documentSnapshot.get("numberOfBedrooms")));
                     roomsNP.setValue(Integer.valueOf((String) documentSnapshot.get("numberOfRooms")));
-                    mRecyclerViewPOI.setAdapter(new SimpleRVAdapter(this, (List<String>) documentSnapshot.get("pointOfInterest")));
+                    interestsArray = (ArrayList<String>) documentSnapshot.get("pointOfInterest");
 
-
+                    for (int i = 0; i < interestsArray.size(); i++){
+                        if (interestsArray.get(i).equalsIgnoreCase("Park")){
+                            parkCB.setChecked(true);
+                        }
+                        if (interestsArray.get(i).equalsIgnoreCase("Restaurant")){
+                            restaurantCB.setChecked(true);
+                        }
+                        if (interestsArray.get(i).equalsIgnoreCase("School")){
+                            schoolCB.setChecked(true);
+                        }
+                    }
                 }
             }
         });
@@ -472,6 +451,9 @@ public class EditActivity extends AppCompatActivity {
 
         //Fetching all TV and ET
         title = findViewById(R.id.title);
+        basicRL = findViewById(R.id.basicRL);
+        charaRL = findViewById(R.id.charaRL);
+        detailRL = findViewById(R.id.detailRL);
 
         //Basics
         typeTV = findViewById(R.id.houseTypeTV);
@@ -503,18 +485,16 @@ public class EditActivity extends AppCompatActivity {
         horizontalRecyclerViewAdd = findViewById(R.id.horizontalRecyclerViewAdd);
         progressBar = findViewById(R.id.progressBar);
 
-
         //Cara
         pointOfInterestTV = findViewById(R.id.pointsOfInterestTV);
-        pointOfInterestET = findViewById(R.id.pointsOfInterestET);
-        mRecyclerViewPOI = findViewById(R.id.recyclerViewPOI);
         surfaceIcon = findViewById(R.id.surfaceIcon);
         roomsIcon = findViewById(R.id.roomsIcon);
         bedroomsIcon = findViewById(R.id.bedroomsIcon);
         bathroomsIcon = findViewById(R.id.bathroomsIcon);
         interestsIcon = findViewById(R.id.interestsIcon);
-
-        mRecyclerViewPOI.setLayoutManager(new LinearLayoutManager(this));
+        restaurantCB = findViewById(R.id.restaurantCB);
+        schoolCB = findViewById(R.id.schoolCB);
+        parkCB = findViewById(R.id.parkCB);
 
         notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
             Intent iin = getIntent();
@@ -533,32 +513,7 @@ public class EditActivity extends AppCompatActivity {
             }
         });
 
-        pointOfInterestET.setOnTouchListener((v, event) -> {
-            final int DRAWABLE_RIGHT = 2;
-            if (event.getAction() == MotionEvent.ACTION_UP) {
-                if (event.getRawX() >= (pointOfInterestET.getRight() - pointOfInterestET.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
-                    if (numberMaxPOI == 0) {
-                        numberMaxPOI = interestArrayFromDB.size();
-                        interestsArray = interestArrayFromDB;
-                    }
-                    numberMaxPOI++;
 
-                    if (numberMaxPOI <= 5) {
-                        interestsArray.add(pointOfInterestET.getText().toString());
-                        pointOfInterestET.setText("");
-                    } else {
-                        Toast.makeText(this, "You have reached the limit", Toast.LENGTH_SHORT).show();
-                        pointOfInterestET.setText("");
-                    }
-                    mRecyclerViewPOI.setAdapter(new SimpleRVAdapter(this, interestsArray));
-                    Toast.makeText(this, "Added successfully", Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-
-            }
-
-            return false;
-        });
 
         surfaceTV = findViewById(R.id.surfaceTV);
         surfaceET = findViewById(R.id.surfaceET);
@@ -610,23 +565,6 @@ public class EditActivity extends AppCompatActivity {
             }
             return true;
         });
-
-        pointOfInterestET.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                numberMaxPOI++;
-
-                if (numberMaxPOI <= 5) {
-                    interestsArray.add(pointOfInterestET.getText().toString());
-                    pointOfInterestET.setText("");
-                } else {
-                    Toast.makeText(this, "You have reached the limit", Toast.LENGTH_SHORT).show();
-                    pointOfInterestET.setText("");
-                }
-                mRecyclerViewPOI.setAdapter(new SimpleRVAdapter(this, interestsArray));
-                Toast.makeText(this, "Added successfully", Toast.LENGTH_SHORT).show();
-            }
-            return true;
-        });
     }
 
     private void setCorrectTVs() {
@@ -639,143 +577,28 @@ public class EditActivity extends AppCompatActivity {
             nextButton.setText("Next (1/3)");
             title.setText("Basics");
 
-            descriptionTV.setVisibility(View.INVISIBLE);
-            descriptionET.setVisibility(View.INVISIBLE);
-            locationTV.setVisibility(View.INVISIBLE);
-            locationET.setVisibility(View.INVISIBLE);
-            pointOfInterestTV.setVisibility(View.INVISIBLE);
-            pointOfInterestET.setVisibility(View.INVISIBLE);
-            surfaceTV.setVisibility(View.INVISIBLE);
-            surfaceET.setVisibility(View.INVISIBLE);
-            bathroomTV.setVisibility(View.INVISIBLE);
-            bedroomTV.setVisibility(View.INVISIBLE);
-            roomTV.setVisibility(View.INVISIBLE);
-            bathroomsNP.setVisibility(View.INVISIBLE);
-            bedroomsNP.setVisibility(View.INVISIBLE);
-            roomsNP.setVisibility(View.INVISIBLE);
-            locationIcon.setVisibility(View.INVISIBLE);
-            descriptionIcon.setVisibility(View.INVISIBLE);
-            uploadFileTV.setVisibility(View.VISIBLE);
-            mainPicImageView.setVisibility(View.VISIBLE);
-            chooseMainPicButton.setVisibility(View.VISIBLE);
-            roomsIcon.setVisibility(View.INVISIBLE);
-            bedroomsIcon.setVisibility(View.INVISIBLE);
-            bathroomsIcon.setVisibility(View.INVISIBLE);
-            interestsIcon.setVisibility(View.INVISIBLE);
-            surfaceIcon.setVisibility(View.INVISIBLE);
-            soldButton.setVisibility(View.VISIBLE);
-            mRecyclerViewPOI.setVisibility(View.INVISIBLE);
-
-            typeTV.setVisibility(View.VISIBLE);
-            typeET.setVisibility(View.VISIBLE);
-            priceTV.setVisibility(View.VISIBLE);
-            priceET.setVisibility(View.VISIBLE);
-            cityTV.setVisibility(View.VISIBLE);
-            cityET.setVisibility(View.VISIBLE);
-            typeIcon.setVisibility(View.VISIBLE);
-            priceIcon.setVisibility(View.VISIBLE);
-            cityIcon.setVisibility(View.VISIBLE);
-            sidePicturesTV.setVisibility(View.INVISIBLE);
-            addAPictureButton.setVisibility(View.INVISIBLE);
-            addAPictureIV.setVisibility(View.INVISIBLE);
-            pictureDescriptionET.setVisibility(View.INVISIBLE);
-            addButton.setVisibility(View.INVISIBLE);
-            horizontalRecyclerViewAdd.setVisibility(View.INVISIBLE);
-            progressBar.setVisibility(View.INVISIBLE);
+            basicRL.setVisibility(View.VISIBLE);
+            charaRL.setVisibility(View.INVISIBLE);
+            detailRL.setVisibility(View.INVISIBLE);
 
         } else if (mPrefs.getInt("addNumber", 1) == 2) {
             backButton.setText("Back");
             nextButton.setText("Next (2/3)");
 
             title.setText("Details");
-            descriptionTV.setVisibility(View.VISIBLE);
-            descriptionET.setVisibility(View.VISIBLE);
-            locationTV.setVisibility(View.VISIBLE);
-            locationET.setVisibility(View.VISIBLE);
-            pointOfInterestTV.setVisibility(View.INVISIBLE);
-            pointOfInterestET.setVisibility(View.INVISIBLE);
-            surfaceTV.setVisibility(View.INVISIBLE);
-            surfaceET.setVisibility(View.INVISIBLE);
-            bathroomTV.setVisibility(View.INVISIBLE);
-            bedroomTV.setVisibility(View.INVISIBLE);
-            roomTV.setVisibility(View.INVISIBLE);
-            typeTV.setVisibility(View.INVISIBLE);
-            typeET.setVisibility(View.INVISIBLE);
-            priceTV.setVisibility(View.INVISIBLE);
-            priceET.setVisibility(View.INVISIBLE);
-            cityTV.setVisibility(View.INVISIBLE);
-            cityET.setVisibility(View.INVISIBLE);
-            bathroomsNP.setVisibility(View.INVISIBLE);
-            bedroomsNP.setVisibility(View.INVISIBLE);
-            roomsNP.setVisibility(View.INVISIBLE);
-            uploadFileTV.setVisibility(View.INVISIBLE);
-            chooseMainPicButton.setVisibility(View.INVISIBLE);
-            mainPicImageView.setVisibility(View.INVISIBLE);
-            typeIcon.setVisibility(View.INVISIBLE);
-            priceIcon.setVisibility(View.INVISIBLE);
-            cityIcon.setVisibility(View.INVISIBLE);
-            locationIcon.setVisibility(View.VISIBLE);
-            descriptionIcon.setVisibility(View.VISIBLE);
-            roomsIcon.setVisibility(View.INVISIBLE);
-            bedroomsIcon.setVisibility(View.INVISIBLE);
-            bathroomsIcon.setVisibility(View.INVISIBLE);
-            interestsIcon.setVisibility(View.INVISIBLE);
-            surfaceIcon.setVisibility(View.INVISIBLE);
-            sidePicturesTV.setVisibility(View.VISIBLE);
-            addAPictureButton.setVisibility(View.VISIBLE);
-            addAPictureIV.setVisibility(View.VISIBLE);
-            pictureDescriptionET.setVisibility(View.VISIBLE);
-            addButton.setVisibility(View.VISIBLE);
-            horizontalRecyclerViewAdd.setVisibility(View.VISIBLE);
-            soldButton.setVisibility(View.INVISIBLE);
-            mRecyclerViewPOI.setVisibility(View.INVISIBLE);
+            progressBar.setVisibility(View.INVISIBLE);
+            basicRL.setVisibility(View.INVISIBLE);
+            charaRL.setVisibility(View.INVISIBLE);
+            detailRL.setVisibility(View.VISIBLE);
 
         } else if (mPrefs.getInt("addNumber", 1) == 3) {
             nextButton.setText("Edit listing");
             backButton.setText("Back");
 
             title.setText("Characteristics");
-            descriptionTV.setVisibility(View.INVISIBLE);
-            descriptionET.setVisibility(View.INVISIBLE);
-            locationTV.setVisibility(View.INVISIBLE);
-            locationET.setVisibility(View.INVISIBLE);
-            pointOfInterestTV.setVisibility(View.VISIBLE);
-            pointOfInterestET.setVisibility(View.VISIBLE);
-            surfaceTV.setVisibility(View.VISIBLE);
-            surfaceET.setVisibility(View.VISIBLE);
-            bathroomTV.setVisibility(View.VISIBLE);
-            bedroomTV.setVisibility(View.VISIBLE);
-            roomTV.setVisibility(View.VISIBLE);
-            typeTV.setVisibility(View.INVISIBLE);
-            typeET.setVisibility(View.INVISIBLE);
-            priceTV.setVisibility(View.INVISIBLE);
-            priceET.setVisibility(View.INVISIBLE);
-            cityTV.setVisibility(View.INVISIBLE);
-            cityET.setVisibility(View.INVISIBLE);
-            soldButton.setVisibility(View.INVISIBLE);
-            bathroomsNP.setVisibility(View.VISIBLE);
-            bedroomsNP.setVisibility(View.VISIBLE);
-            roomsNP.setVisibility(View.VISIBLE);
-            uploadFileTV.setVisibility(View.INVISIBLE);
-            chooseMainPicButton.setVisibility(View.INVISIBLE);
-            mainPicImageView.setVisibility(View.INVISIBLE);
-            typeIcon.setVisibility(View.INVISIBLE);
-            priceIcon.setVisibility(View.INVISIBLE);
-            cityIcon.setVisibility(View.INVISIBLE);
-            locationIcon.setVisibility(View.INVISIBLE);
-            descriptionIcon.setVisibility(View.INVISIBLE);
-            roomsIcon.setVisibility(View.VISIBLE);
-            bedroomsIcon.setVisibility(View.VISIBLE);
-            bathroomsIcon.setVisibility(View.VISIBLE);
-            interestsIcon.setVisibility(View.VISIBLE);
-            surfaceIcon.setVisibility(View.VISIBLE);
-            sidePicturesTV.setVisibility(View.INVISIBLE);
-            addAPictureButton.setVisibility(View.INVISIBLE);
-            addAPictureIV.setVisibility(View.INVISIBLE);
-            pictureDescriptionET.setVisibility(View.INVISIBLE);
-            addButton.setVisibility(View.INVISIBLE);
-            horizontalRecyclerViewAdd.setVisibility(View.INVISIBLE);
-            mRecyclerViewPOI.setVisibility(View.VISIBLE);
+            basicRL.setVisibility(View.INVISIBLE);
+            charaRL.setVisibility(View.VISIBLE);
+            detailRL.setVisibility(View.INVISIBLE);
 
         }
     }
