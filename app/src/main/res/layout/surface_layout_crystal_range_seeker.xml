@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/cardViewGeneralStyle"
+    app:contentPaddingLeft="10dp"
+    app:contentPaddingRight="10dp"
+    app:contentPaddingTop="10dp">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/surfaceTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Surface in m² (0 - 100)" />
+
+        <com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar
+            android:id="@+id/surfaceCRS"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/surfaceTV"
+            android:layout_margin="10dp"
+            android:layout_marginTop="20dp"
+            app:bar_color="#ffb3cc"
+            app:bar_highlight_color="@color/colorAccent"
+            app:corner_radius="10"
+            app:data_type="_integer"
+            app:gap="20"
+            app:left_thumb_color="#e6004c"
+            app:left_thumb_color_pressed="#990033"
+            app:max_value="100"
+            app:min_value="0"
+            app:right_thumb_color="#e6004c"
+            app:right_thumb_color_pressed="#990033" />
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

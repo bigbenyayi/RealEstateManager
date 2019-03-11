@@ -1,5 +1,7 @@
 package com.openclassrooms.realestatemanager.Models;
 
+import java.util.ArrayList;
+
 public class RecyclerViewItem {
 
     String mainPicture;
@@ -7,15 +9,53 @@ public class RecyclerViewItem {
     String type;
     String city;
     String price;
+    String numberOfRooms;
+    String onMarket;
+    String sold;
+    ArrayList<String> pictures;
+ //   ArrayList<String> pointOfInterest;
+    String surface;
 
     public RecyclerViewItem(){}
 
-    public RecyclerViewItem(String id, String picture, String type, String location, String price) {
-        this.mainPicture = picture;
-        this.type = type;
-        this.city = location;
-        this.price = price;
+    public RecyclerViewItem(String mainPicture, String id, String type, String city,
+                            String price, String numberOfRooms, String onMarket, String sold,
+                            ArrayList<String> pictures, ArrayList<String> pointOfInterest, String surface) {
+        this.mainPicture = mainPicture;
         this.id = id;
+        this.type = type;
+        this.city = city;
+        this.price = price;
+        this.numberOfRooms = numberOfRooms;
+        this.onMarket = onMarket;
+        this.sold = sold;
+        this.pictures = pictures;
+   //     this.pointOfInterest = pointOfInterest;
+        this.surface = surface;
+    }
+
+    public String getNumberOfRooms() {
+        return numberOfRooms;
+    }
+
+    public String getOnMarket() {
+        return onMarket;
+    }
+
+    public String getSold() {
+        return sold;
+    }
+
+    public ArrayList<String> getPictures() {
+        return pictures;
+    }
+
+//    public ArrayList<String> getPointOfInterest() {
+//        return pointOfInterest;
+//    }
+
+    public String getSurface() {
+        return surface;
     }
 
     public String getMainPicture() {

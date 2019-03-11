@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.Activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -30,12 +31,13 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.openclassrooms.realestatemanager.Fragments.DetailFragment;
 import com.openclassrooms.realestatemanager.Fragments.MainFragment;
+import com.openclassrooms.realestatemanager.Models.DialogBuilder;
 import com.openclassrooms.realestatemanager.R;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-public class MainActivity extends AppCompatActivity implements MainFragment.OnButtonClickedListener, NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements MainFragment.OnButtonClickedListener, NavigationView.OnNavigationItemSelectedListener, DialogBuilder.AlertDialogListener {
 
     private static final int SIGN_OUT_TASK = 10;
     private static final int DELETE_USER_TASK = 20;
@@ -73,11 +75,14 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
         toggle.syncState();
 
 
+
         //Configure and show it
         this.configureAndShowMainFragment();
         this.configureAndShowDetailFragment();
         this.configureNavigationView();
     }
+
+
 
     // --------------
     // CallBack
@@ -108,6 +113,8 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
     }
 
     private void openSearchAlertDialog() {
+        DialogBuilder dialogBuilder =  new DialogBuilder();
+        dialogBuilder.show(getSupportFragmentManager(), "example dialog");
     }
 
     private void configureNavigationView() {
@@ -239,5 +246,10 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
 
             }
         };
+    }
+
+    @Override
+    public void fetchData(String city, int roomsMin, int roomsMax, boolean sold, boolean available, String beginDate, String endDate, int photosMin, int photosMax, boolean park, boolean school, boolean restaurant, int surfaceMin, int surfaceMax) {
+
     }
 }

@@ -23,7 +23,9 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.openclassrooms.realestatemanager.Activities.DetailActivity;
+import com.openclassrooms.realestatemanager.Models.DialogBuilder;
 import com.openclassrooms.realestatemanager.Models.RecyclerViewItem;
+import com.openclassrooms.realestatemanager.Models.SearchObject;
 import com.openclassrooms.realestatemanager.R;
 import com.squareup.picasso.Picasso;
 
@@ -34,12 +36,16 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Date;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class MainFragment extends Fragment implements View.OnClickListener {
+public class MainFragment extends Fragment implements View.OnClickListener, DialogBuilder.AlertDialogListener {
 
     // Declare callback
     private OnButtonClickedListener mCallback;
@@ -49,9 +55,11 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     private List<RecyclerViewItem> listItems;
     List<RecyclerViewItem> housesList = new ArrayList<>();
     private FirestoreRecyclerAdapter<RecyclerViewItem, ProductViewHolder> theAdapter;
+    SearchObject mSearchObject;
 
     private DetailFragment detailFragment;
     List<View> itemViewList = new ArrayList<>();
+
 
 
     // Declare our interface that will be implemented by any container activity
@@ -95,14 +103,45 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
             @Override
             protected void onBindViewHolder(@NonNull final ProductViewHolder holder, int position, @NonNull final RecyclerViewItem model) {
+                DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+
+                if (mSearchObject != null) {
+
+                    if (mSearchObject.getCity().equalsIgnoreCase(model.getCity()) && mSearchObject.getCity() == null) {
+                        if (mSearchObject.getRoomsMin() >= Integer.valueOf(model.getNumberOfRooms()) && Integer.valueOf(model.getNumberOfRooms()) >= mSearchObject.getRoomsMax()) {
+                            if (model.getSold() != null && mSearchObject.isSold() || !mSearchObject.isSold() && !mSearchObject.isAvailable()) {
+                                if (model.getSold() == null && mSearchObject.isAvailable() || !mSearchObject.isSold() && !mSearchObject.isAvailable()) {
+                                    if (mSearchObject.getPhotosMin() >= model.getPictures().size() && model.getPictures().size() >= mSearchObject.getPhotosMax()) {
+//                                        if (model.getPointOfInterest().contains("Park") == mSearchObject.isPark() &&
+//                                                model.getPointOfInterest().contains("Restaurant") == mSearchObject.isRestaurant() &&
+//                                                model.getPointOfInterest().contains("School") == mSearchObject.isSchool()) {
+                                            if (mSearchObject.getSurfaceMin() >= Integer.valueOf(model.getSurface()) && Integer.valueOf(model.getSurface()) >= mSearchObject.getSurfaceMax()) {
+                                                try {
+                                                    if (format.parse(mSearchObject.getBeginDate()).after(format.parse(model.getOnMarket())) && format.parse(model.getOnMarket()).after(format.parse(mSearchObject.getEndDate())) || mSearchObject.getBeginDate() == null && mSearchObject.getEndDate() == null) {
+                                                        holder.setPrice(model.getPrice());
+                                                        holder.setQuickLocation(model.getCity());
+                                                        holder.setType(model.getType());
+                                                        holder.setPicture(model.getMainPicture());
+                                                    }
+                                                } catch (ParseException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        }
+//                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    holder.setPrice(model.getPrice());
+                    holder.setQuickLocation(model.getCity());
+                    holder.setType(model.getType());
+                    holder.setPicture(model.getMainPicture());
+                }
 
 
-                holder.setPrice(model.getPrice());
-                holder.setQuickLocation(model.getCity());
-                holder.setType(model.getType());
-                holder.setPicture(model.getMainPicture());
-
-                Log.d("addAdebugger", model.getMainPicture() + "lol");
+                Log.d("addADebugger", model.getMainPicture() + "lol");
 
                 holder.relativeLayout.setOnClickListener(v -> {
                     holder.setClickAction(model.getId());
@@ -127,6 +166,17 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         recyclerView.setAdapter(theAdapter);
 
         return result;
+    }
+
+    @Override
+    public void fetchData(String city, int roomsMin, int roomsMax, boolean sold, boolean available, String beginDate, String endDate, int photosMin, int photosMax, boolean park, boolean school, boolean restaurant, int surfaceMin, int surfaceMax) {
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date date = new Date();
+
+        if (beginDate != null && endDate == null){
+            endDate = dateFormat.format(date);
+        }
+        mSearchObject = new SearchObject(city, roomsMin, roomsMax, sold, available, beginDate, endDate, photosMin, photosMax, park, school, restaurant, surfaceMin, surfaceMax);
     }
 
     @Override
