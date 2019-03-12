@@ -13,7 +13,7 @@ public class RecyclerViewItem {
     String onMarket;
     String sold;
     ArrayList<String> pictures;
- //   ArrayList<String> pointOfInterest;
+    ArrayList<String> pointOfInterest;
     String surface;
 
     public RecyclerViewItem(){}
@@ -30,7 +30,7 @@ public class RecyclerViewItem {
         this.onMarket = onMarket;
         this.sold = sold;
         this.pictures = pictures;
-   //     this.pointOfInterest = pointOfInterest;
+        this.pointOfInterest = pointOfInterest;
         this.surface = surface;
     }
 
@@ -50,9 +50,9 @@ public class RecyclerViewItem {
         return pictures;
     }
 
-//    public ArrayList<String> getPointOfInterest() {
-//        return pointOfInterest;
-//    }
+    public ArrayList<String> getPointOfInterest() {
+        return pointOfInterest;
+    }
 
     public String getSurface() {
         return surface;

@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDialogFragment;
@@ -14,12 +16,20 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
+import com.openclassrooms.realestatemanager.Activities.MainActivity;
 import com.openclassrooms.realestatemanager.R;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+
+import butterknife.internal.ListenerClass;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class DialogBuilder extends AppCompatDialogFragment {
 
@@ -30,6 +40,8 @@ public class DialogBuilder extends AppCompatDialogFragment {
     TextView roomIndicator;
     CrystalRangeSeekbar photosCRS;
     TextView photosIndicator;
+    CrystalRangeSeekbar priceCRS;
+    TextView priceTV;
 
     //Edittext
     EditText cityET;
@@ -54,16 +66,7 @@ public class DialogBuilder extends AppCompatDialogFragment {
     //Pass data via interface
     private AlertDialogListener mListener;
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
 
-        try {
-            mListener = (AlertDialogListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement AlertDialogListener");
-        }
-    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -102,8 +105,8 @@ public class DialogBuilder extends AppCompatDialogFragment {
             }
 
             private void updateLabel() {
-                String myFormat = "MM/dd/yyyy";
-                SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+                String myFormat = "dd/MM/yyyy";
+                SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.ENGLISH);
                 beginDateET.setText(sdf.format(myCalendar.getTime()));
                 beginDate = sdf.format(myCalendar.getTime());
 
@@ -129,8 +132,8 @@ public class DialogBuilder extends AppCompatDialogFragment {
             }
 
             private void updateLabel() {
-                String myFormat = "MM/dd/yyyy";
-                SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+                String myFormat = "dd/MM/yyyy";
+                SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.ENGLISH);
                 endDateET.setText(sdf.format(myCalendar.getTime()));
                 endDateString = sdf.format(myCalendar.getTime());
 
@@ -159,10 +162,19 @@ public class DialogBuilder extends AppCompatDialogFragment {
         builder.setView(view).setTitle("Search")
                 .setNegativeButton("Cancel", (dialog, which) -> {
                     mListener.fetchData(null, 80, 80, false, false, null, null, 80, 80, false,
-                            false, false, 80, 80);
+                            false, false, 80, 80, 80, 80);
+                    SharedPreferences mPrefs = getContext().getSharedPreferences("SHARED", MODE_PRIVATE);
+                    mPrefs.edit().putInt("roomsMax", 80).apply();
+                    Intent myIntent = new Intent(getContext(), MainActivity.class);
+                    myIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    startActivity(myIntent);
+
                 })
                 .setPositiveButton("Search", (dialog, which) -> {
-                fetchAllData();
+                    fetchAllData();
+                    Intent myIntent = new Intent(getContext(), MainActivity.class);
+                    myIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    startActivity(myIntent);
                 });
     }
 
@@ -171,6 +183,7 @@ public class DialogBuilder extends AppCompatDialogFragment {
         View surfaceIncludeView = view.findViewById(R.id.card_view_surface_area_id);
         View roomsIncludeView = view.findViewById(R.id.card_view_rooms_id);
         View photosIncludeView = view.findViewById(R.id.card_view_photos_id);
+        View priceIncludeView = view.findViewById(R.id.card_view_price_id);
 
         //////////////////////////
 
@@ -190,6 +203,15 @@ public class DialogBuilder extends AppCompatDialogFragment {
         photosIndicator = photosIncludeView.findViewById(R.id.photosTV);
         photosCRS.setOnRangeSeekbarChangeListener((minValue, maxValue) -> photosIndicator.setText("Number of pictures available (" + minValue + " - " + maxValue + ")"));
 
+        //////////////////////////
+
+        priceCRS = priceIncludeView.findViewById(R.id.priceCRS);
+        priceTV = priceIncludeView.findViewById(R.id.priceTV);
+        priceCRS.setOnRangeSeekbarChangeListener((minValue, maxValue) -> {
+            String minValueString = String.format("%,d", minValue);
+            String maxValueString = String.format("%,d", maxValue);
+            priceTV.setText("Price in $ (" + minValueString + " - " + maxValueString + ")");
+        });
     }
 
     private void fetchAllData() {
@@ -208,15 +230,28 @@ public class DialogBuilder extends AppCompatDialogFragment {
                 restaurantCB.isChecked(),
                 schoolCB.isChecked(),
                 surfaceCRS.getSelectedMinValue().intValue(),
-                surfaceCRS.getSelectedMaxValue().intValue());
+                surfaceCRS.getSelectedMaxValue().intValue(),
+                priceCRS.getSelectedMinValue().intValue(),
+                priceCRS.getSelectedMaxValue().intValue());
 
     }
 
-    public interface AlertDialogListener{
+    public interface AlertDialogListener {
         void fetchData(String city, int roomsMin, int roomsMax, boolean sold, boolean available,
                        String beginDate, String endDate, int photosMin, int photosMax, boolean park,
-                       boolean school, boolean restaurant, int surfaceMin, int surfaceMax);
+                       boolean school, boolean restaurant, int surfaceMin, int surfaceMax, int priceMin, int priceMax);
 
 
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            mListener = (AlertDialogListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + " must implement AlertDialogListener");
+        }
     }
 }

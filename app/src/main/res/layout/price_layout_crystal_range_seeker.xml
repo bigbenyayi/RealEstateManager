@@ -11,27 +11,27 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/surfaceTV"
+            android:id="@+id/priceTV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Surface in m² (0 - 1000)" />
+            android:text="Price in $ (0 - 100,000,000)" />
 
         <com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar
-            android:id="@+id/surfaceCRS"
+            android:id="@+id/priceCRS"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/surfaceTV"
+            android:layout_below="@+id/priceTV"
             android:layout_margin="10dp"
             android:layout_marginTop="20dp"
             app:bar_color="#ffb3cc"
             app:bar_highlight_color="@color/colorAccent"
             app:corner_radius="10"
             app:data_type="_integer"
-            app:gap="20"
+            app:gap="20000"
             app:left_thumb_color="#e6004c"
             app:left_thumb_color_pressed="#990033"
-            app:max_value="1000"
+            app:max_value="100000000"
             app:min_value="0"
             app:right_thumb_color="#e6004c"
             app:right_thumb_color_pressed="#990033" />

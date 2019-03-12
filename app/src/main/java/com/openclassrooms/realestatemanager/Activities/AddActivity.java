@@ -13,6 +13,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -284,7 +286,7 @@ public class AddActivity extends AppCompatActivity {
                             }
                             dataToSave.put("pointOfInterest", interestsArray);
 
-                            dataToSave.put("price", priceET.getText().toString());
+                            dataToSave.put("price", priceET.getText().toString().replace(",",""));
                             dataToSave.put("surface", surfaceET.getText().toString());
                             dataToSave.put("type", typeET.getText().toString());
                             dataToSave.put("realtor", mPrefs.getString("username", "Realtor"));
@@ -422,6 +424,47 @@ public class AddActivity extends AppCompatActivity {
                 cityET.requestFocus();
             }
             return true;
+        });
+
+        priceET.addTextChangedListener(new TextWatcher() {
+
+            boolean isManualChange = false;
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (isManualChange) {
+                    isManualChange = false;
+                    return;
+                }
+                try {
+                    String value = s.toString().replace(",", "");
+                    String reverseValue = new StringBuilder(value).reverse()
+                            .toString();
+                    StringBuilder finalValue = new StringBuilder();
+                    for (int i = 1; i <= reverseValue.length(); i++) {
+                        char val = reverseValue.charAt(i - 1);
+                        finalValue.append(val);
+                        if (i % 3 == 0 && i != reverseValue.length() && i > 0) {
+                            finalValue.append(",");
+                        }
+                    }
+                    isManualChange = true;
+                    priceET.setText(finalValue.reverse());
+                    priceET.setSelection(finalValue.length());
+                } catch (Exception e) {
+                    // Do nothing since not a number
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
         });
 
         cityET.setOnEditorActionListener((v, actionId, event) -> {

@@ -38,7 +38,7 @@
             android:id="@+id/cityLL"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/cityCV">
+            android:layout_below="@+id/priceLL">
 
             <include
                 android:id="@+id/card_view_rooms_id"
@@ -276,5 +276,17 @@
                 android:id="@+id/card_view_surface_area_id"
                 layout="@layout/surface_layout_crystal_range_seeker" />
         </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/priceLL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/cityCV">
+
+            <include
+                android:id="@+id/card_view_price_id"
+                layout="@layout/price_layout_crystal_range_seeker" />
+        </LinearLayout>
     </RelativeLayout>
+
 </ScrollView>

@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -249,7 +250,23 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
     }
 
     @Override
-    public void fetchData(String city, int roomsMin, int roomsMax, boolean sold, boolean available, String beginDate, String endDate, int photosMin, int photosMax, boolean park, boolean school, boolean restaurant, int surfaceMin, int surfaceMax) {
-
+    public void fetchData(String city, int roomsMin, int roomsMax, boolean sold, boolean available, String beginDate, String endDate, int photosMin, int photosMax, boolean park, boolean school, boolean restaurant, int surfaceMin, int surfaceMax, int priceMin, int priceMax) {
+        SharedPreferences mPrefs = getSharedPreferences("SHARED", MODE_PRIVATE);
+        mPrefs.edit().putString("city", city).apply();
+        mPrefs.edit().putInt("roomsMin", roomsMin).apply();
+        mPrefs.edit().putInt("roomsMax", roomsMax).apply();
+        mPrefs.edit().putBoolean("sold", sold).apply();
+        mPrefs.edit().putBoolean("available", available).apply();
+        mPrefs.edit().putString("beginDate", beginDate).apply();
+        mPrefs.edit().putString("endDate", endDate).apply();
+        mPrefs.edit().putInt("photosMin", photosMin).apply();
+        mPrefs.edit().putInt("photosMax", photosMax).apply();
+        mPrefs.edit().putBoolean("park", park).apply();
+        mPrefs.edit().putBoolean("school", school).apply();
+        mPrefs.edit().putBoolean("restaurant", restaurant).apply();
+        mPrefs.edit().putInt("surfaceMin", surfaceMin).apply();
+        mPrefs.edit().putInt("surfaceMax", surfaceMax).apply();
+        mPrefs.edit().putInt("priceMax", surfaceMax).apply();
+        mPrefs.edit().putInt("priceMin", surfaceMax).apply();
     }
 }

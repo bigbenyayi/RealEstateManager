@@ -15,6 +15,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -325,7 +327,7 @@ public class EditActivity extends AppCompatActivity {
                                 interestsArray.add("Park");
                             }
                             dataToSave.put("pointOfInterest", interestsArray);
-                            dataToSave.put("price", priceET.getText().toString());
+                            dataToSave.put("price", priceET.getText().toString().replace(",", ""));
                             dataToSave.put("surface", surfaceET.getText().toString());
                             dataToSave.put("type", typeET.getText().toString());
 
@@ -397,7 +399,10 @@ public class EditActivity extends AppCompatActivity {
                             soldButton.setBackgroundColor(Color.parseColor("#696969"));
                         }
                     }
-                    priceET.setText((String) documentSnapshot.get("price"));
+                    String priceString = (String) documentSnapshot.get("price");
+                    int priceInt = Integer.valueOf(priceString);
+                    String priceWithComas = String.format("%,d", priceInt);
+                    priceET.setText(priceWithComas);
                     ArrayList<String> size = (ArrayList) documentSnapshot.get("pictures");
                     ArrayList<String> size2 = (ArrayList) documentSnapshot.get("rooms");
                     for (int i = 0; i < size.size(); i++) {
@@ -405,7 +410,6 @@ public class EditActivity extends AppCompatActivity {
                     }
                     adapter = new MyHorizontalPictureAdapter(this, listOfPicturesAndDesc);
                     horizontalRecyclerViewAdd.setAdapter(adapter);
-
 
                     cityET.setText((String) documentSnapshot.get("city"));
 
@@ -442,6 +446,47 @@ public class EditActivity extends AppCompatActivity {
                         }
                     }
                 }
+            }
+        });
+
+        priceET.addTextChangedListener(new TextWatcher() {
+
+            Boolean isManualChange = false;
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (isManualChange) {
+                    isManualChange = false;
+                    return;
+                }
+                try {
+                    String value = s.toString().replace(",", "");
+                    String reverseValue = new StringBuilder(value).reverse()
+                            .toString();
+                    StringBuilder finalValue = new StringBuilder();
+                    for (int i = 1; i <= reverseValue.length(); i++) {
+                        char val = reverseValue.charAt(i - 1);
+                        finalValue.append(val);
+                        if (i % 3 == 0 && i != reverseValue.length() && i > 0) {
+                            finalValue.append(",");
+                        }
+                    }
+                    isManualChange = true;
+                    priceET.setText(finalValue.reverse());
+                    priceET.setSelection(finalValue.length());
+                } catch (Exception e) {
+                    // Do nothing since not a number
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
     }
