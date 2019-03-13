@@ -206,6 +206,7 @@ public class EditActivity extends AppCompatActivity {
 
                 urlAdd = uri.toString();
                 listOfPicturesAndDesc.add(new HorizontalRecyclerViewItem(urlAdd, pictureDescriptionET.getText().toString()));
+
                 arrayOfPics.add(urlAdd);
                 arrayOfDesc.add(pictureDescriptionET.getText().toString());
                 addAPictureIV.setImageResource(0);
@@ -307,30 +308,35 @@ public class EditActivity extends AppCompatActivity {
                                 dataToSave.put("mainPicture", url);
                             }
                             dataToSave.put("pictures", arrayOfPics);
-                            dataToSave.put("rooms", adapter.getUpdatedlist());
-
-                            if (soldStatusChanged) {
-                                if (sold) {
-                                    dataToSave.put("sold", dateFormat.format(date));
-                                } else {
-                                    dataToSave.put("sold", null);
-                                }
+                            dataToSave.put("rooms", arrayOfDesc);
+                            for (int i = 0; i < adapter.getUpdatedlist().size(); i++){
+                                arrayOfPics.clear();
+                                arrayOfPics.add(adapter.getUpdatedlist().get(i).getPictureUrl());
+                                arrayOfDesc.add(adapter.getUpdatedlist().get(i).getRoom());
                             }
 
+                                if (soldStatusChanged) {
+                                    if (sold) {
+                                        dataToSave.put("sold", dateFormat.format(date));
+                                    } else {
+                                        dataToSave.put("sold", null);
+                                    }
+                                }
 
                             interestsArray.clear();
-                            if (schoolCB.isChecked()){
+                            if (schoolCB.isChecked()) {
                                 interestsArray.add("School");
-                            }if (restaurantCB.isChecked()){
+                            }
+                            if (restaurantCB.isChecked()) {
                                 interestsArray.add("Restaurant");
-                            }if (parkCB.isChecked()){
+                            }
+                            if (parkCB.isChecked()) {
                                 interestsArray.add("Park");
                             }
                             dataToSave.put("pointOfInterest", interestsArray);
                             dataToSave.put("price", priceET.getText().toString().replace(",", ""));
                             dataToSave.put("surface", surfaceET.getText().toString());
                             dataToSave.put("type", typeET.getText().toString());
-
 
                             notebookRef.document(documentSnapshot.getId()).set(dataToSave, SetOptions.merge());
                         }
@@ -434,14 +440,14 @@ public class EditActivity extends AppCompatActivity {
                     roomsNP.setValue(Integer.valueOf((String) documentSnapshot.get("numberOfRooms")));
                     interestsArray = (ArrayList<String>) documentSnapshot.get("pointOfInterest");
 
-                    for (int i = 0; i < interestsArray.size(); i++){
-                        if (interestsArray.get(i).equalsIgnoreCase("Park")){
+                    for (int i = 0; i < interestsArray.size(); i++) {
+                        if (interestsArray.get(i).equalsIgnoreCase("Park")) {
                             parkCB.setChecked(true);
                         }
-                        if (interestsArray.get(i).equalsIgnoreCase("Restaurant")){
+                        if (interestsArray.get(i).equalsIgnoreCase("Restaurant")) {
                             restaurantCB.setChecked(true);
                         }
-                        if (interestsArray.get(i).equalsIgnoreCase("School")){
+                        if (interestsArray.get(i).equalsIgnoreCase("School")) {
                             schoolCB.setChecked(true);
                         }
                     }
@@ -557,7 +563,6 @@ public class EditActivity extends AppCompatActivity {
                 }
             }
         });
-
 
 
         surfaceTV = findViewById(R.id.surfaceTV);

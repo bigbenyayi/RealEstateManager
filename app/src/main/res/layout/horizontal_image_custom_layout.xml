@@ -28,6 +28,7 @@
         android:layout_width="130dp"
         android:layout_height="wrap_content"
         android:text="Description"
+        android:imeOptions="actionDone"
         android:layout_below="@+id/horizontalImageRecyclerViewIV"
         android:layout_marginTop="10dp"
         android:hint="Description" />

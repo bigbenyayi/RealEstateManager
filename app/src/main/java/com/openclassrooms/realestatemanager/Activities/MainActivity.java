@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
@@ -76,13 +77,11 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
         toggle.syncState();
 
 
-
         //Configure and show it
         this.configureAndShowMainFragment();
         this.configureAndShowDetailFragment();
         this.configureNavigationView();
     }
-
 
 
     // --------------
@@ -106,7 +105,16 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
                 startActivity(addIntent);
                 break;
             case R.id.navbar_search:
-                openSearchAlertDialog();
+                SharedPreferences mPrefs = getSharedPreferences("SHARED", MODE_PRIVATE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !mPrefs.getBoolean("searchBoolean", false)) {
+                    item.setIcon(getDrawable(R.drawable.ic_clear_black_24dp));
+                    mPrefs.edit().putBoolean("searchBoolean", true).apply();
+                    openSearchAlertDialog();
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && mPrefs.getBoolean("searchBoolean", false)) {
+                    mPrefs.edit().putBoolean("searchBoolean", false).apply();
+                    item.setIcon(getDrawable(R.drawable.ic_clear_black_24dp));
+                    openSearchAlertDialog();
+                }
                 break;
         }
 
@@ -114,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
     }
 
     private void openSearchAlertDialog() {
-        DialogBuilder dialogBuilder =  new DialogBuilder();
+        DialogBuilder dialogBuilder = new DialogBuilder();
         dialogBuilder.show(getSupportFragmentManager(), "example dialog");
     }
 
@@ -150,6 +158,17 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
         return true;
     }
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        SharedPreferences mPrefs = getSharedPreferences("SHARED", MODE_PRIVATE);
+//        MenuItem fave = menu.findItem(R.menu.navbar_main_menu);
+//        MenuItem unfave = menu.findItem(R.menu.navbar_main_menu_search);
+//
+//        fave.setVisible(!mPrefs.getBoolean("searchBoolean", false));
+//        unfave.setVisible(mPrefs.getBoolean("searchBoolean", false));
+
+        return true;
+    }
 
     // --------------
     // FRAGMENTS
@@ -185,13 +204,13 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
         switch (id) {
             case R.id.navbar_settings:
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                SharedPreferences mPrefs;
                 startActivity(settingsIntent);
 
                 break;
 
             case R.id.navbar_logout:
-
-                SharedPreferences mPrefs = getSharedPreferences("SHARED", MODE_PRIVATE);
+                mPrefs = getSharedPreferences("SHARED", MODE_PRIVATE);
                 mPrefs.edit().putString("username", null).apply();
                 mPrefs.edit().putString("email", null).apply();
 
@@ -266,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
         mPrefs.edit().putBoolean("restaurant", restaurant).apply();
         mPrefs.edit().putInt("surfaceMin", surfaceMin).apply();
         mPrefs.edit().putInt("surfaceMax", surfaceMax).apply();
-        mPrefs.edit().putInt("priceMax", surfaceMax).apply();
-        mPrefs.edit().putInt("priceMin", surfaceMax).apply();
+        mPrefs.edit().putInt("priceMax", priceMax).apply();
+        mPrefs.edit().putInt("priceMin", priceMin).apply();
     }
 }

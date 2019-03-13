@@ -10,9 +10,11 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -32,6 +34,7 @@ public class MyHorizontalPictureAdapter extends RecyclerView.Adapter<MyHorizonta
     private List<HorizontalRecyclerViewItem> listItems;
     private ArrayList<String> photoItems = new ArrayList<>();
     private ArrayList<String> descItems = new ArrayList<>();
+    private ArrayList<HorizontalRecyclerViewItem> items = new ArrayList<>();
     public static final int PICK_IMAGE_REQUEST = 1;
     Context mContext;
     Set<String> set = new HashSet<>();
@@ -63,66 +66,35 @@ public class MyHorizontalPictureAdapter extends RecyclerView.Adapter<MyHorizonta
         Picasso.get().load(listItem.getPictureUrl()).into(holder.mImageView);
         holder.mEditText.setText(listItem.getRoom());
 
-        photoItems.add(listItem.getPictureUrl());
-        descItems.add(listItem.getRoom());
+        items.add(new HorizontalRecyclerViewItem(listItem.getPictureUrl(), listItem.getRoom()));
+
 
         SharedPreferences mPref = mContext.getSharedPreferences("SHARED", Context.MODE_PRIVATE);
         mPref.edit().putBoolean("boolean", false).apply();
 
+        holder.mEditText.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                items.add(position,new HorizontalRecyclerViewItem(items.get(position).getPictureUrl(), holder.mEditText.getText().toString()));
 
-        holder.mImageView.setOnClickListener(v -> {
+                return true;
+            }
+            return false;
 
+        });
+
+        holder.mImageView.setOnClickListener(v ->
+        {
             listItems.remove(position);
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, listItems.size());
-            photoItems.remove(position);
-            notifyItemRangeChanged(position, photoItems.size());
-            descItems.remove(position);
-            notifyItemRangeChanged(position, descItems.size());
 
-            set.clear();
-            setDesc.clear();
-
-            for (int i = 0; i < listItems.size(); i++) {
-
-                set.add(listItems.get(i).getPictureUrl());
-                setDesc.add(listItems.get(i).getRoom());
-
-            }
-            mPref.edit().putStringSet("pictures", set).apply();
-            mPref.edit().putStringSet("description", setDesc).apply();
-            mPref.edit().putBoolean("boolean", true).apply();
-
+            items.remove(position);
+            notifyItemRangeChanged(position, items.size());
         });
-
-        holder.mEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-                descItems.remove(position);
-                descItems.add(position, holder.mEditText.getText().toString());
-                setDesc.clear();
-
-                setDesc.addAll(descItems);
-                mPref.edit().putStringSet("description", setDesc).apply();
-
-            }
-        });
-
-
     }
-    public ArrayList<String> getUpdatedlist(){
-        return descItems;
+
+    public ArrayList<HorizontalRecyclerViewItem> getUpdatedlist() {
+        return items;
     }
 
     // total number of rows

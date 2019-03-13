@@ -138,6 +138,10 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                     if (mSearchObject.getEndDate() == null && mSearchObject.getBeginDate() != null) {
                         Date date = new Date();
                         mSearchObject.setEndDate(format.format(date));
+                    } else if (mSearchObject.getEndDate() == null && mSearchObject.getBeginDate() == null){
+                        Date date = new Date();
+                        mSearchObject.setEndDate(format.format(date));
+                        mSearchObject.setBeginDate("01/01/1900");
                     }
 
                     ViewGroup.LayoutParams layoutParams = holder.relativeLayout.getLayoutParams();
@@ -156,11 +160,15 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                                     if (mSearchObject.getPhotosMax() >= size && size >= mSearchObject.getPhotosMin()) {
                                         Log.d("thegreatdebugger", "6th " + model.getCity());
                                         if (mSearchObject.getPriceMax() >= Integer.valueOf(model.getPrice()) && Integer.valueOf(model.getPrice()) >= mSearchObject.getPriceMin()) {
+                                            Log.d("thegreatdebugger", "7th " + model.getCity());
                                             if (!mSearchObject.isPark() || model.getPointOfInterest().contains("Park")) {
+                                                Log.d("thegreatdebugger", "8th " + model.getCity());
                                                 if (!mSearchObject.isSchool() || model.getPointOfInterest().contains("School")) {
+                                                    Log.d("thegreatdebugger", "9th " + model.getCity());
                                                     if (!mSearchObject.isRestaurant() || model.getPointOfInterest().contains("Restaurant")) {
+                                                        Log.d("thegreatdebugger", "10th " + model.getCity());
                                                         if (mSearchObject.getSurfaceMax() >= Integer.valueOf(model.getSurface().replace("m²", "")) && Integer.valueOf(model.getSurface().replace("m²", "")) >= mSearchObject.getSurfaceMin()) {
-                                                            Log.d("thegreatdebugger", "7th " + model.getCity());
+                                                            Log.d("thegreatdebugger", "11th " + model.getCity());
                                                             try {
                                                                 Date beginDate = format.parse(mSearchObject.getBeginDate());
                                                                 Date theDate = format.parse(model.getOnMarket());
@@ -168,8 +176,10 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                                                                 if (beginDate.before(theDate) && endDate.after(theDate)) {
                                                                     layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
                                                                     holder.relativeLayout.setLayoutParams(layoutParams);
+                                                                    Log.d("thegreatdebugger", "12th " + model.getCity());
 
-                                                                    holder.setPrice(model.getPrice());
+                                                                    String priceWithComas = String.format("%,d", Integer.valueOf(model.getPrice()));
+                                                                    holder.setPrice(priceWithComas + "$");
                                                                     holder.setQuickLocation(model.getCity());
                                                                     holder.setType(model.getType());
                                                                     holder.setPicture(model.getMainPicture());
