@@ -1,5 +1,7 @@
 package com.openclassrooms.realestatemanager.Activities;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.persistence.room.Room;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -33,11 +35,16 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.openclassrooms.realestatemanager.Fragments.DetailFragment;
 import com.openclassrooms.realestatemanager.Fragments.MainFragment;
+import com.openclassrooms.realestatemanager.Models.DatabaseHouseItem;
 import com.openclassrooms.realestatemanager.Models.DialogBuilder;
+import com.openclassrooms.realestatemanager.Models.ItemDao;
+import com.openclassrooms.realestatemanager.Models.RealEstateManagerDatabase;
 import com.openclassrooms.realestatemanager.R;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MainFragment.OnButtonClickedListener, NavigationView.OnNavigationItemSelectedListener, DialogBuilder.AlertDialogListener {
 
@@ -50,7 +57,11 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private Toolbar mToolbar;
+    private RealEstateManagerDatabase database;
 
+    ArrayList poi = new ArrayList();
+    ArrayList pics = new ArrayList();
+    ArrayList rooms = new ArrayList();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +87,26 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
         toggle.getDrawerArrowDrawable().setColor(Color.parseColor("#FFFFFF"));
         toggle.syncState();
 
+////////////////////////////////////////////////////////////////////////////////
+
+//        ROOM problems:
+//        1) Is doesn't create the Item
+//        2) I don't know how to save lists after it does work
+
+//        database = Room.inMemoryDatabaseBuilder(this,
+//                RealEstateManagerDatabase.class)
+//                .allowMainThreadQueries()
+//                .build();
+//        database.close();
+//
+//        database.itemDao().insertItem(new DatabaseHouseItem("description yo", "140", "8", "4", "5",
+//                "6", "location", "me", "01/01/1600", "14/03/2019", "link.jpg", "125555","mpt"));
+//
+//       List<DatabaseHouseItem> doesItWork = database.itemDao().getItems().getValue();
+//        if (doesItWork != null) {
+//            Log.d("doesItWork", doesItWork.get(0).toString());
+//            Log.d("doesItWork", doesItWork.get(0).getCity());
+//        }
 
         //Configure and show it
         this.configureAndShowMainFragment();
@@ -159,16 +190,13 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        SharedPreferences mPrefs = getSharedPreferences("SHARED", MODE_PRIVATE);
-//        MenuItem fave = menu.findItem(R.menu.navbar_main_menu);
-//        MenuItem unfave = menu.findItem(R.menu.navbar_main_menu_search);
-//
-//        fave.setVisible(!mPrefs.getBoolean("searchBoolean", false));
-//        unfave.setVisible(mPrefs.getBoolean("searchBoolean", false));
+    public boolean onPrepareOptionsMenu(final Menu menu) {
+        getMenuInflater().inflate(R.menu.navbar_main_menu, menu);
 
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
+
+
 
     // --------------
     // FRAGMENTS

@@ -250,14 +250,19 @@ public class DetailFragment extends BaseFragment {
         return result;
     }
 
+
     public void updateTextView() {
 
         Intent iin = getActivity().getIntent();
         Bundle b = iin.getExtras();
         String id;
 
+        if (b != null) {
             id = (String) b.get("id");
-
+        } else{
+            SharedPreferences mPrefs = getContext().getSharedPreferences("SHARED", Context.MODE_PRIVATE);
+            id = mPrefs.getString("id", "0");
+        }
 
 
         notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
