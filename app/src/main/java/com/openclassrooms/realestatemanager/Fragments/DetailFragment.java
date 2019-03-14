@@ -154,6 +154,7 @@ public class DetailFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.fragment_detail, container, false);
+
         recyclerView = result.findViewById(R.id.horizontalRecyclerView);
         editRecyclerView = result.findViewById(R.id.horizontalPictureRecyclerView);
         isTablet = getResources().getBoolean(R.bool.isTablet);
@@ -172,7 +173,6 @@ public class DetailFragment extends BaseFragment {
         Bundle b = iin.getExtras();
 
         configureHorizontalRecyclerView();
-
 
         description = result.findViewById(R.id.descriptionTV);
         surface = result.findViewById(R.id.surfaceTV);
@@ -259,7 +259,7 @@ public class DetailFragment extends BaseFragment {
 
         if (b != null) {
             id = (String) b.get("id");
-        } else{
+        } else {
             SharedPreferences mPrefs = getContext().getSharedPreferences("SHARED", Context.MODE_PRIVATE);
             id = mPrefs.getString("id", "0");
         }
@@ -372,7 +372,6 @@ public class DetailFragment extends BaseFragment {
             configureAndDisplayMiniMap();
         } else {
             seeOnMapButton.setVisibility(View.VISIBLE);
-
         }
 
 
@@ -429,14 +428,49 @@ public class DetailFragment extends BaseFragment {
 
     public void configureAndDisplayMiniMap() {
 
-        mapsFragment = (MapsFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.miniMapFrameLayout);
+        SharedPreferences mPrefs = getContext().getSharedPreferences("SHARED", Context.MODE_PRIVATE);
 
-        if (mapsFragment == null) {
-            mapsFragment = new MapsFragment();
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .add(R.id.miniMapFrameLayout, mapsFragment)
-                    .commit();
+        Intent iin = getActivity().getIntent();
+        Bundle b = iin.getExtras();
+        String id;
+
+        if (b != null) {
+            id = (String) b.get("id");
+        } else {
+            id = mPrefs.getString("id", "0");
         }
+
+
+        if (houseItem != null) {
+            mPrefs.edit().putString("miniMapLocation", houseItem.getAddress()).apply();
+
+            mapsFragment = (MapsFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.miniMapFrameLayout);
+            if (mapsFragment == null) {
+                mapsFragment = new MapsFragment();
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .add(R.id.miniMapFrameLayout, mapsFragment)
+                        .commit();
+            }
+        } else {
+            notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
+
+                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+
+                    if (id.equals(documentSnapshot.get("id"))) {
+                        mPrefs.edit().putString("miniMapLocation", (String) documentSnapshot.get("location")).apply();
+
+                        mapsFragment = (MapsFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.miniMapFrameLayout);
+                        if (mapsFragment == null) {
+                            mapsFragment = new MapsFragment();
+                            getActivity().getSupportFragmentManager().beginTransaction()
+                                    .add(R.id.miniMapFrameLayout, mapsFragment)
+                                    .commit();
+                        }
+                    }
+                }
+            });
+        }
+
     }
 
 

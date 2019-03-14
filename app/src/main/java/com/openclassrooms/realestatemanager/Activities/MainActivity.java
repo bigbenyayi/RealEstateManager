@@ -189,12 +189,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
         return true;
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(final Menu menu) {
-        getMenuInflater().inflate(R.menu.navbar_main_menu, menu);
-
-        return super.onCreateOptionsMenu(menu);
-    }
 
 
 
