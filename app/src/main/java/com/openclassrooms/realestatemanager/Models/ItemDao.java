@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Insert;
+import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
@@ -16,9 +17,9 @@ import java.util.List;
 public interface ItemDao {
 
     @Query("SELECT * FROM DatabaseHouseItem")
-    LiveData<List<DatabaseHouseItem>> getItems();
+    List<DatabaseHouseItem> getItems();
 
-    @Insert
+    @Insert (onConflict = OnConflictStrategy.REPLACE)
     long insertItem(DatabaseHouseItem item);
 
     @Update

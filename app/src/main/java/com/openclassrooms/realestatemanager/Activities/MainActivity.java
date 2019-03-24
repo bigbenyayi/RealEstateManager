@@ -93,20 +93,22 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
 //        1) Is doesn't create the Item
 //        2) I don't know how to save lists after it does work
 
-//        database = Room.inMemoryDatabaseBuilder(this,
-//                RealEstateManagerDatabase.class)
-//                .allowMainThreadQueries()
-//                .build();
+        database = Room.inMemoryDatabaseBuilder(this,
+                RealEstateManagerDatabase.class)
+                .allowMainThreadQueries()
+                .build();
 //        database.close();
-//
-//        database.itemDao().insertItem(new DatabaseHouseItem("description yo", "140", "8", "4", "5",
-//                "6", "location", "me", "01/01/1600", "14/03/2019", "link.jpg", "125555","mpt"));
-//
-//       List<DatabaseHouseItem> doesItWork = database.itemDao().getItems().getValue();
-//        if (doesItWork != null) {
-//            Log.d("doesItWork", doesItWork.get(0).toString());
-//            Log.d("doesItWork", doesItWork.get(0).getCity());
-//        }
+
+        long returnedValue = database.itemDao().insertItem(new DatabaseHouseItem("description yo", "140", "" + System.currentTimeMillis(), "4", "5",
+                "6", "location", "me", "01/01/1600", "14/03/2019", "link.jpg", "125555","mpt"));
+
+       List<DatabaseHouseItem> doesItWork = database.itemDao().getItems();
+        if (doesItWork != null) {
+            Log.d("doesItWork", doesItWork.get(0).toString());
+            Log.d("doesItWork", doesItWork.get(0).getCity());
+        }
+
+        Log.d("doesItWork", returnedValue + "");
 
         //Configure and show it
         this.configureAndShowMainFragment();
@@ -188,7 +190,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
 
         return true;
     }
-
 
 
 

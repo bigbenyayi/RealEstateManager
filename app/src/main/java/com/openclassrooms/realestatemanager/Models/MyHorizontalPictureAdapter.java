@@ -34,7 +34,7 @@ public class MyHorizontalPictureAdapter extends RecyclerView.Adapter<MyHorizonta
     private List<HorizontalRecyclerViewItem> listItems;
     private ArrayList<String> photoItems = new ArrayList<>();
     private ArrayList<String> descItems = new ArrayList<>();
-    private ArrayList<HorizontalRecyclerViewItem> items = new ArrayList<>();
+//    private ArrayList<HorizontalRecyclerViewItem> items = new ArrayList<>();
     public static final int PICK_IMAGE_REQUEST = 1;
     Context mContext;
     Set<String> set = new HashSet<>();
@@ -66,7 +66,7 @@ public class MyHorizontalPictureAdapter extends RecyclerView.Adapter<MyHorizonta
         Picasso.get().load(listItem.getPictureUrl()).into(holder.mImageView);
         holder.mEditText.setText(listItem.getRoom());
 
-        items.add(new HorizontalRecyclerViewItem(listItem.getPictureUrl(), listItem.getRoom()));
+//        items.add(new HorizontalRecyclerViewItem(listItem.getPictureUrl(), listItem.getRoom()));
 
 
         SharedPreferences mPref = mContext.getSharedPreferences("SHARED", Context.MODE_PRIVATE);
@@ -74,7 +74,7 @@ public class MyHorizontalPictureAdapter extends RecyclerView.Adapter<MyHorizonta
 
         holder.mEditText.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                items.add(position,new HorizontalRecyclerViewItem(items.get(position).getPictureUrl(), holder.mEditText.getText().toString()));
+                listItems.add(position,new HorizontalRecyclerViewItem(listItems.get(position).getPictureUrl(), holder.mEditText.getText().toString()));
 
                 return true;
             }
@@ -85,16 +85,17 @@ public class MyHorizontalPictureAdapter extends RecyclerView.Adapter<MyHorizonta
         holder.mImageView.setOnClickListener(v ->
         {
             listItems.remove(position);
+            //call activity using interface
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, listItems.size());
 
-            items.remove(position);
-            notifyItemRangeChanged(position, items.size());
+//            items.remove(position);
+//            notifyItemRangeChanged(position, items.size());
         });
     }
 
-    public ArrayList<HorizontalRecyclerViewItem> getUpdatedlist() {
-        return items;
+    public List<HorizontalRecyclerViewItem> getUpdatedlist() {
+        return listItems;
     }
 
     // total number of rows

@@ -199,6 +199,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                     }
                 } else {
                     String priceWithComas = String.format("%,d", Integer.valueOf(model.getPrice()));
+//                    String priceWithComas = "lalala";
                     holder.setPrice(priceWithComas + "$");
                     holder.setQuickLocation(model.getCity());
                     holder.setType(model.getType());
