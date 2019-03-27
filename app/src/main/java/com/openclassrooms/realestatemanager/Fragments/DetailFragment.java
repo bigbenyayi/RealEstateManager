@@ -20,9 +20,12 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewManager;
 import android.widget.AbsoluteLayout;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -77,22 +80,7 @@ public class DetailFragment extends BaseFragment {
     TextView sold;
     TextView market;
     TextView pointsOfInterest;
-    Button addAPicButton;
-    ImageView chosenPicIV;
-    EditText pictureDescET;
-    Button addButton;
-    EditText realtorET;
-    EditText descriptionET;
-    EditText surfaceET;
-    EditText addressET;
-    EditText interestsET;
-    EditText bathroomsET;
-    EditText bedroomsET;
-    EditText roomsET;
-    RecyclerView mRecyclerViewPOI;
-    String addUrl;
     Boolean editing = false;
-    int numberMaxPOI = 0;
 
     FirebaseStorage storage = FirebaseStorage.getInstance();
     ArrayList<String> pointsOfInterestValue = new ArrayList<>();
@@ -110,6 +98,8 @@ public class DetailFragment extends BaseFragment {
     public static final int PICK_IMAGE_REQUEST = 1;
     Uri mainImageUri;
 
+    FrameLayout fl;
+
     private MapsFragment mapsFragment;
 
     HorizontalRecyclerViewItem photoItem = null;
@@ -124,7 +114,6 @@ public class DetailFragment extends BaseFragment {
 
 
     RecyclerView recyclerView;
-    RecyclerView editRecyclerView;
 
 
     // --------------
@@ -155,7 +144,6 @@ public class DetailFragment extends BaseFragment {
         View result = inflater.inflate(R.layout.fragment_detail, container, false);
 
         recyclerView = result.findViewById(R.id.horizontalRecyclerView);
-        editRecyclerView = result.findViewById(R.id.horizontalPictureRecyclerView);
         isTablet = getResources().getBoolean(R.bool.isTablet);
 
 
@@ -178,16 +166,7 @@ public class DetailFragment extends BaseFragment {
         market = result.findViewById(R.id.onTheMarketSinceTV);
         sold = result.findViewById(R.id.soldTV);
         seeOnMapButton = result.findViewById(R.id.seeOnMapButton);
-        addAPicButton = result.findViewById(R.id.addAPictureButton);
-        addAPicButton.setVisibility(View.INVISIBLE);
-        addAPicButton.setText("Add a picture");
-        pictureDescET = result.findViewById(R.id.pictureDescriptionET);
-        pictureDescET.setVisibility(View.INVISIBLE);
-        chosenPicIV = result.findViewById(R.id.pictureChosenIV);
-        chosenPicIV.setVisibility(View.INVISIBLE);
-        addButton = result.findViewById(R.id.addButton);
-        addButton.setVisibility(View.INVISIBLE);
-        mRecyclerViewPOI = result.findViewById(R.id.recyclerViewPOI);
+
 
         inter = result.findViewById(R.id.pointsOfInterest);
         desc = result.findViewById(R.id.description);
@@ -197,23 +176,7 @@ public class DetailFragment extends BaseFragment {
         bath = result.findViewById(R.id.nbrOfBathrooms);
         add = result.findViewById(R.id.address);
         media = result.findViewById(R.id.media);
-
-//        realtorET = result.findViewById(R.id.realEstateInChargeET);
-//        descriptionET = result.findViewById(R.id.descriptionET);
-        surfaceET = result.findViewById(R.id.surfaceET);
-        addressET = result.findViewById(R.id.addressET);
-        interestsET = result.findViewById(R.id.pointsOfInterestET);
-        bathroomsET = result.findViewById(R.id.nbrOfBathroomsET);
-        bedroomsET = result.findViewById(R.id.nbrOfBedroomsET);
-        roomsET = result.findViewById(R.id.nbrOfRoomsET);
-//        realtorET.setVisibility(View.INVISIBLE);
-//        descriptionET.setVisibility(View.INVISIBLE);
-        surfaceET.setVisibility(View.INVISIBLE);
-        addressET.setVisibility(View.INVISIBLE);
-        interestsET.setVisibility(View.INVISIBLE);
-        bathroomsET.setVisibility(View.INVISIBLE);
-        bedroomsET.setVisibility(View.INVISIBLE);
-        roomsET.setVisibility(View.INVISIBLE);
+        fl = result.findViewById(R.id.miniMapFrameLayout);
 
         surface.setVisibility(View.INVISIBLE);
         rooms.setVisibility(View.INVISIBLE);
@@ -276,8 +239,6 @@ public class DetailFragment extends BaseFragment {
                     pointsOfInterestValue = (ArrayList<String>) documentSnapshot.get("pointOfInterest");
                     ArrayList<String> pictures = (ArrayList<String>) documentSnapshot.get("pictures");
 
-                    mRecyclerViewPOI.setAdapter(new SimpleRVAdapter(getContext(), pointsOfInterestValue));
-                    Log.d("interestsValueFirst", pointsOfInterestValue.toString());
 
                     houseItem = new DetailHouse(descriptionValue, surfaceValue, nbrOfRooms,
                             nbrOfBedrooms, nbrOfBathrooms, location,
@@ -350,7 +311,6 @@ public class DetailFragment extends BaseFragment {
         desc.setVisibility(View.VISIBLE);
         surf.setVisibility(View.VISIBLE);
         roo.setVisibility(View.VISIBLE);
-        editRecyclerView.setVisibility(View.INVISIBLE);
         bed.setVisibility(View.VISIBLE);
         bath.setVisibility(View.VISIBLE);
         add.setVisibility(View.VISIBLE);
@@ -365,6 +325,8 @@ public class DetailFragment extends BaseFragment {
             configureAndDisplayMiniMap();
         } else {
             seeOnMapButton.setVisibility(View.VISIBLE);
+            fl.setLayoutParams(new RelativeLayout.LayoutParams(0,0));
+
         }
 
 
@@ -373,10 +335,7 @@ public class DetailFragment extends BaseFragment {
     public void configureHorizontalRecyclerView() {
 
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        LinearLayoutManager horizontalPictureLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-
         recyclerView.setLayoutManager(horizontalLayoutManager);
-        editRecyclerView.setLayoutManager(horizontalPictureLayoutManager);
 
 
         listItems = new ArrayList<>();
@@ -411,12 +370,11 @@ public class DetailFragment extends BaseFragment {
                     }
                 }
             }
+            adapter = new MyHorizontalAdapter(getContext(), listItems);
+            recyclerView.setAdapter(adapter);
         });
 
-        adapter = new MyHorizontalAdapter(getContext(), listItems);
-        myOtherAdapter = new MyHorizontalPictureAdapter(getContext(), listItems);
-        editRecyclerView.setAdapter(myOtherAdapter);
-        recyclerView.setAdapter(adapter);
+
     }
 
     public void configureAndDisplayMiniMap() {
