@@ -2,6 +2,8 @@ package com.openclassrooms.realestatemanager.Activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import com.openclassrooms.realestatemanager.Fragments.DetailFragment;
 import com.openclassrooms.realestatemanager.R;
@@ -10,6 +12,8 @@ public class DetailActivity extends AppCompatActivity {
 
     //Declare detail fragment
     private DetailFragment detailFragment;
+    private Toolbar mToolbar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,6 +21,19 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
         //Configure and show home fragment
         this.configureAndShowDetailFragment();
+        this.configureToolbar();
+    }
+
+    private void configureToolbar() {
+        mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_24dp);
+
+//        if (isTablet) {
+//            mToolbar.setVisibility(View.INVISIBLE);
+//        }
+
     }
 
     // --------------

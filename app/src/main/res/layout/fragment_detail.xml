@@ -5,18 +5,6 @@
     android:background="#BED4D6"
     tools:context="com.openclassrooms.realestatemanager.Activities.DetailActivity">
 
-    <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/toolbar"
-        colorControlNormal="@android:color/white"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="@style/ToolbarTheme"
-        app:titleTextColor="#FAFAFA" />
-
-
     <!-- //////////////////////////// MEDIA \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\  -->
     <TextView
         android:id="@+id/media"

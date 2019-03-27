@@ -125,7 +125,6 @@ public class DetailFragment extends BaseFragment {
 
     RecyclerView recyclerView;
     RecyclerView editRecyclerView;
-    private Toolbar mToolbar;
 
 
     // --------------
@@ -158,16 +157,10 @@ public class DetailFragment extends BaseFragment {
         recyclerView = result.findViewById(R.id.horizontalRecyclerView);
         editRecyclerView = result.findViewById(R.id.horizontalPictureRecyclerView);
         isTablet = getResources().getBoolean(R.bool.isTablet);
-        mToolbar = result.findViewById(R.id.toolbar);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_24dp);
+
 
         setHasOptionsMenu(true);
 
-        if (isTablet) {
-            mToolbar.setVisibility(View.INVISIBLE);
-        }
 
         Intent iin = getActivity().getIntent();
         Bundle b = iin.getExtras();
