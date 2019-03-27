@@ -113,7 +113,7 @@ public class DetailFragment extends BaseFragment {
     private MapsFragment mapsFragment;
 
     HorizontalRecyclerViewItem photoItem = null;
-    private List<HorizontalRecyclerViewItem> listItems;
+    private ArrayList<HorizontalRecyclerViewItem> listItems;
     private ArrayList<String> photoItems = new ArrayList<>();
     private ArrayList<String> roomItems = new ArrayList<>();
     private ArrayList<String> interestsArray = new ArrayList<>();

@@ -178,16 +178,13 @@ public class AddActivity extends AppCompatActivity {
             UploadTask uploadTask = firememeRef.putBytes(data, metadata);
             uploadTask.addOnSuccessListener(AddActivity.this, taskSnapshot -> taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(uri -> {
 
-                // SAVE EVERYTHING TO FIRESTOOOORE HERE
                 urlAdd = uri.toString();
                 listOfPicturesAndDesc.add(new HorizontalRecyclerViewItem(urlAdd, pictureDescriptionET.getText().toString()));
-                arrayOfPics.add(urlAdd);
-                arrayOfDesc.add(pictureDescriptionET.getText().toString());
+
                 addAPictureIV.setImageResource(0);
                 pictureDescriptionET.setText("");
 
                 adapter = new MyHorizontalAdapter(AddActivity.this, listOfPicturesAndDesc);
-
                 horizontalRecyclerViewAdd.setAdapter(adapter);
 
                 progressBar.setVisibility(View.GONE);
@@ -273,6 +270,10 @@ public class AddActivity extends AppCompatActivity {
                             dataToSave.put("numberOfBedrooms", String.valueOf(bedroomsNP.getValue()));
                             dataToSave.put("numberOfRooms", String.valueOf(roomsNP.getValue()));
                             dataToSave.put("mainPicture", url);
+                            for (int i = 0; i < adapter.getUpdatedlist().size(); i++) {
+                                arrayOfPics.add(adapter.getUpdatedlist().get(i).getPictureUrl());
+                                arrayOfDesc.add(adapter.getUpdatedlist().get(i).getRoom());
+                            }
                             dataToSave.put("pictures", arrayOfPics);
                             dataToSave.put("rooms", arrayOfDesc);
 
@@ -547,6 +548,12 @@ public class AddActivity extends AppCompatActivity {
             Picasso.get().load(data.getData()).into(addAPictureIV);
             setCorrectTVs();
         }
+    }
+
+    public void adapterSendsList(int position) {
+        listOfPicturesAndDesc = adapter.getUpdatedlist();
+        listOfPicturesAndDesc.remove(position);
+        adapter.notifyDataSetChanged();
     }
 }
 

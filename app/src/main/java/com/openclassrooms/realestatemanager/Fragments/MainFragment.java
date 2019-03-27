@@ -198,9 +198,17 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                         }
                     }
                 } else {
-                    String priceWithComas = String.format("%,d", Integer.valueOf(model.getPrice()));
+                    if (model.getPrice() != null) {
+                        String priceWithComas = null;
+                        try {
+                            priceWithComas = String.format("%,d", Integer.valueOf(model.getPrice()));
+                        } catch (NumberFormatException e) {
+                            e.printStackTrace();
+                        }
+                        holder.setPrice(priceWithComas + "$");
+
+                    }
 //                    String priceWithComas = "lalala";
-                    holder.setPrice(priceWithComas + "$");
                     holder.setQuickLocation(model.getCity());
                     holder.setType(model.getType());
                     holder.setPicture(model.getMainPicture());

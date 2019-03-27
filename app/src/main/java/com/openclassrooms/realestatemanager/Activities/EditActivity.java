@@ -207,14 +207,10 @@ public class EditActivity extends AppCompatActivity {
                 urlAdd = uri.toString();
                 listOfPicturesAndDesc.add(new HorizontalRecyclerViewItem(urlAdd, pictureDescriptionET.getText().toString()));
 
-                arrayOfPics.add(urlAdd);
-                arrayOfDesc.add(pictureDescriptionET.getText().toString());
                 addAPictureIV.setImageResource(0);
                 pictureDescriptionET.setText("");
 
-                adapter = new MyHorizontalPictureAdapter(this, listOfPicturesAndDesc);
-
-                horizontalRecyclerViewAdd.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
 
                 progressBar.setVisibility(View.GONE);
                 addAPictureButton.setEnabled(true);
@@ -254,6 +250,19 @@ public class EditActivity extends AppCompatActivity {
 
                 notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
 
+
+                    // SAVE EVERYTHING TO FIRESTOOOORE HERE
+
+                    Intent iin = getIntent();
+                    Bundle b = iin.getExtras();
+                    String id;
+
+                    if (b != null) {
+                        id = (String) b.get("id");
+                    } else {
+                        id = mPrefs.getString("id", null);
+                    }
+
                     if (mainPicGetsChanged) {
 
 
@@ -276,44 +285,76 @@ public class EditActivity extends AppCompatActivity {
                         uploadTask.addOnSuccessListener(taskSnapshot -> {
                             taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(uri -> {
 
-
                                 url = uri.toString();
+
+                                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                                    if (id.equals(documentSnapshot.get("id"))) {
+
+                                        Map<String, Object> dataToSave = new HashMap<>();
+
+                                        dataToSave.put("city", cityET.getText().toString());
+                                        dataToSave.put("description", descriptionET.getText().toString());
+                                        dataToSave.put("location", locationET.getText().toString());
+                                        dataToSave.put("numberOfBathrooms", String.valueOf(bathroomsNP.getValue()));
+                                        dataToSave.put("numberOfBedrooms", String.valueOf(bedroomsNP.getValue()));
+                                        dataToSave.put("numberOfRooms", String.valueOf(roomsNP.getValue()));
+                                        if (!(("" + documentSnapshot.get("mainPicture")).equals(url))) {
+                                            dataToSave.put("mainPicture", url);
+                                        }
+
+                                        for (int i = 0; i < adapter.getUpdatedlist().size(); i++) {
+                                            arrayOfPics.add(adapter.getUpdatedlist().get(i).getPictureUrl());
+                                            arrayOfDesc.add(adapter.getUpdatedlist().get(i).getRoom());
+                                        }
+                                        dataToSave.put("pictures", arrayOfPics);
+                                        dataToSave.put("rooms", arrayOfDesc);
+
+                                        if (soldStatusChanged) {
+                                            if (sold) {
+                                                dataToSave.put("sold", dateFormat.format(date));
+                                            } else {
+                                                dataToSave.put("sold", null);
+                                            }
+                                        }
+
+                                        interestsArray.clear();
+                                        if (schoolCB.isChecked()) {
+                                            interestsArray.add("School");
+                                        }
+                                        if (restaurantCB.isChecked()) {
+                                            interestsArray.add("Restaurant");
+                                        }
+                                        if (parkCB.isChecked()) {
+                                            interestsArray.add("Park");
+                                        }
+                                        dataToSave.put("pointOfInterest", interestsArray);
+                                        dataToSave.put("price", priceET.getText().toString().replace(",", ""));
+                                        dataToSave.put("surface", surfaceET.getText().toString());
+                                        dataToSave.put("type", typeET.getText().toString());
+
+                                        notebookRef.document(documentSnapshot.getId()).set(dataToSave, SetOptions.merge());
+                                    }
+                                }
                             });
                         });
-                    }
-                    // SAVE EVERYTHING TO FIRESTOOOORE HERE
-
-                    DocumentReference mDocRef = FirebaseFirestore.getInstance().collection("house").document();
-                    Intent iin = getIntent();
-                    Bundle b = iin.getExtras();
-                    String id;
-
-                    if (b != null) {
-                        id = (String) b.get("id");
                     } else {
-                        id = mPrefs.getString("id", null);
-                    }
-                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                        if (id.equals(documentSnapshot.get("id"))) {
+                        for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                            if (id.equals(documentSnapshot.get("id"))) {
 
-                            Map<String, Object> dataToSave = new HashMap<>();
+                                Map<String, Object> dataToSave = new HashMap<>();
 
-                            dataToSave.put("city", cityET.getText().toString());
-                            dataToSave.put("description", descriptionET.getText().toString());
-                            dataToSave.put("location", locationET.getText().toString());
-                            dataToSave.put("numberOfBathrooms", String.valueOf(bathroomsNP.getValue()));
-                            dataToSave.put("numberOfBedrooms", String.valueOf(bedroomsNP.getValue()));
-                            dataToSave.put("numberOfRooms", String.valueOf(roomsNP.getValue()));
-                            if (mainPicGetsChanged) {
-                                dataToSave.put("mainPicture", url);
-                            }
-                            dataToSave.put("pictures", arrayOfPics);
-                            dataToSave.put("rooms", arrayOfDesc);
-                            for (int i = 0; i < adapter.getUpdatedlist().size(); i++){
-                                arrayOfPics.clear();
-                                arrayOfPics.add(adapter.getUpdatedlist().get(i).getPictureUrl());
-                                arrayOfDesc.add(adapter.getUpdatedlist().get(i).getRoom());
-                            }
+                                dataToSave.put("city", cityET.getText().toString());
+                                dataToSave.put("description", descriptionET.getText().toString());
+                                dataToSave.put("location", locationET.getText().toString());
+                                dataToSave.put("numberOfBathrooms", String.valueOf(bathroomsNP.getValue()));
+                                dataToSave.put("numberOfBedrooms", String.valueOf(bedroomsNP.getValue()));
+                                dataToSave.put("numberOfRooms", String.valueOf(roomsNP.getValue()));
+                                for (int i = 0; i < adapter.getUpdatedlist().size(); i++) {
+                                    arrayOfPics.add(adapter.getUpdatedlist().get(i).getPictureUrl());
+                                    arrayOfDesc.add(adapter.getUpdatedlist().get(i).getRoom());
+                                }
+                                dataToSave.put("pictures", arrayOfPics);
+                                dataToSave.put("rooms", arrayOfDesc);
 
                                 if (soldStatusChanged) {
                                     if (sold) {
@@ -323,22 +364,23 @@ public class EditActivity extends AppCompatActivity {
                                     }
                                 }
 
-                            interestsArray.clear();
-                            if (schoolCB.isChecked()) {
-                                interestsArray.add("School");
-                            }
-                            if (restaurantCB.isChecked()) {
-                                interestsArray.add("Restaurant");
-                            }
-                            if (parkCB.isChecked()) {
-                                interestsArray.add("Park");
-                            }
-                            dataToSave.put("pointOfInterest", interestsArray);
-                            dataToSave.put("price", priceET.getText().toString().replace(",", ""));
-                            dataToSave.put("surface", surfaceET.getText().toString());
-                            dataToSave.put("type", typeET.getText().toString());
+                                interestsArray.clear();
+                                if (schoolCB.isChecked()) {
+                                    interestsArray.add("School");
+                                }
+                                if (restaurantCB.isChecked()) {
+                                    interestsArray.add("Restaurant");
+                                }
+                                if (parkCB.isChecked()) {
+                                    interestsArray.add("Park");
+                                }
+                                dataToSave.put("pointOfInterest", interestsArray);
+                                dataToSave.put("price", priceET.getText().toString().replace(",", ""));
+                                dataToSave.put("surface", surfaceET.getText().toString());
+                                dataToSave.put("type", typeET.getText().toString());
 
-                            notebookRef.document(documentSnapshot.getId()).set(dataToSave, SetOptions.merge());
+                                notebookRef.document(documentSnapshot.getId()).set(dataToSave, SetOptions.merge());
+                            }
                         }
                     }
                 });
@@ -655,7 +697,6 @@ public class EditActivity extends AppCompatActivity {
 
     private void setImagePickers() {
         chooseMainPicButton.setOnClickListener(v -> {
-            mainPicGetsChanged = true;
             Intent myIntent = new Intent();
             myIntent.setType("image/*");
             myIntent.setAction(Intent.ACTION_GET_CONTENT);
@@ -668,6 +709,7 @@ public class EditActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            mainPicGetsChanged = true;
             mainImageUri = data.getData();
 
             Picasso.get().load(mainImageUri).into(mainPicImageView);
@@ -679,4 +721,8 @@ public class EditActivity extends AppCompatActivity {
         }
     }
 
+    public void adapterSendsList(int position) {
+        listOfPicturesAndDesc.remove(position);
+        adapter.notifyDataSetChanged();
+    }
 }

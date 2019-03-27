@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="10dp"
@@ -11,7 +12,18 @@
         android:layout_height="130dp"
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"
-        android:src="@drawable/background_navview" />
+        android:src="@drawable/background_navview"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/horizontalImageRecyclerViewTV"
+        android:layout_width="130dp"
+        android:layout_height="50dp"
+        android:layout_alignBottom="@+id/horizontalImageRecyclerViewIV"
+        android:background="#99000000"
+        android:gravity="center"
+        android:text="Lounge"
+        android:textColor="#FFFFFF" />
 
     <ImageView
         android:id="@+id/horizontalImageRecyclerViewIVCross"
@@ -19,19 +31,20 @@
         android:layout_height="130dp"
         android:adjustViewBounds="true"
         android:alpha=".75"
-        android:padding="20dp"
+        android:padding="30dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/delete" />
+        android:src="@drawable/delete"
+        tools:ignore="ContentDescription" />
 
-    <EditText
-        android:id="@+id/horizontalEditTextRecyclerViewIV"
-        android:layout_width="130dp"
-        android:layout_height="wrap_content"
-        android:text="Description"
-        android:imeOptions="actionDone"
-        android:layout_below="@+id/horizontalImageRecyclerViewIV"
-        android:layout_marginTop="10dp"
-        android:hint="Description" />
+    <!--<EditText-->
+        <!--android:id="@+id/horizontalEditTextRecyclerViewIV"-->
+        <!--android:layout_width="130dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Description"-->
+        <!--android:imeOptions="actionDone"-->
+        <!--android:layout_below="@+id/horizontalImageRecyclerViewIV"-->
+        <!--android:layout_marginTop="10dp"-->
+        <!--android:hint="Description" />-->
 
 
 </RelativeLayout>

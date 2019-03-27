@@ -9,20 +9,25 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.openclassrooms.realestatemanager.Activities.AddActivity;
+import com.openclassrooms.realestatemanager.Activities.EditActivity;
 import com.openclassrooms.realestatemanager.R;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MyHorizontalAdapter extends RecyclerView.Adapter<MyHorizontalAdapter.ViewHolder> {
 
     private LayoutInflater mInflater;
-    private List<HorizontalRecyclerViewItem> listItems;
+    private ArrayList<HorizontalRecyclerViewItem> listItems;
+    private Context mContext;
 
     // data is passed into the constructor
-    public MyHorizontalAdapter(Context context, List<HorizontalRecyclerViewItem> listItems) {
+    public MyHorizontalAdapter(Context context, ArrayList<HorizontalRecyclerViewItem> listItems) {
         this.mInflater = LayoutInflater.from(context);
         this.listItems = listItems;
+        this.mContext = context;
     }
 
     // inflates the row layout from xml when needed
@@ -37,9 +42,18 @@ public class MyHorizontalAdapter extends RecyclerView.Adapter<MyHorizontalAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final HorizontalRecyclerViewItem listItem = listItems.get(position);
-
         Picasso.get().load(listItem.getPictureUrl()).into(holder.mImageView);
         holder.mTextView.setText(listItem.getRoom());
+
+        holder.mImageView.setOnClickListener(v -> {
+            if(mContext instanceof AddActivity){
+                ((AddActivity)mContext).adapterSendsList(position);
+            }
+        });
+    }
+
+    public ArrayList<HorizontalRecyclerViewItem> getUpdatedlist() {
+        return listItems;
     }
 
     // total number of rows

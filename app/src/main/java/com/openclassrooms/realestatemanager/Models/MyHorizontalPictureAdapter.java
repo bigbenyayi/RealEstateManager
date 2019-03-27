@@ -15,10 +15,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.openclassrooms.realestatemanager.Activities.EditActivity;
 import com.openclassrooms.realestatemanager.R;
 import com.squareup.picasso.Picasso;
 
@@ -31,19 +33,12 @@ import java.util.Set;
 public class MyHorizontalPictureAdapter extends RecyclerView.Adapter<MyHorizontalPictureAdapter.ViewHolder> {
 
     private LayoutInflater mInflater;
-    private List<HorizontalRecyclerViewItem> listItems;
-    private ArrayList<String> photoItems = new ArrayList<>();
-    private ArrayList<String> descItems = new ArrayList<>();
-//    private ArrayList<HorizontalRecyclerViewItem> items = new ArrayList<>();
-    public static final int PICK_IMAGE_REQUEST = 1;
-    Context mContext;
-    Set<String> set = new HashSet<>();
-    Set<String> setDesc = new HashSet<>();
-    private static ViewHolder globalHolder;
+    private ArrayList<HorizontalRecyclerViewItem> listItems;
+    private Context mContext;
 
 
     // data is passed into the constructor
-    public MyHorizontalPictureAdapter(Context context, List<HorizontalRecyclerViewItem> listItems) {
+    public MyHorizontalPictureAdapter(Context context, ArrayList<HorizontalRecyclerViewItem> listItems) {
         this.mInflater = LayoutInflater.from(context);
         this.listItems = listItems;
         mContext = context;
@@ -62,39 +57,17 @@ public class MyHorizontalPictureAdapter extends RecyclerView.Adapter<MyHorizonta
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final HorizontalRecyclerViewItem listItem = listItems.get(position);
-        globalHolder = holder;
         Picasso.get().load(listItem.getPictureUrl()).into(holder.mImageView);
-        holder.mEditText.setText(listItem.getRoom());
+        holder.mTextView.setText(listItem.getRoom());
 
-//        items.add(new HorizontalRecyclerViewItem(listItem.getPictureUrl(), listItem.getRoom()));
-
-
-        SharedPreferences mPref = mContext.getSharedPreferences("SHARED", Context.MODE_PRIVATE);
-        mPref.edit().putBoolean("boolean", false).apply();
-
-        holder.mEditText.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                listItems.add(position,new HorizontalRecyclerViewItem(listItems.get(position).getPictureUrl(), holder.mEditText.getText().toString()));
-
-                return true;
+        holder.mImageView.setOnClickListener(v -> {
+            if(mContext instanceof EditActivity){
+                ((EditActivity)mContext).adapterSendsList(position);
             }
-            return false;
-
-        });
-
-        holder.mImageView.setOnClickListener(v ->
-        {
-            listItems.remove(position);
-            //call activity using interface
-            notifyItemRemoved(position);
-            notifyItemRangeChanged(position, listItems.size());
-
-//            items.remove(position);
-//            notifyItemRangeChanged(position, items.size());
         });
     }
 
-    public List<HorizontalRecyclerViewItem> getUpdatedlist() {
+    public ArrayList<HorizontalRecyclerViewItem> getUpdatedlist() {
         return listItems;
     }
 
@@ -107,13 +80,13 @@ public class MyHorizontalPictureAdapter extends RecyclerView.Adapter<MyHorizonta
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView mImageView;
-        EditText mEditText;
+        TextView mTextView;
         ImageView mUslessImageView;
 
         ViewHolder(View itemView) {
             super(itemView);
             mImageView = itemView.findViewById(R.id.horizontalImageRecyclerViewIV);
-            mEditText = itemView.findViewById(R.id.horizontalEditTextRecyclerViewIV);
+            mTextView = itemView.findViewById(R.id.horizontalImageRecyclerViewTV);
             mUslessImageView = itemView.findViewById(R.id.horizontalImageRecyclerViewIVCross);
         }
     }
