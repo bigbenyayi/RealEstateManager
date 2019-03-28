@@ -32,8 +32,9 @@ public class DatabaseHouseItem {
     String mainPicture;
     String price;
     String city;
+    String type;
 
-    public DatabaseHouseItem(String description, String surface, String id, String nbrOfRooms, String nbrOfBedrooms, String nbrOfBathrooms, String location, String realtor, String onMarket, String saleDate, String mainPicture, String price, String city) {
+    public DatabaseHouseItem(String description, String surface, String id, String nbrOfRooms, String nbrOfBedrooms, String nbrOfBathrooms, String location, String realtor, String onMarket, String saleDate, String mainPicture, String price, String city, String type) {
         this.description = description;
         this.surface = surface;
         this.id = id;
@@ -50,6 +51,7 @@ public class DatabaseHouseItem {
         this.mainPicture = mainPicture;
         this.price = price;
         this.city = city;
+        this.type = type;
     }
 
     public String getDescription() {
@@ -178,6 +180,10 @@ public class DatabaseHouseItem {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public String getType() {
+        return type;
     }
 }
 

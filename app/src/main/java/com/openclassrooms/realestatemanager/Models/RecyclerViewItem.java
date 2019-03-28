@@ -10,28 +10,36 @@ public class RecyclerViewItem {
     String city;
     String price;
     String numberOfRooms;
+    String numberOfBedrooms;
+    String numberOfBathrooms;
     String onMarket;
     String sold;
+    String description;
     ArrayList<String> pictures;
     ArrayList<String> pointOfInterest;
     String surface;
+    String location;
+    String realtor;
 
     public RecyclerViewItem(){}
 
-    public RecyclerViewItem(String mainPicture, String id, String type, String city,
-                            String price, String numberOfRooms, String onMarket, String sold,
-                            ArrayList<String> pictures, ArrayList<String> pointOfInterest, String surface) {
+    public RecyclerViewItem(String mainPicture, String id, String type, String city, String price, String numberOfRooms, String numberOfBedrooms, String numberOfBathrooms, String onMarket, String sold, String description, ArrayList<String> pictures, ArrayList<String> pointOfInterest, String surface, String location, String realtor) {
         this.mainPicture = mainPicture;
         this.id = id;
         this.type = type;
         this.city = city;
         this.price = price;
         this.numberOfRooms = numberOfRooms;
+        this.numberOfBedrooms = numberOfBedrooms;
+        this.numberOfBathrooms = numberOfBathrooms;
         this.onMarket = onMarket;
         this.sold = sold;
+        this.description = description;
         this.pictures = pictures;
         this.pointOfInterest = pointOfInterest;
         this.surface = surface;
+        this.location = location;
+        this.realtor = realtor;
     }
 
     public String getNumberOfRooms() {
@@ -76,5 +84,25 @@ public class RecyclerViewItem {
 
     public String getPrice() {
         return price;
+    }
+
+    public String getNumberOfBedrooms() {
+        return numberOfBedrooms;
+    }
+
+    public String getNumberOfBathrooms() {
+        return numberOfBathrooms;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public String getRealtor() {
+        return realtor;
     }
 }

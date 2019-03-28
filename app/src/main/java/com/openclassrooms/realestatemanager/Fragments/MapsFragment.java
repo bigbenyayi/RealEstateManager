@@ -119,4 +119,5 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         // Build the map
         getChildFragmentManager().beginTransaction().replace(R.id.mapFrag, mMapFragment).commit();
     }
+
 }

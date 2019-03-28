@@ -3,10 +3,14 @@ package com.openclassrooms.realestatemanager.Activities;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.arch.persistence.room.Room;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +19,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -40,8 +45,11 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.openclassrooms.realestatemanager.Models.DatabaseHouseItem;
 import com.openclassrooms.realestatemanager.Models.HorizontalRecyclerViewItem;
 import com.openclassrooms.realestatemanager.Models.MyHorizontalAdapter;
+import com.openclassrooms.realestatemanager.Models.RealEstateManagerDatabase;
+import com.openclassrooms.realestatemanager.Models.RecyclerWith3Items;
 import com.openclassrooms.realestatemanager.Models.SimpleRVAdapter;
 import com.openclassrooms.realestatemanager.R;
 import com.squareup.picasso.Picasso;
@@ -61,6 +69,8 @@ public class AddActivity extends AppCompatActivity {
     RelativeLayout basicRL;
     RelativeLayout detailRL;
     RelativeLayout charaRL;
+
+    private RealEstateManagerDatabase database;
 
     TextView title;
     //Basics
@@ -278,16 +288,18 @@ public class AddActivity extends AppCompatActivity {
                             dataToSave.put("rooms", arrayOfDesc);
 
                             interestsArray.clear();
-                            if (schoolCB.isChecked()){
+                            if (schoolCB.isChecked()) {
                                 interestsArray.add("School");
-                            }if (restaurantCB.isChecked()){
+                            }
+                            if (restaurantCB.isChecked()) {
                                 interestsArray.add("Restaurant");
-                            }if (parkCB.isChecked()){
+                            }
+                            if (parkCB.isChecked()) {
                                 interestsArray.add("Park");
                             }
                             dataToSave.put("pointOfInterest", interestsArray);
 
-                            dataToSave.put("price", priceET.getText().toString().replace(",",""));
+                            dataToSave.put("price", priceET.getText().toString().replace(",", ""));
                             dataToSave.put("surface", surfaceET.getText().toString());
                             dataToSave.put("type", typeET.getText().toString());
                             dataToSave.put("realtor", mPrefs.getString("username", "Realtor"));
@@ -299,6 +311,37 @@ public class AddActivity extends AppCompatActivity {
 
 
                             mDocRef.set(dataToSave, SetOptions.merge());
+
+                            ////////////////////////// SENDING DATA TO SQL DATABASE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+                            database = Room.inMemoryDatabaseBuilder(this,
+                                    RealEstateManagerDatabase.class)
+                                    .allowMainThreadQueries()
+                                    .build();
+
+                            int biggestId = 0;
+
+                            List<DatabaseHouseItem> listOfItems = database.itemDao().getItems();
+                            if (listOfItems != null) {
+                                for (int i = 0; i < listOfItems.size(); i++) {
+                                    String id = listOfItems.get(i).getId();
+                                    int idInt = Integer.parseInt(id);
+                                    biggestId = 0;
+                                    if (idInt > biggestId) {
+                                        biggestId = Integer.parseInt(id);
+                                    }
+                                }
+                            }
+
+                            database.itemDao().insertItem(new DatabaseHouseItem(descriptionET.getText().toString(), surfaceET.getText().toString(),
+                                    String.valueOf(biggestId + 1), String.valueOf(roomsNP.getValue()), String.valueOf(bedroomsNP.getValue()),
+                                    String.valueOf(bathroomsNP.getValue()), locationET.getText().toString(),
+                                    mPrefs.getString("username", "Realtor"), dateFormat.format(date),
+                                    null, url, priceET.getText().toString().replace(",", ""), cityET.getText().toString(), typeET.getText().toString()));
+
+                            List<DatabaseHouseItem> doesItWork = database.itemDao().getItems();
+
+
                         });
                     });
 

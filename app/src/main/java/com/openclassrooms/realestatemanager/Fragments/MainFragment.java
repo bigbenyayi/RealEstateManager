@@ -1,10 +1,13 @@
 package com.openclassrooms.realestatemanager.Fragments;
 
 import android.annotation.SuppressLint;
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -20,14 +23,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.openclassrooms.realestatemanager.Activities.DetailActivity;
+import com.openclassrooms.realestatemanager.Models.DatabaseHouseItem;
 import com.openclassrooms.realestatemanager.Models.DialogBuilder;
+import com.openclassrooms.realestatemanager.Models.MyAdapter;
+import com.openclassrooms.realestatemanager.Models.RealEstateManagerDatabase;
 import com.openclassrooms.realestatemanager.Models.RecyclerViewItem;
+import com.openclassrooms.realestatemanager.Models.RecyclerWith3Items;
 import com.openclassrooms.realestatemanager.Models.SearchObject;
 import com.openclassrooms.realestatemanager.R;
 import com.squareup.picasso.Picasso;
@@ -55,12 +63,15 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     // Declare callback
     private OnButtonClickedListener mCallback;
 
+    private RealEstateManagerDatabase database;
+
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<RecyclerViewItem> listItems;
     List<RecyclerViewItem> housesList = new ArrayList<>();
     private FirestoreRecyclerAdapter<RecyclerViewItem, ProductViewHolder> theAdapter;
     SearchObject mSearchObject;
+    ArrayList<DatabaseHouseItem> forDatabase = new ArrayList<>();
 
     private DetailFragment detailFragment;
     List<View> itemViewList = new ArrayList<>();
@@ -72,7 +83,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     }
 
     // --------------
-
+    private List<RecyclerViewItem> offlineListForAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -98,94 +109,103 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 mPrefs.getInt("priceMin", 0),
                 mPrefs.getInt("priceMax", 100000000));
 
-
         recyclerView = result.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
-        Query query = rootRef.collection("house");
-
-        listItems = new ArrayList<>();
-        RecyclerViewItem houseItem = null;
-
-        FirestoreRecyclerOptions<RecyclerViewItem> options = new FirestoreRecyclerOptions.Builder<RecyclerViewItem>()
-                .setQuery(query, RecyclerViewItem.class)
+        database = Room.inMemoryDatabaseBuilder(getContext(),
+                RealEstateManagerDatabase.class)
+                .allowMainThreadQueries()
                 .build();
 
+        if (isNetworkAvailable()) {
 
-        theAdapter = new FirestoreRecyclerAdapter<RecyclerViewItem, ProductViewHolder>(options) {
-            @NonNull
-            @Override
-            public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-                View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.custom_layout, viewGroup, false);
-                itemViewList.add(view);
-                return new ProductViewHolder(view);
-            }
 
-            int size;
+            FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
+            Query query = rootRef.collection("house");
 
-            @Override
-            protected void onBindViewHolder(@NonNull final ProductViewHolder holder, int position, @NonNull final RecyclerViewItem model) {
-                @SuppressLint("SimpleDateFormat") DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+            listItems = new ArrayList<>();
+            RecyclerViewItem houseItem = null;
 
-                if (mSearchObject.getRoomsMax() != 80) {
-                    if (model.getPictures() == null) {
-                        size = 0;
-                    } else {
-                        size = model.getPictures().size();
-                    }
-                    if (mSearchObject.getEndDate() == null && mSearchObject.getBeginDate() != null) {
-                        Date date = new Date();
-                        mSearchObject.setEndDate(format.format(date));
-                    } else if (mSearchObject.getEndDate() == null && mSearchObject.getBeginDate() == null){
-                        Date date = new Date();
-                        mSearchObject.setEndDate(format.format(date));
-                        mSearchObject.setBeginDate("01/01/1900");
-                    }
+            FirestoreRecyclerOptions<RecyclerViewItem> options = new FirestoreRecyclerOptions.Builder<RecyclerViewItem>()
+                    .setQuery(query, RecyclerViewItem.class)
+                    .build();
 
-                    ViewGroup.LayoutParams layoutParams = holder.relativeLayout.getLayoutParams();
-                    layoutParams.height = 0;
-                    holder.relativeLayout.setLayoutParams(layoutParams);
 
-                    Log.d("thegreatdebugger", "1st");
-                    if (mSearchObject.getCity() == null || mSearchObject.getCity().equalsIgnoreCase(model.getCity()) || mSearchObject.getCity().equals("")) {
-                        Log.d("thegreatdebugger", "2nd");
-                        if (mSearchObject.getRoomsMax() >= Integer.valueOf(model.getNumberOfRooms()) && Integer.valueOf(model.getNumberOfRooms()) >= mSearchObject.getRoomsMin()) {
-                            Log.d("thegreatdebugger", "3rd " + model.getCity());
-                            if (model.getSold() != null && mSearchObject.isSold() || !mSearchObject.isSold() && !mSearchObject.isAvailable()) {
-                                Log.d("thegreatdebugger", "4th " + model.getCity());
-                                if (model.getSold() == null && mSearchObject.isAvailable() || !mSearchObject.isSold() && !mSearchObject.isAvailable()) {
-                                    Log.d("thegreatdebugger", "5th " + model.getCity());
-                                    if (mSearchObject.getPhotosMax() >= size && size >= mSearchObject.getPhotosMin()) {
-                                        Log.d("thegreatdebugger", "6th " + model.getCity());
-                                        if (mSearchObject.getPriceMax() >= Integer.valueOf(model.getPrice()) && Integer.valueOf(model.getPrice()) >= mSearchObject.getPriceMin()) {
-                                            Log.d("thegreatdebugger", "7th " + model.getCity());
-                                            if (!mSearchObject.isPark() || model.getPointOfInterest().contains("Park")) {
-                                                Log.d("thegreatdebugger", "8th " + model.getCity());
-                                                if (!mSearchObject.isSchool() || model.getPointOfInterest().contains("School")) {
-                                                    Log.d("thegreatdebugger", "9th " + model.getCity());
-                                                    if (!mSearchObject.isRestaurant() || model.getPointOfInterest().contains("Restaurant")) {
-                                                        Log.d("thegreatdebugger", "10th " + model.getCity());
-                                                        if (mSearchObject.getSurfaceMax() >= Integer.valueOf(model.getSurface().replace("m²", "")) && Integer.valueOf(model.getSurface().replace("m²", "")) >= mSearchObject.getSurfaceMin()) {
-                                                            Log.d("thegreatdebugger", "11th " + model.getCity());
-                                                            try {
-                                                                Date beginDate = format.parse(mSearchObject.getBeginDate());
-                                                                Date theDate = format.parse(model.getOnMarket());
-                                                                Date endDate = format.parse(mSearchObject.getEndDate());
-                                                                if (beginDate.before(theDate) && endDate.after(theDate)) {
-                                                                    layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-                                                                    holder.relativeLayout.setLayoutParams(layoutParams);
-                                                                    Log.d("thegreatdebugger", "12th " + model.getCity());
+            theAdapter = new FirestoreRecyclerAdapter<RecyclerViewItem, ProductViewHolder>(options) {
+                @NonNull
+                @Override
+                public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+                    View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.custom_layout, viewGroup, false);
+                    itemViewList.add(view);
+                    return new ProductViewHolder(view);
+                }
 
-                                                                    String priceWithComas = String.format("%,d", Integer.valueOf(model.getPrice()));
-                                                                    holder.setPrice(priceWithComas + "$");
-                                                                    holder.setQuickLocation(model.getCity());
-                                                                    holder.setType(model.getType());
-                                                                    holder.setPicture(model.getMainPicture());
+                int size;
+
+                @Override
+                protected void onBindViewHolder(@NonNull final ProductViewHolder holder, int position, @NonNull final RecyclerViewItem model) {
+                    @SuppressLint("SimpleDateFormat") DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+
+                    if (mSearchObject.getRoomsMax() != 80) {
+                        if (model.getPictures() == null) {
+                            size = 0;
+                        } else {
+                            size = model.getPictures().size();
+                        }
+                        if (mSearchObject.getEndDate() == null && mSearchObject.getBeginDate() != null) {
+                            Date date = new Date();
+                            mSearchObject.setEndDate(format.format(date));
+                        } else if (mSearchObject.getEndDate() == null && mSearchObject.getBeginDate() == null) {
+                            Date date = new Date();
+                            mSearchObject.setEndDate(format.format(date));
+                            mSearchObject.setBeginDate("01/01/1900");
+                        }
+
+                        ViewGroup.LayoutParams layoutParams = holder.relativeLayout.getLayoutParams();
+                        layoutParams.height = 0;
+                        holder.relativeLayout.setLayoutParams(layoutParams);
+
+                        Log.d("thegreatdebugger", "1st");
+                        if (mSearchObject.getCity() == null || mSearchObject.getCity().equalsIgnoreCase(model.getCity()) || mSearchObject.getCity().equals("")) {
+                            Log.d("thegreatdebugger", "2nd");
+                            if (mSearchObject.getRoomsMax() >= Integer.valueOf(model.getNumberOfRooms()) && Integer.valueOf(model.getNumberOfRooms()) >= mSearchObject.getRoomsMin()) {
+                                Log.d("thegreatdebugger", "3rd " + model.getCity());
+                                if (model.getSold() != null && mSearchObject.isSold() || !mSearchObject.isSold() && !mSearchObject.isAvailable()) {
+                                    Log.d("thegreatdebugger", "4th " + model.getCity());
+                                    if (model.getSold() == null && mSearchObject.isAvailable() || !mSearchObject.isSold() && !mSearchObject.isAvailable()) {
+                                        Log.d("thegreatdebugger", "5th " + model.getCity());
+                                        if (mSearchObject.getPhotosMax() >= size && size >= mSearchObject.getPhotosMin()) {
+                                            Log.d("thegreatdebugger", "6th " + model.getCity());
+                                            if (mSearchObject.getPriceMax() >= Integer.valueOf(model.getPrice()) && Integer.valueOf(model.getPrice()) >= mSearchObject.getPriceMin()) {
+                                                Log.d("thegreatdebugger", "7th " + model.getCity());
+                                                if (!mSearchObject.isPark() || model.getPointOfInterest().contains("Park")) {
+                                                    Log.d("thegreatdebugger", "8th " + model.getCity());
+                                                    if (!mSearchObject.isSchool() || model.getPointOfInterest().contains("School")) {
+                                                        Log.d("thegreatdebugger", "9th " + model.getCity());
+                                                        if (!mSearchObject.isRestaurant() || model.getPointOfInterest().contains("Restaurant")) {
+                                                            Log.d("thegreatdebugger", "10th " + model.getCity());
+                                                            if (mSearchObject.getSurfaceMax() >= Integer.valueOf(model.getSurface().replace("m²", "")) && Integer.valueOf(model.getSurface().replace("m²", "")) >= mSearchObject.getSurfaceMin()) {
+                                                                Log.d("thegreatdebugger", "11th " + model.getCity());
+                                                                try {
+                                                                    Date beginDate = format.parse(mSearchObject.getBeginDate());
+                                                                    Date theDate = format.parse(model.getOnMarket());
+                                                                    Date endDate = format.parse(mSearchObject.getEndDate());
+                                                                    if (beginDate.before(theDate) && endDate.after(theDate)) {
+                                                                        layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                                                                        holder.relativeLayout.setLayoutParams(layoutParams);
+                                                                        Log.d("thegreatdebugger", "12th " + model.getCity());
+
+                                                                        String priceWithComas = String.format("%,d", Integer.valueOf(model.getPrice()));
+                                                                        holder.setPrice(priceWithComas + "$");
+                                                                        holder.setQuickLocation(model.getCity());
+                                                                        holder.setType(model.getType());
+                                                                        holder.setPicture(model.getMainPicture());
+
+                                                                    }
+                                                                } catch (ParseException e) {
+                                                                    e.printStackTrace();
                                                                 }
-                                                            } catch (ParseException e) {
-                                                                e.printStackTrace();
                                                             }
                                                         }
                                                     }
@@ -196,50 +216,96 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                                 }
                             }
                         }
-                    }
-                } else {
-                    if (model.getPrice() != null) {
-                        String priceWithComas = null;
-                        try {
-                            priceWithComas = String.format("%,d", Integer.valueOf(model.getPrice()));
-                        } catch (NumberFormatException e) {
-                            e.printStackTrace();
-                        }
-                        holder.setPrice(priceWithComas + "$");
+                    } else {
+                        if (model.getPrice() != null) {
+                            String priceWithComas = null;
+                            try {
+                                priceWithComas = String.format("%,d", Integer.valueOf(model.getPrice()));
+                            } catch (NumberFormatException e) {
+                                e.printStackTrace();
+                            }
+                            holder.setPrice(priceWithComas + "$");
 
-                    }
+                        }
 //                    String priceWithComas = "lalala";
-                    holder.setQuickLocation(model.getCity());
-                    holder.setType(model.getType());
-                    holder.setPicture(model.getMainPicture());
-                }
+                        holder.setQuickLocation(model.getCity());
+                        holder.setType(model.getType());
+                        holder.setPicture(model.getMainPicture());
+
+                        database.itemDao().insertItem(new DatabaseHouseItem(model.getDescription(), model.getSurface(), model.getId(), model.getNumberOfRooms(), model.getNumberOfBedrooms(),
+                                model.getNumberOfBathrooms(), model.getLocation(), model.getRealtor(), model.getOnMarket(), model.getSold(), model.getMainPicture(),
+                                model.getPrice(), model.getCity(), model.getType()));
 
 
-                Log.d("addADebugger", model.getMainPicture() + "lol");
-
-                holder.relativeLayout.setOnClickListener(v -> {
-                    holder.setClickAction(model.getId());
-
-                    for (View tempItemView : itemViewList) {
-                        TextView price = tempItemView.findViewById(R.id.recyclerViewPriceTV);
-
-                        if (itemViewList.get(holder.getAdapterPosition()) == tempItemView) {
-                            tempItemView.setBackgroundColor(Color.parseColor("#b380ff"));
-                            price.setTextColor(Color.parseColor("#FAFAFA"));
-                        } else {
-                            tempItemView.setBackgroundColor(Color.parseColor("#FAFAFA"));
-                            price.setTextColor(getResources().getColor(R.color.colorAccent));
-                        }
                     }
 
-                });
+
+                    Log.d("addADebugger", model.getMainPicture() + "lol");
+
+                    holder.relativeLayout.setOnClickListener(v -> {
+                        holder.setClickAction(model.getId());
+
+                        for (View tempItemView : itemViewList) {
+                            TextView price = tempItemView.findViewById(R.id.recyclerViewPriceTV);
+
+                            if (itemViewList.get(holder.getAdapterPosition()) == tempItemView) {
+                                tempItemView.setBackgroundColor(Color.parseColor("#b380ff"));
+                                price.setTextColor(Color.parseColor("#FAFAFA"));
+                            } else {
+                                tempItemView.setBackgroundColor(Color.parseColor("#FAFAFA"));
+                                price.setTextColor(getResources().getColor(R.color.colorAccent));
+                            }
+                        }
+
+                    });
+                    //////////////////////////////////// THIS DISPLAYS WHEN ONLINE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+
+//                    List<RecyclerWith3Items> list3items = new ArrayList<>();
+//
+//                    List<DatabaseHouseItem> listOfItems = database.itemDao().getItems();
+//                    if (listOfItems != null) {
+//                        for (int i = 0; i < listOfItems.size(); i++) {
+//                            list3items.add(new RecyclerWith3Items(listOfItems.get(i).getId(), listOfItems.get(i).getCity(),
+//                                    listOfItems.get(i).getPrice(), listOfItems.get(i).getType(), listOfItems.get(i).getMainPicture()));
+//
+//                            Log.d("daodaodao", listOfItems.get(i).getId() + listOfItems.get(i).getCity() +
+//                                    listOfItems.get(i).getPrice() + listOfItems.get(i).getType() + listOfItems.get(i).getMainPicture());
+//                        }
+//                    }
+//                    Log.d("daodaodao", "online Listof 3 Items: " + list3items.toString());
+//                    Log.d("daodaodao", "online ListofItems: " + listOfItems.toString());
+                }
+            };
+            recyclerView.setAdapter(theAdapter);
+
+
+
+
+        } else {
+            Toast.makeText(getContext(), "Offline", Toast.LENGTH_SHORT).show();
+            List<RecyclerWith3Items> list3items = new ArrayList<>();
+
+
+            List<DatabaseHouseItem> listOfItems = database.itemDao().getItems();
+            if (listOfItems != null) {
+                for (int i = 0; i < listOfItems.size(); i++) {
+                    list3items.add(new RecyclerWith3Items(listOfItems.get(i).getId(), listOfItems.get(i).getCity(),
+                            listOfItems.get(i).getPrice(), listOfItems.get(i).getType(), listOfItems.get(i).getMainPicture()));
+
+                    Log.d("daodaodao", listOfItems.get(i).getId() + listOfItems.get(i).getCity() +
+                            listOfItems.get(i).getPrice() + listOfItems.get(i).getType() + listOfItems.get(i).getMainPicture());
+                }
             }
+            Log.d("daodaodao", "Listof 3 Items: " + list3items.toString());
+            Log.d("daodaodao", "ListofItems: " + listOfItems.toString());
 
-
-        };
-        recyclerView.setAdapter(theAdapter);
-
+            RecyclerView.Adapter offlineAdapter = new MyAdapter(list3items, getContext());
+            recyclerView.setAdapter(offlineAdapter);
+            offlineAdapter.notifyDataSetChanged();
+        }
         return result;
+
     }
 
     @Override
@@ -263,7 +329,9 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onStart() {
         super.onStart();
-        theAdapter.startListening();
+        if (theAdapter != null) {
+            theAdapter.startListening();
+        }
     }
 
     @Override
@@ -366,5 +434,12 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         }
 
 
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
     }
 }
