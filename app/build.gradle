@@ -74,5 +74,9 @@ dependencies {
     //VIEW MODEL & LIVE DATA
     implementation "android.arch.lifecycle:extensions:1.1.1"
 
+    //dunno
+    debugImplementation 'com.amitshekhar.android:debug-db:1.0.4'
+
+
 }
 apply plugin: 'com.google.gms.google-services'

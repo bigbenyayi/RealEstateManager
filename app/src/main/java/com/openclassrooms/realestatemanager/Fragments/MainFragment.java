@@ -261,20 +261,20 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                     //////////////////////////////////// THIS DISPLAYS WHEN ONLINE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 
-//                    List<RecyclerWith3Items> list3items = new ArrayList<>();
-//
-//                    List<DatabaseHouseItem> listOfItems = database.itemDao().getItems();
-//                    if (listOfItems != null) {
-//                        for (int i = 0; i < listOfItems.size(); i++) {
-//                            list3items.add(new RecyclerWith3Items(listOfItems.get(i).getId(), listOfItems.get(i).getCity(),
-//                                    listOfItems.get(i).getPrice(), listOfItems.get(i).getType(), listOfItems.get(i).getMainPicture()));
-//
-//                            Log.d("daodaodao", listOfItems.get(i).getId() + listOfItems.get(i).getCity() +
-//                                    listOfItems.get(i).getPrice() + listOfItems.get(i).getType() + listOfItems.get(i).getMainPicture());
-//                        }
-//                    }
-//                    Log.d("daodaodao", "online Listof 3 Items: " + list3items.toString());
-//                    Log.d("daodaodao", "online ListofItems: " + listOfItems.toString());
+                    List<RecyclerWith3Items> list3items = new ArrayList<>();
+
+                    List<DatabaseHouseItem> listOfItems = database.itemDao().getItems();
+                    if (listOfItems != null) {
+                        for (int i = 0; i < listOfItems.size(); i++) {
+                            list3items.add(new RecyclerWith3Items(listOfItems.get(i).getId(), listOfItems.get(i).getCity(),
+                                    listOfItems.get(i).getPrice(), listOfItems.get(i).getType(), listOfItems.get(i).getMainPicture()));
+
+                            Log.d("daodaodao", listOfItems.get(i).getId() + listOfItems.get(i).getCity() +
+                                    listOfItems.get(i).getPrice() + listOfItems.get(i).getType() + listOfItems.get(i).getMainPicture());
+                        }
+                    }
+                    Log.d("daodaodao", "online Listof 3 Items: " + list3items.toString());
+                    Log.d("daodaodao", "online ListofItems: " + listOfItems.toString());
                 }
             };
             recyclerView.setAdapter(theAdapter);

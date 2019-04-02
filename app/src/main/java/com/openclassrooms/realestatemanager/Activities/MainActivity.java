@@ -29,6 +29,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.common.collect.Maps;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.firestore.DocumentReference;
@@ -128,6 +129,10 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
                     item.setIcon(getDrawable(R.drawable.ic_clear_black_24dp));
                     openSearchAlertDialog();
                 }
+                break;
+            case R.id.navbar_edit:
+                Intent myIntent = new Intent(MainActivity.this, EditActivity.class);
+                startActivity(myIntent);
                 break;
         }
 
