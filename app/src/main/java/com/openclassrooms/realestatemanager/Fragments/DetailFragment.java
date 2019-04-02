@@ -321,6 +321,7 @@ public class DetailFragment extends BaseFragment {
         market.setVisibility(View.VISIBLE);
         pointsOfInterest.setVisibility(View.VISIBLE);
         inter.setVisibility(View.VISIBLE);
+
         if (isTablet) {
             configureAndDisplayMiniMap();
         } else {

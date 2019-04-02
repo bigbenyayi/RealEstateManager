@@ -24,8 +24,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
         android:layout_margin="20dp"
+        android:layout_below="@+id/charaRL"
         android:padding="10dp"
         android:text="Back" />
 
@@ -34,8 +34,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
         android:layout_margin="20dp"
+        android:layout_below="@+id/charaRL"
         android:background="@color/colorAccent"
         android:padding="10dp"
         android:text="Next" />
@@ -179,7 +179,6 @@
         android:id="@+id/detailRL"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/backButton"
         android:layout_below="@id/title">
 
         <ImageView
@@ -311,7 +310,6 @@
         android:id="@+id/charaRL"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/backButton"
         android:layout_below="@id/title">
 
         <ImageView
@@ -501,6 +499,5 @@
 </RelativeLayout>
 </android.support.v4.widget.NestedScrollView>
 
-    <!--<EditText--><!--android:id="@+id/pointsOfInterestET"--><!--android:layout_width="match_parent"--><!--android:layout_height="wrap_content"--><!--android:layout_below="@id/pointsOfInterestTV"--><!--android:layout_marginStart="15dp"--><!--android:layout_marginTop="15dp"--><!--android:layout_marginEnd="15dp"--><!--android:drawableEnd="@drawable/ic_add_circle_black_24dp"--><!--android:imeOptions="actionDone"--><!--android:inputType="text"--><!--android:singleLine="true"--><!--android:textAlignment="center"--><!--android:textCursorDrawable="@null" />-->
 
     <!--<android.support.v7.widget.RecyclerView--><!--android:id="@+id/recyclerViewPOI"--><!--android:layout_width="match_parent"--><!--android:layout_height="wrap_content"--><!--android:layout_below="@+id/pointsOfInterestET"--><!--android:layout_centerHorizontal="true"--><!--android:textAlignment="center" />-->

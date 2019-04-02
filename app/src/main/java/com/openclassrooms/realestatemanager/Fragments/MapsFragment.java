@@ -79,6 +79,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+
         checkPlayServices();
         configurePlayServiceMaps();
 
@@ -86,12 +87,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         SupportMapFragment mapFragment = (SupportMapFragment) getActivity().getSupportFragmentManager()
                 .findFragmentById(R.id.mapFrag);
 
-
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_maps, container, false);
+
     }
-
-
 
 
     @Override

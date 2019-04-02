@@ -10,6 +10,16 @@
         android:layout_height="match_parent"
         tools:context=".Activities.AddActivity">
 
+        <Button
+            android:id="@+id/soldButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="25dp"
+            android:background="@color/colorAccent"
+            android:text="Sold?" />
+
         <TextView
             android:id="@+id/title"
             android:layout_width="match_parent"
@@ -171,15 +181,7 @@
                 android:scaleType="centerCrop"
                 android:textAlignment="center" />
 
-            <Button
-                android:id="@+id/soldButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_margin="25dp"
-                android:background="@color/colorAccent"
-                android:text="Sold?" />
+
         </RelativeLayout>
         <!-- DETAIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIILS -->
 
