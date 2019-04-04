@@ -113,13 +113,12 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        database = Room.inMemoryDatabaseBuilder(getContext(),
-                RealEstateManagerDatabase.class)
+        database = Room.databaseBuilder(getContext(),
+                RealEstateManagerDatabase.class, "MyDatabase.db")
                 .allowMainThreadQueries()
                 .build();
 
         if (isNetworkAvailable()) {
-
 
             FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
             Query query = rootRef.collection("house");
@@ -146,6 +145,11 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 @Override
                 protected void onBindViewHolder(@NonNull final ProductViewHolder holder, int position, @NonNull final RecyclerViewItem model) {
                     @SuppressLint("SimpleDateFormat") DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+
+                    database.itemDao().insertItem(new DatabaseHouseItem(model.getDescription(), model.getSurface(), model.getId(), model.getNumberOfRooms(), model.getNumberOfBedrooms(),
+                            model.getNumberOfBathrooms(), model.getLocation(), model.getRealtor(), model.getOnMarket(), model.getSold(), model.getMainPicture(),
+                            model.getPrice(), model.getCity(), model.getType()));
+
 
                     if (mSearchObject.getRoomsMax() != 80) {
                         if (model.getPictures() == null) {
@@ -232,11 +236,6 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                         holder.setType(model.getType());
                         holder.setPicture(model.getMainPicture());
 
-                        database.itemDao().insertItem(new DatabaseHouseItem(model.getDescription(), model.getSurface(), model.getId(), model.getNumberOfRooms(), model.getNumberOfBedrooms(),
-                                model.getNumberOfBathrooms(), model.getLocation(), model.getRealtor(), model.getOnMarket(), model.getSold(), model.getMainPicture(),
-                                model.getPrice(), model.getCity(), model.getType()));
-
-
                     }
 
 
@@ -258,47 +257,21 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                         }
 
                     });
-                    //////////////////////////////////// THIS DISPLAYS WHEN ONLINE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
-
-                    List<RecyclerWith3Items> list3items = new ArrayList<>();
-
-                    List<DatabaseHouseItem> listOfItems = database.itemDao().getItems();
-                    if (listOfItems != null) {
-                        for (int i = 0; i < listOfItems.size(); i++) {
-                            list3items.add(new RecyclerWith3Items(listOfItems.get(i).getId(), listOfItems.get(i).getCity(),
-                                    listOfItems.get(i).getPrice(), listOfItems.get(i).getType(), listOfItems.get(i).getMainPicture()));
-
-                            Log.d("daodaodao", listOfItems.get(i).getId() + listOfItems.get(i).getCity() +
-                                    listOfItems.get(i).getPrice() + listOfItems.get(i).getType() + listOfItems.get(i).getMainPicture());
-                        }
-                    }
-                    Log.d("daodaodao", "online Listof 3 Items: " + list3items.toString());
-                    Log.d("daodaodao", "online ListofItems: " + listOfItems.toString());
                 }
             };
             recyclerView.setAdapter(theAdapter);
-
-
-
 
         } else {
             Toast.makeText(getContext(), "Offline", Toast.LENGTH_SHORT).show();
             List<RecyclerWith3Items> list3items = new ArrayList<>();
 
-
             List<DatabaseHouseItem> listOfItems = database.itemDao().getItems();
             if (listOfItems != null) {
                 for (int i = 0; i < listOfItems.size(); i++) {
-                    list3items.add(new RecyclerWith3Items(listOfItems.get(i).getId(), listOfItems.get(i).getCity(),
-                            listOfItems.get(i).getPrice(), listOfItems.get(i).getType(), listOfItems.get(i).getMainPicture()));
-
-                    Log.d("daodaodao", listOfItems.get(i).getId() + listOfItems.get(i).getCity() +
-                            listOfItems.get(i).getPrice() + listOfItems.get(i).getType() + listOfItems.get(i).getMainPicture());
+                    list3items.add(new RecyclerWith3Items(listOfItems.get(i).getId(), listOfItems.get(i).getType(),
+                            listOfItems.get(i).getCity(), listOfItems.get(i).getPrice(), listOfItems.get(i).getMainPicture()));
                 }
             }
-            Log.d("daodaodao", "Listof 3 Items: " + list3items.toString());
-            Log.d("daodaodao", "ListofItems: " + listOfItems.toString());
 
             RecyclerView.Adapter offlineAdapter = new MyAdapter(list3items, getContext());
             recyclerView.setAdapter(offlineAdapter);
@@ -331,6 +304,22 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         super.onStart();
         if (theAdapter != null) {
             theAdapter.startListening();
+        }
+        if (!isNetworkAvailable()) {
+            Toast.makeText(getContext(), "Offline start", Toast.LENGTH_SHORT).show();
+            List<RecyclerWith3Items> list3items = new ArrayList<>();
+
+            List<DatabaseHouseItem> listOfItems = database.itemDao().getItems();
+            if (listOfItems != null) {
+                for (int i = 0; i < listOfItems.size(); i++) {
+                    list3items.add(new RecyclerWith3Items(listOfItems.get(i).getId(), listOfItems.get(i).getType(),
+                            listOfItems.get(i).getCity(), listOfItems.get(i).getPrice(), listOfItems.get(i).getMainPicture()));
+                }
+            }
+
+            RecyclerView.Adapter offlineAdapter = new MyAdapter(list3items, getContext());
+            recyclerView.setAdapter(offlineAdapter);
+            offlineAdapter.notifyDataSetChanged();
         }
     }
 
@@ -436,7 +425,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    private boolean isNetworkAvailable() {
+    public boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();

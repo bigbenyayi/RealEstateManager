@@ -55,7 +55,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
         viewHolder.recyclerViewTypeTV.setText(listItem.getType());
         viewHolder.recyclerViewLocationTV.setText(listItem.getCity());
-        viewHolder.recyclerViewPriceTV.setText(listItem.getPrice());
+        try {
+            String priceWithComas = String.format("%,d", Integer.valueOf(listItem.getPrice()));
+            viewHolder.recyclerViewPriceTV.setText(priceWithComas + "$");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Picasso.get().load(listItem.getPicture()).into(viewHolder.recyclerViewPicture);
 
         viewHolder.recyclerViewRelativeLayout.setOnClickListener(view -> {

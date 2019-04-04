@@ -314,8 +314,8 @@ public class AddActivity extends AppCompatActivity {
 
                             ////////////////////////// SENDING DATA TO SQL DATABASE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-                            database = Room.inMemoryDatabaseBuilder(this,
-                                    RealEstateManagerDatabase.class)
+                            database = Room.databaseBuilder(this,
+                                    RealEstateManagerDatabase.class, "MyDatabase.db")
                                     .allowMainThreadQueries()
                                     .build();
 

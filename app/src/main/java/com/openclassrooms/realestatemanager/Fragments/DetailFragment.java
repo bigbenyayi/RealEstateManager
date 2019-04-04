@@ -341,7 +341,7 @@ public class DetailFragment extends BaseFragment {
 
         listItems = new ArrayList<>();
         listItems.clear();
-
+        
         notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
 
             for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
