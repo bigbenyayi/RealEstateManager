@@ -16,6 +16,7 @@ public class RecyclerViewItem {
     String sold;
     String description;
     ArrayList<String> pictures;
+    ArrayList<String> rooms;
     ArrayList<String> pointOfInterest;
     String surface;
     String location;
@@ -23,7 +24,7 @@ public class RecyclerViewItem {
 
     public RecyclerViewItem(){}
 
-    public RecyclerViewItem(String mainPicture, String id, String type, String city, String price, String numberOfRooms, String numberOfBedrooms, String numberOfBathrooms, String onMarket, String sold, String description, ArrayList<String> pictures, ArrayList<String> pointOfInterest, String surface, String location, String realtor) {
+    public RecyclerViewItem(String mainPicture, String id, String type, String city, String price, String numberOfRooms, String numberOfBedrooms, String numberOfBathrooms, String onMarket, String sold, String description, ArrayList<String> pictures, ArrayList<String> rooms, ArrayList<String> pointOfInterest, String surface, String location, String realtor) {
         this.mainPicture = mainPicture;
         this.id = id;
         this.type = type;
@@ -36,10 +37,15 @@ public class RecyclerViewItem {
         this.sold = sold;
         this.description = description;
         this.pictures = pictures;
+        this.rooms = rooms;
         this.pointOfInterest = pointOfInterest;
         this.surface = surface;
         this.location = location;
         this.realtor = realtor;
+    }
+
+    public ArrayList<String> getRooms() {
+        return rooms;
     }
 
     public String getNumberOfRooms() {

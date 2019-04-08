@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.Activities;
 
+import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -27,12 +28,17 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.openclassrooms.realestatemanager.Models.DatabaseHouseItem;
+import com.openclassrooms.realestatemanager.Models.RealEstateManagerDatabase;
+import com.openclassrooms.realestatemanager.Models.Utils;
 import com.openclassrooms.realestatemanager.R;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import okhttp3.internal.Util;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
@@ -44,7 +50,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     ArrayList<LatLng> locations = new ArrayList<>();
     List<Address> theAddress;
     private Toolbar mToolbar;
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -80,23 +85,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         geocoder = new Geocoder(this, Locale.getDefault());
 
 
-        notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
+        if (Utils.isInternetAvailable(this)) {
+            notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
 
-            for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                try {
-                    addresses = geocoder.getFromLocationName((String) documentSnapshot.get("location"), 1);
-                } catch (IOException e) {
-                    e.printStackTrace();
+                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                    try {
+                        addresses = geocoder.getFromLocationName((String) documentSnapshot.get("location"), 1);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    locations.add(new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude()));
+                    ids.add((String) documentSnapshot.get("id"));
+                    Log.d("location", String.valueOf(addresses.get(0).getLatitude() + "," + addresses.get(0).getLongitude()));
                 }
-                locations.add(new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude()));
-                ids.add((String) documentSnapshot.get("id"));
-                Log.d("location", String.valueOf(addresses.get(0).getLatitude() + "," + addresses.get(0).getLongitude()));
-            }
-            AddPinsOnMap();
+                AddPinsOnMap();
 
-        });
-
-
+            });
+        }
     }
 
 

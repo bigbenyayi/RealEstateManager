@@ -40,6 +40,7 @@ import com.openclassrooms.realestatemanager.Models.DatabaseHouseItem;
 import com.openclassrooms.realestatemanager.Models.DialogBuilder;
 import com.openclassrooms.realestatemanager.Models.ItemDao;
 import com.openclassrooms.realestatemanager.Models.RealEstateManagerDatabase;
+import com.openclassrooms.realestatemanager.Models.Utils;
 import com.openclassrooms.realestatemanager.R;
 
 import java.io.FileInputStream;
@@ -88,7 +89,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
         toggle.syncState();
 
 ////////////////////////////////////////////////////////////////////////////////
-
 
 
         //Configure and show it
@@ -177,7 +177,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
     }
 
 
-
     // --------------
     // FRAGMENTS
     // --------------
@@ -231,8 +230,13 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
                 break;
             case R.id.navbar_map:
 
-                Intent myMapIntent = new Intent(this, MapsActivity.class);
-                startActivity(myMapIntent);
+                if (Utils.isInternetAvailable(this)) {
+
+                    Intent myMapIntent = new Intent(this, MapsActivity.class);
+                    startActivity(myMapIntent);
+                } else {
+                    Toast.makeText(this, "You need to be connected to internet to view the map", Toast.LENGTH_SHORT).show();
+                }
 
                 //Show map with pins on the house lol
                 break;

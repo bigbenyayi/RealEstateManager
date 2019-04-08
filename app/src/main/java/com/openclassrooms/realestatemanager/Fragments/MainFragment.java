@@ -37,6 +37,7 @@ import com.openclassrooms.realestatemanager.Models.RealEstateManagerDatabase;
 import com.openclassrooms.realestatemanager.Models.RecyclerViewItem;
 import com.openclassrooms.realestatemanager.Models.RecyclerWith3Items;
 import com.openclassrooms.realestatemanager.Models.SearchObject;
+import com.openclassrooms.realestatemanager.Models.Utils;
 import com.openclassrooms.realestatemanager.R;
 import com.squareup.picasso.Picasso;
 
@@ -118,7 +119,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 .allowMainThreadQueries()
                 .build();
 
-        if (isNetworkAvailable()) {
+        if (Utils.isInternetAvailable(getContext())) {
+
 
             FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
             Query query = rootRef.collection("house");
@@ -148,8 +150,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
                     database.itemDao().insertItem(new DatabaseHouseItem(model.getDescription(), model.getSurface(), model.getId(), model.getNumberOfRooms(), model.getNumberOfBedrooms(),
                             model.getNumberOfBathrooms(), model.getLocation(), model.getRealtor(), model.getOnMarket(), model.getSold(), model.getMainPicture(),
-                            model.getPrice(), model.getCity(), model.getType()));
-
+                            model.getPrice(), model.getCity(), model.getType(), model.getPointOfInterest(), model.getPictures(), model.getRooms()));
 
                     if (mSearchObject.getRoomsMax() != 80) {
                         if (model.getPictures() == null) {
@@ -305,7 +306,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         if (theAdapter != null) {
             theAdapter.startListening();
         }
-        if (!isNetworkAvailable()) {
+        if (!Utils.isInternetAvailable(getContext())) {
             Toast.makeText(getContext(), "Offline start", Toast.LENGTH_SHORT).show();
             List<RecyclerWith3Items> list3items = new ArrayList<>();
 
@@ -425,10 +426,5 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    public boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
-    }
+
 }

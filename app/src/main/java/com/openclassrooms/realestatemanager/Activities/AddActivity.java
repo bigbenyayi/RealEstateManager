@@ -127,10 +127,10 @@ public class AddActivity extends AppCompatActivity {
     int numberMaxPOI = 0;
     String url;
     String urlAdd;
-    ArrayList<String> interestsArray = new ArrayList<>();
+    List<String> interestsArray = new ArrayList<>();
     ArrayList<HorizontalRecyclerViewItem> listOfPicturesAndDesc = new ArrayList<>();
-    ArrayList<String> arrayOfPics = new ArrayList<>();
-    ArrayList<String> arrayOfDesc = new ArrayList<>();
+    List<String> arrayOfPics = new ArrayList<>();
+    List<String> arrayOfDesc = new ArrayList<>();
 
     FirebaseStorage storage = FirebaseStorage.getInstance();
     private MyHorizontalAdapter adapter;
@@ -337,7 +337,7 @@ public class AddActivity extends AppCompatActivity {
                                     String.valueOf(biggestId + 1), String.valueOf(roomsNP.getValue()), String.valueOf(bedroomsNP.getValue()),
                                     String.valueOf(bathroomsNP.getValue()), locationET.getText().toString(),
                                     mPrefs.getString("username", "Realtor"), dateFormat.format(date),
-                                    null, url, priceET.getText().toString().replace(",", ""), cityET.getText().toString(), typeET.getText().toString()));
+                                    null, url, priceET.getText().toString().replace(",", ""), cityET.getText().toString(), typeET.getText().toString(), interestsArray, arrayOfPics, arrayOfDesc));
 
                             List<DatabaseHouseItem> doesItWork = database.itemDao().getItems();
 

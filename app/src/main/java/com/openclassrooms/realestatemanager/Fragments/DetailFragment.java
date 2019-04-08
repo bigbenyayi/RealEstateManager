@@ -2,12 +2,14 @@ package com.openclassrooms.realestatemanager.Fragments;
 
 
 import android.annotation.SuppressLint;
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -44,11 +46,14 @@ import com.google.firebase.storage.UploadTask;
 import com.openclassrooms.realestatemanager.Activities.AddActivity;
 import com.openclassrooms.realestatemanager.Activities.EditActivity;
 import com.openclassrooms.realestatemanager.Activities.MapsActivity;
+import com.openclassrooms.realestatemanager.Models.DatabaseHouseItem;
 import com.openclassrooms.realestatemanager.Models.DetailHouse;
 import com.openclassrooms.realestatemanager.Models.HorizontalRecyclerViewItem;
 import com.openclassrooms.realestatemanager.Models.MyHorizontalAdapter;
 import com.openclassrooms.realestatemanager.Models.MyHorizontalPictureAdapter;
+import com.openclassrooms.realestatemanager.Models.RealEstateManagerDatabase;
 import com.openclassrooms.realestatemanager.Models.SimpleRVAdapter;
+import com.openclassrooms.realestatemanager.Models.Utils;
 import com.openclassrooms.realestatemanager.R;
 import com.squareup.picasso.Picasso;
 
@@ -83,7 +88,7 @@ public class DetailFragment extends BaseFragment {
     Boolean editing = false;
 
     FirebaseStorage storage = FirebaseStorage.getInstance();
-    ArrayList<String> pointsOfInterestValue = new ArrayList<>();
+    List<String> pointsOfInterestValue = new ArrayList<>();
 
     TextView inter;
     TextView desc;
@@ -99,6 +104,8 @@ public class DetailFragment extends BaseFragment {
     Uri mainImageUri;
 
     FrameLayout fl;
+
+    private RealEstateManagerDatabase database;
 
     private MapsFragment mapsFragment;
 
@@ -149,12 +156,20 @@ public class DetailFragment extends BaseFragment {
 
         setHasOptionsMenu(true);
 
+        database = Room.databaseBuilder(getContext(),
+                RealEstateManagerDatabase.class, "MyDatabase.db")
+                .allowMainThreadQueries()
+                .build();
 
         Intent iin = getActivity().getIntent();
         Bundle b = iin.getExtras();
 
-        configureHorizontalRecyclerView();
+        if (Utils.isInternetAvailable(getContext())) {
 
+            configureHorizontalRecyclerView();
+        } else {
+            configureHorizontalRecyclerViewWhenOffline();
+        }
         description = result.findViewById(R.id.descriptionTV);
         surface = result.findViewById(R.id.surfaceTV);
         rooms = result.findViewById(R.id.nbrOfRoomsTV);
@@ -201,9 +216,174 @@ public class DetailFragment extends BaseFragment {
         media.setText("Please select a house to see the details");
 
         if (b != null) {
-            updateTextView();
+            if (Utils.isInternetAvailable(getContext())) {
+                updateTextView();
+            } else {
+                updateTextViewWhenOffline();
+            }
         }
         return result;
+    }
+
+    private void updateTextViewWhenOffline() {
+
+        Intent iin = getActivity().getIntent();
+        Bundle b = iin.getExtras();
+        String id;
+
+        if (b != null) {
+            id = (String) b.get("id");
+        } else {
+            SharedPreferences mPrefs = getContext().getSharedPreferences("SHARED", Context.MODE_PRIVATE);
+            id = mPrefs.getString("id", "0");
+        }
+
+        List<DatabaseHouseItem> listOfItems = database.itemDao().getItems();
+
+            for (int i = 0; i < listOfItems.size(); i++) {
+
+                if (id.equals(listOfItems.get(i).getId())) {
+
+                    String descriptionValue = listOfItems.get(i).getDescription();
+                    String surfaceValue = listOfItems.get(i).getSurface();
+                    String nbrOfRooms = listOfItems.get(i).getNbrOfRooms();
+                    String nbrOfBedrooms = listOfItems.get(i).getNbrOfBedrooms();
+                    String nbrOfBathrooms = listOfItems.get(i).getNbrOfBathrooms();
+                    String location = listOfItems.get(i).getLocation();
+                    String realtorValue =  listOfItems.get(i).getRealtor();
+                    String onMarket = listOfItems.get(i).getOnMarket();
+                    String soldValue =  listOfItems.get(i).getSaleDate();
+                    pointsOfInterestValue = listOfItems.get(i).getPointsOfInterest();
+                    List<String> pictures = listOfItems.get(i).getPictures();
+
+
+                    houseItem = new DetailHouse(descriptionValue, surfaceValue, nbrOfRooms,
+                            nbrOfBedrooms, nbrOfBathrooms, location,
+                            realtorValue, onMarket, soldValue, pointsOfInterestValue, pictures);
+
+                    assert houseItem != null;
+                    description.setText(houseItem.getDescription());
+
+                    surface.setText(houseItem.getSurface() + "m²");
+                    rooms.setText(houseItem.getNbrOfRooms());
+                    bedrooms.setText(houseItem.getNbrOfBedrooms());
+                    bathrooms.setText(houseItem.getNbrOfBathrooms());
+                    address.setText(houseItem.getAddress());
+                    realtor.setText("Real Estate Agent: " + houseItem.getRealtor());
+                    market.setText("On market since: " + houseItem.getOnMarket());
+                    if (soldValue != null) {
+                        sold.setText("Sold: " + houseItem.getSaleDate());
+                    } else {
+                        sold.setText("Still available");
+                    }
+
+                    if (houseItem.getPointsOfInterest() != null) {
+                        Log.d("house", String.valueOf(houseItem.getPointsOfInterest()));
+                        if (houseItem.getPointsOfInterest().size() > 0) {
+                            Log.d("house", houseItem.getPointsOfInterest().get(0));
+                        }
+                        pointsOfInterest.setText("");
+                        for (int j = 0; j < houseItem.getPointsOfInterest().size(); j++) {
+
+                            if (j == houseItem.getPointsOfInterest().size() - 1) {
+                                pointsOfInterest.append(houseItem.getPointsOfInterest().get(j));
+                            } else {
+                                pointsOfInterest.append(houseItem.getPointsOfInterest().get(j) + ", ");
+
+                            }
+                        }
+                    } else {
+                        pointsOfInterest.setVisibility(View.INVISIBLE);
+                        inter.setVisibility(View.INVISIBLE);
+                        Log.d("house", houseItem.getPointsOfInterest().get(0) + "ELSEEEEEE");
+
+                    }
+                }
+            }
+            seeOnMapButton.setOnClickListener(v -> {
+                if (!editing) {
+                    Intent mapsIntent = new Intent(getContext(), MapsActivity.class);
+                    mapsIntent.putExtra("focus", houseItem.getAddress());
+                    startActivity(mapsIntent);
+                }
+            });
+
+        desc.setText("Description");
+        surf.setText("Surface");
+        roo.setText("Rooms");
+        bed.setText("Bedrooms");
+        bath.setText("Bathrooms");
+        add.setText("Address");
+        media.setText("Media");
+
+        surface.setVisibility(View.VISIBLE);
+        rooms.setVisibility(View.VISIBLE);
+        bedrooms.setVisibility(View.VISIBLE);
+        bathrooms.setVisibility(View.VISIBLE);
+        address.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.VISIBLE);
+        desc.setVisibility(View.VISIBLE);
+        surf.setVisibility(View.VISIBLE);
+        roo.setVisibility(View.VISIBLE);
+        bed.setVisibility(View.VISIBLE);
+        bath.setVisibility(View.VISIBLE);
+        add.setVisibility(View.VISIBLE);
+        media.setVisibility(View.VISIBLE);
+        description.setVisibility(View.VISIBLE);
+        sold.setVisibility(View.VISIBLE);
+        realtor.setVisibility(View.VISIBLE);
+        market.setVisibility(View.VISIBLE);
+        pointsOfInterest.setVisibility(View.VISIBLE);
+        inter.setVisibility(View.VISIBLE);
+
+        if (isTablet) {
+            configureAndDisplayMiniMap();
+        } else {
+            seeOnMapButton.setVisibility(View.VISIBLE);
+            fl.setLayoutParams(new RelativeLayout.LayoutParams(0, 0));
+
+        }
+    }
+
+    private void configureHorizontalRecyclerViewWhenOffline() {
+        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(horizontalLayoutManager);
+
+
+        listItems = new ArrayList<>();
+        listItems.clear();
+
+
+        List<DatabaseHouseItem> listOfItems = database.itemDao().getItems();
+        for (int i = 0; i < listOfItems.size(); i++) {
+            Intent iin = getActivity().getIntent();
+            Bundle b = iin.getExtras();
+            String id;
+
+            if (b != null) {
+                id = (String) b.get("id");
+            } else {
+                SharedPreferences mPrefs = getContext().getSharedPreferences("SHARED", Context.MODE_PRIVATE);
+                id = mPrefs.getString("id", null);
+            }
+
+            if (id.equals(listOfItems.get(i).getId())) {
+
+                    List<String> pictures = listOfItems.get(i).getPictures();
+                    List<String> rooms = listOfItems.get(i).getRooms();
+
+                    for (int j = 0; j < pictures.size(); j++) {
+
+                        photoItem = new HorizontalRecyclerViewItem(pictures.get(j), rooms.get(j));
+
+                        listItems.add(photoItem);
+                        photoItems.add(pictures.get(j));
+                        roomItems.add(rooms.get(j));
+                    }
+            }
+        }
+        adapter = new MyHorizontalAdapter(getContext(), listItems);
+        recyclerView.setAdapter(adapter);
     }
 
 
@@ -326,7 +506,7 @@ public class DetailFragment extends BaseFragment {
             configureAndDisplayMiniMap();
         } else {
             seeOnMapButton.setVisibility(View.VISIBLE);
-            fl.setLayoutParams(new RelativeLayout.LayoutParams(0,0));
+            fl.setLayoutParams(new RelativeLayout.LayoutParams(0, 0));
 
         }
 
@@ -341,7 +521,7 @@ public class DetailFragment extends BaseFragment {
 
         listItems = new ArrayList<>();
         listItems.clear();
-        
+
         notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
 
             for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
@@ -392,35 +572,36 @@ public class DetailFragment extends BaseFragment {
             id = mPrefs.getString("id", "0");
         }
 
+        if (isTablet) {
+            if (houseItem != null) {
+                mPrefs.edit().putString("miniMapLocation", houseItem.getAddress()).apply();
 
-        if (houseItem != null) {
-            mPrefs.edit().putString("miniMapLocation", houseItem.getAddress()).apply();
+                mapsFragment = (MapsFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.miniMapFrameLayout);
+                if (mapsFragment == null) {
+                    mapsFragment = new MapsFragment();
+                    getActivity().getSupportFragmentManager().beginTransaction()
+                            .add(R.id.miniMapFrameLayout, mapsFragment)
+                            .commit();
+                }
+            } else {
+                notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
 
-            mapsFragment = (MapsFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.miniMapFrameLayout);
-            if (mapsFragment == null) {
-                mapsFragment = new MapsFragment();
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .add(R.id.miniMapFrameLayout, mapsFragment)
-                        .commit();
-            }
-        } else {
-            notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
+                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
 
-                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                        if (id.equals(documentSnapshot.get("id"))) {
+                            mPrefs.edit().putString("miniMapLocation", (String) documentSnapshot.get("location")).apply();
 
-                    if (id.equals(documentSnapshot.get("id"))) {
-                        mPrefs.edit().putString("miniMapLocation", (String) documentSnapshot.get("location")).apply();
-
-                        mapsFragment = (MapsFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.miniMapFrameLayout);
-                        if (mapsFragment == null) {
-                            mapsFragment = new MapsFragment();
-                            getActivity().getSupportFragmentManager().beginTransaction()
-                                    .add(R.id.miniMapFrameLayout, mapsFragment)
-                                    .commit();
+                            mapsFragment = (MapsFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.miniMapFrameLayout);
+                            if (mapsFragment == null) {
+                                mapsFragment = new MapsFragment();
+                                getActivity().getSupportFragmentManager().beginTransaction()
+                                        .add(R.id.miniMapFrameLayout, mapsFragment)
+                                        .commit();
+                            }
                         }
                     }
-                }
-            });
+                });
+            }
         }
 
     }

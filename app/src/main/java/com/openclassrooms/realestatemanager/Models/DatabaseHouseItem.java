@@ -6,6 +6,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.TypeConverters;
 import android.arch.persistence.room.Update;
 import android.support.annotation.NonNull;
 
@@ -26,15 +27,21 @@ public class DatabaseHouseItem {
     String realtor;
     String onMarket;
     String saleDate;
-//    List<String> pointsOfInterest;
-//    List<String> pictures;
-//    List<String> rooms;
     String mainPicture;
     String price;
     String city;
     String type;
 
-    public DatabaseHouseItem(String description, String surface, String id, String nbrOfRooms, String nbrOfBedrooms, String nbrOfBathrooms, String location, String realtor, String onMarket, String saleDate, String mainPicture, String price, String city, String type) {
+    @TypeConverters(GithubTypeConverters.class)
+    List<String> pointsOfInterest;
+
+    @TypeConverters(GithubTypeConverters.class)
+    List<String> pictures;
+
+    @TypeConverters(GithubTypeConverters.class)
+    List<String> rooms;
+
+    public DatabaseHouseItem(String description, String surface, @NonNull String id, String nbrOfRooms, String nbrOfBedrooms, String nbrOfBathrooms, String location, String realtor, String onMarket, String saleDate, String mainPicture, String price, String city, String type, List<String> pointsOfInterest, List<String> pictures, List<String> rooms) {
         this.description = description;
         this.surface = surface;
         this.id = id;
@@ -45,13 +52,25 @@ public class DatabaseHouseItem {
         this.realtor = realtor;
         this.onMarket = onMarket;
         this.saleDate = saleDate;
-//        this.pointsOfInterest = pointsOfInterest;
-//        this.pictures = pictures;
-//        this.rooms = rooms;
         this.mainPicture = mainPicture;
         this.price = price;
         this.city = city;
         this.type = type;
+        this.pointsOfInterest = pointsOfInterest;
+        this.pictures = pictures;
+        this.rooms = rooms;
+    }
+
+    public List<String> getPictures() {
+        return pictures;
+    }
+
+    public List<String> getRooms() {
+        return rooms;
+    }
+
+    public List<String> getPointsOfInterest() {
+        return pointsOfInterest;
     }
 
     public String getDescription() {

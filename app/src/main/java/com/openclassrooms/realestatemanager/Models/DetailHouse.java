@@ -3,6 +3,7 @@ package com.openclassrooms.realestatemanager.Models;
 import org.json.JSONArray;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DetailHouse {
     String description;
@@ -14,10 +15,10 @@ public class DetailHouse {
     String realtor;
     String onMarket;
     String saleDate;
-    ArrayList<String> pointsOfInterest;
-    ArrayList<String> pictures;
+    List<String> pointsOfInterest;
+    List<String> pictures;
 
-    public DetailHouse(String description, String surface, String nbrOfRooms, String nbrOfBedrooms, String nbrOfBathrooms, String address, String realtor, String onMarket, String saleDate, ArrayList<String> pointsOfInterest, ArrayList<String> pictures) {
+    public DetailHouse(String description, String surface, String nbrOfRooms, String nbrOfBedrooms, String nbrOfBathrooms, String address, String realtor, String onMarket, String saleDate, List<String> pointsOfInterest, List<String> pictures) {
         this.description = description;
         this.surface = surface;
         this.nbrOfRooms = nbrOfRooms;
@@ -68,11 +69,11 @@ public class DetailHouse {
         return saleDate;
     }
 
-    public ArrayList<String> getPointsOfInterest() {
+    public List<String> getPointsOfInterest() {
         return pointsOfInterest;
     }
 
-    public ArrayList<String> getPictures() {
+    public List<String> getPictures() {
         return pictures;
     }
 }
