@@ -100,16 +100,19 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.addMarker(new MarkerOptions().position(location));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 11f));
-
+        if (location != null) {
+            mMap.addMarker(new MarkerOptions().position(location));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 11f));
+        }
 
     }
 
     private void AddPinsOnMap() {
 
         if (mMap != null) {
-            mMap.addMarker(new MarkerOptions().position(location));
+            if (location != null) {
+                mMap.addMarker(new MarkerOptions().position(location));
+            }
         }
     }
 

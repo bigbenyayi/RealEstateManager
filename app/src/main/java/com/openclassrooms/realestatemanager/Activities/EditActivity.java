@@ -3,6 +3,7 @@ package com.openclassrooms.realestatemanager.Activities;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -40,10 +41,12 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.openclassrooms.realestatemanager.Models.DatabaseHouseItem;
 import com.openclassrooms.realestatemanager.Models.FirebaseRequestHandler;
 import com.openclassrooms.realestatemanager.Models.HorizontalRecyclerViewItem;
 import com.openclassrooms.realestatemanager.Models.MyHorizontalAdapter;
 import com.openclassrooms.realestatemanager.Models.MyHorizontalPictureAdapter;
+import com.openclassrooms.realestatemanager.Models.RealEstateManagerDatabase;
 import com.openclassrooms.realestatemanager.Models.SimpleRVAdapter;
 import com.openclassrooms.realestatemanager.R;
 import com.squareup.picasso.Picasso;
@@ -130,6 +133,8 @@ public class EditActivity extends AppCompatActivity {
     DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     Date date = new Date();
 
+    private RealEstateManagerDatabase database;
+
     FirebaseStorage storage = FirebaseStorage.getInstance();
     private MyHorizontalPictureAdapter adapter;
 
@@ -151,6 +156,10 @@ public class EditActivity extends AppCompatActivity {
         setButtonAction();
         setImagePickers();
 
+        database = Room.databaseBuilder(this,
+                RealEstateManagerDatabase.class, "MyDatabase.db")
+                .allowMainThreadQueries()
+                .build();
 
         soldButton.setOnClickListener(v -> {
             if (sold) {
@@ -286,6 +295,30 @@ public class EditActivity extends AppCompatActivity {
 
                                 url = uri.toString();
 
+                                ////////////////////////// SENDING DATA TO SQL DATABASE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+                                String onMarketSince = null;
+                                List<DatabaseHouseItem> lol = database.itemDao().getItems();
+                                for (int i = 0; i<lol.size(); i++){
+                                    if (lol.get(i).getId().equals(id)){
+                                        onMarketSince = lol.get(i).getOnMarket();
+
+                                    }
+
+                                }
+                                String stillOnMarket = null;
+                                if (soldStatusChanged) {
+                                    if (sold) {
+                                        stillOnMarket = dateFormat.format(date);
+                                    }
+                                }
+                                database.itemDao().insertItem(new DatabaseHouseItem(descriptionET.getText().toString(), surfaceET.getText().toString(), id, String.valueOf(roomsNP.getValue()),
+                                        String.valueOf(bedroomsNP.getValue()), String.valueOf(bathroomsNP.getValue()), locationET.getText().toString(), mPrefs.getString("username", "Realtor"),
+                                        onMarketSince, stillOnMarket, url, priceET.getText().toString().replace(",", ""), cityET.getText().toString(), typeET.getText().toString(),
+                                        interestsArray, arrayOfPics, arrayOfDesc));
+
+                                ////////////////////////// SENDING DATA TO FIRESTORE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
                                 for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
                                     if (id.equals(documentSnapshot.get("id"))) {
 
@@ -319,11 +352,9 @@ public class EditActivity extends AppCompatActivity {
                                         interestsArray.clear();
                                         if (schoolCB.isChecked()) {
                                             interestsArray.add("School");
-                                        }
-                                        if (restaurantCB.isChecked()) {
+                                        }if (restaurantCB.isChecked()) {
                                             interestsArray.add("Restaurant");
-                                        }
-                                        if (parkCB.isChecked()) {
+                                        }if (parkCB.isChecked()) {
                                             interestsArray.add("Park");
                                         }
                                         dataToSave.put("pointOfInterest", interestsArray);
@@ -337,6 +368,32 @@ public class EditActivity extends AppCompatActivity {
                             });
                         });
                     } else {
+
+                        ////////////////////////// SENDING DATA TO SQL DATABASE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+                        String onMarketSince = null;
+                        String mainPicUrlFromDatabase = null;
+                        List<DatabaseHouseItem> lol = database.itemDao().getItems();
+                        for (int i = 0; i<lol.size(); i++){
+                            if (lol.get(i).getId().equals(id)){
+                                onMarketSince = lol.get(i).getOnMarket();
+                                mainPicUrlFromDatabase = lol.get(i).getMainPicture();
+                            }
+                        }
+                        String stillOnMarket = null;
+                        if (soldStatusChanged) {
+                            if (sold) {
+                                stillOnMarket = dateFormat.format(date);
+                            }
+                        }
+                        database.itemDao().insertItem(new DatabaseHouseItem(descriptionET.getText().toString(), surfaceET.getText().toString(), id, String.valueOf(roomsNP.getValue()),
+                                String.valueOf(bedroomsNP.getValue()), String.valueOf(bathroomsNP.getValue()), locationET.getText().toString(), mPrefs.getString("username", "Realtor"),
+                                onMarketSince, stillOnMarket, mainPicUrlFromDatabase,
+                                priceET.getText().toString().replace(",", ""), cityET.getText().toString(), typeET.getText().toString(),
+                                interestsArray, arrayOfPics, arrayOfDesc));
+
+                        ////////////////////////// SENDING DATA TO FIRESTORE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
                         for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
                             if (id.equals(documentSnapshot.get("id"))) {
 

@@ -193,6 +193,21 @@ public class DetailFragment extends BaseFragment {
         media = result.findViewById(R.id.media);
         fl = result.findViewById(R.id.miniMapFrameLayout);
 
+        setTheInvisibles();
+
+        media.setText("Please select a house to see the details");
+
+        if (b != null) {
+            if (Utils.isInternetAvailable(getContext())) {
+                updateTextView();
+            } else {
+                updateTextViewWhenOffline();
+            }
+        }
+        return result;
+    }
+
+    private void setTheInvisibles() {
         surface.setVisibility(View.INVISIBLE);
         rooms.setVisibility(View.INVISIBLE);
         bedrooms.setVisibility(View.INVISIBLE);
@@ -212,17 +227,6 @@ public class DetailFragment extends BaseFragment {
         pointsOfInterest.setVisibility(View.VISIBLE);
         inter.setVisibility(View.INVISIBLE);
         seeOnMapButton.setVisibility(View.INVISIBLE);
-
-        media.setText("Please select a house to see the details");
-
-        if (b != null) {
-            if (Utils.isInternetAvailable(getContext())) {
-                updateTextView();
-            } else {
-                updateTextViewWhenOffline();
-            }
-        }
-        return result;
     }
 
     private void updateTextViewWhenOffline() {
@@ -240,73 +244,73 @@ public class DetailFragment extends BaseFragment {
 
         List<DatabaseHouseItem> listOfItems = database.itemDao().getItems();
 
-            for (int i = 0; i < listOfItems.size(); i++) {
+        for (int i = 0; i < listOfItems.size(); i++) {
 
-                if (id.equals(listOfItems.get(i).getId())) {
+            if (id.equals(listOfItems.get(i).getId())) {
 
-                    String descriptionValue = listOfItems.get(i).getDescription();
-                    String surfaceValue = listOfItems.get(i).getSurface();
-                    String nbrOfRooms = listOfItems.get(i).getNbrOfRooms();
-                    String nbrOfBedrooms = listOfItems.get(i).getNbrOfBedrooms();
-                    String nbrOfBathrooms = listOfItems.get(i).getNbrOfBathrooms();
-                    String location = listOfItems.get(i).getLocation();
-                    String realtorValue =  listOfItems.get(i).getRealtor();
-                    String onMarket = listOfItems.get(i).getOnMarket();
-                    String soldValue =  listOfItems.get(i).getSaleDate();
-                    pointsOfInterestValue = listOfItems.get(i).getPointsOfInterest();
-                    List<String> pictures = listOfItems.get(i).getPictures();
+                String descriptionValue = listOfItems.get(i).getDescription();
+                String surfaceValue = listOfItems.get(i).getSurface();
+                String nbrOfRooms = listOfItems.get(i).getNbrOfRooms();
+                String nbrOfBedrooms = listOfItems.get(i).getNbrOfBedrooms();
+                String nbrOfBathrooms = listOfItems.get(i).getNbrOfBathrooms();
+                String location = listOfItems.get(i).getLocation();
+                String realtorValue = listOfItems.get(i).getRealtor();
+                String onMarket = listOfItems.get(i).getOnMarket();
+                String soldValue = listOfItems.get(i).getSaleDate();
+                pointsOfInterestValue = listOfItems.get(i).getPointsOfInterest();
+                List<String> pictures = listOfItems.get(i).getPictures();
 
 
-                    houseItem = new DetailHouse(descriptionValue, surfaceValue, nbrOfRooms,
-                            nbrOfBedrooms, nbrOfBathrooms, location,
-                            realtorValue, onMarket, soldValue, pointsOfInterestValue, pictures);
+                houseItem = new DetailHouse(descriptionValue, surfaceValue, nbrOfRooms,
+                        nbrOfBedrooms, nbrOfBathrooms, location,
+                        realtorValue, onMarket, soldValue, pointsOfInterestValue, pictures);
 
-                    assert houseItem != null;
-                    description.setText(houseItem.getDescription());
+                assert houseItem != null;
+                description.setText(houseItem.getDescription());
 
-                    surface.setText(houseItem.getSurface() + "m²");
-                    rooms.setText(houseItem.getNbrOfRooms());
-                    bedrooms.setText(houseItem.getNbrOfBedrooms());
-                    bathrooms.setText(houseItem.getNbrOfBathrooms());
-                    address.setText(houseItem.getAddress());
-                    realtor.setText("Real Estate Agent: " + houseItem.getRealtor());
-                    market.setText("On market since: " + houseItem.getOnMarket());
-                    if (soldValue != null) {
-                        sold.setText("Sold: " + houseItem.getSaleDate());
-                    } else {
-                        sold.setText("Still available");
+                surface.setText(houseItem.getSurface() + "m²");
+                rooms.setText(houseItem.getNbrOfRooms());
+                bedrooms.setText(houseItem.getNbrOfBedrooms());
+                bathrooms.setText(houseItem.getNbrOfBathrooms());
+                address.setText(houseItem.getAddress());
+                realtor.setText("Real Estate Agent: " + houseItem.getRealtor());
+                market.setText("On market since: " + houseItem.getOnMarket());
+                if (soldValue != null) {
+                    sold.setText("Sold: " + houseItem.getSaleDate());
+                } else {
+                    sold.setText("Still available");
+                }
+
+                if (houseItem.getPointsOfInterest() != null) {
+                    Log.d("house", String.valueOf(houseItem.getPointsOfInterest()));
+                    if (houseItem.getPointsOfInterest().size() > 0) {
+                        Log.d("house", houseItem.getPointsOfInterest().get(0));
                     }
+                    pointsOfInterest.setText("");
+                    for (int j = 0; j < houseItem.getPointsOfInterest().size(); j++) {
 
-                    if (houseItem.getPointsOfInterest() != null) {
-                        Log.d("house", String.valueOf(houseItem.getPointsOfInterest()));
-                        if (houseItem.getPointsOfInterest().size() > 0) {
-                            Log.d("house", houseItem.getPointsOfInterest().get(0));
+                        if (j == houseItem.getPointsOfInterest().size() - 1) {
+                            pointsOfInterest.append(houseItem.getPointsOfInterest().get(j));
+                        } else {
+                            pointsOfInterest.append(houseItem.getPointsOfInterest().get(j) + ", ");
+
                         }
-                        pointsOfInterest.setText("");
-                        for (int j = 0; j < houseItem.getPointsOfInterest().size(); j++) {
-
-                            if (j == houseItem.getPointsOfInterest().size() - 1) {
-                                pointsOfInterest.append(houseItem.getPointsOfInterest().get(j));
-                            } else {
-                                pointsOfInterest.append(houseItem.getPointsOfInterest().get(j) + ", ");
-
-                            }
-                        }
-                    } else {
-                        pointsOfInterest.setVisibility(View.INVISIBLE);
-                        inter.setVisibility(View.INVISIBLE);
-                        Log.d("house", houseItem.getPointsOfInterest().get(0) + "ELSEEEEEE");
-
                     }
+                } else {
+                    pointsOfInterest.setVisibility(View.INVISIBLE);
+                    inter.setVisibility(View.INVISIBLE);
+                    Log.d("house", houseItem.getPointsOfInterest().get(0) + "ELSEEEEEE");
+
                 }
             }
-            seeOnMapButton.setOnClickListener(v -> {
-                if (!editing) {
-                    Intent mapsIntent = new Intent(getContext(), MapsActivity.class);
-                    mapsIntent.putExtra("focus", houseItem.getAddress());
-                    startActivity(mapsIntent);
-                }
-            });
+        }
+        seeOnMapButton.setOnClickListener(v -> {
+            if (!editing) {
+                Intent mapsIntent = new Intent(getContext(), MapsActivity.class);
+                mapsIntent.putExtra("focus", houseItem.getAddress());
+                startActivity(mapsIntent);
+            }
+        });
 
         desc.setText("Description");
         surf.setText("Surface");
@@ -349,7 +353,6 @@ public class DetailFragment extends BaseFragment {
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(horizontalLayoutManager);
 
-
         listItems = new ArrayList<>();
         listItems.clear();
 
@@ -369,17 +372,17 @@ public class DetailFragment extends BaseFragment {
 
             if (id.equals(listOfItems.get(i).getId())) {
 
-                    List<String> pictures = listOfItems.get(i).getPictures();
-                    List<String> rooms = listOfItems.get(i).getRooms();
+                List<String> pictures = listOfItems.get(i).getPictures();
+                List<String> rooms = listOfItems.get(i).getRooms();
 
-                    for (int j = 0; j < pictures.size(); j++) {
+                for (int j = 0; j < pictures.size(); j++) {
 
-                        photoItem = new HorizontalRecyclerViewItem(pictures.get(j), rooms.get(j));
+                    photoItem = new HorizontalRecyclerViewItem(pictures.get(j), rooms.get(j));
 
-                        listItems.add(photoItem);
-                        photoItems.add(pictures.get(j));
-                        roomItems.add(rooms.get(j));
-                    }
+                    listItems.add(photoItem);
+                    photoItems.add(pictures.get(j));
+                    roomItems.add(rooms.get(j));
+                }
             }
         }
         adapter = new MyHorizontalAdapter(getContext(), listItems);
@@ -517,7 +520,6 @@ public class DetailFragment extends BaseFragment {
 
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(horizontalLayoutManager);
-
 
         listItems = new ArrayList<>();
         listItems.clear();
