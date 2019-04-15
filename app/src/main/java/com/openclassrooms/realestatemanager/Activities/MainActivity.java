@@ -73,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
         mNavigationView = findViewById(R.id.nav_view);
         mToolbar = findViewById(R.id.toolbar);
 
-
         mNavigationView.setNavigationItemSelectedListener(this);
 
 

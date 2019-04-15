@@ -265,7 +265,6 @@ public class EditActivity extends AppCompatActivity {
 
                     if (mainPicGetsChanged) {
 
-
                         mainPicImageView.setDrawingCacheEnabled(true);
                         mainPicImageView.buildDrawingCache();
                         Bitmap bitmap = mainPicImageView.getDrawingCache();
