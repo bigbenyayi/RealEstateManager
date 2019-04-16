@@ -135,6 +135,7 @@ public class AddActivity extends AppCompatActivity {
     FirebaseStorage storage = FirebaseStorage.getInstance();
     private MyHorizontalAdapter adapter;
 
+    List<String> localPathsArray = new ArrayList();
 
     private CollectionReference mCollectionReference;
 
@@ -234,16 +235,14 @@ public class AddActivity extends AppCompatActivity {
                 mCollectionReference = FirebaseFirestore.getInstance().collection("house");
 
                 notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
+                    intId = 0;
 
                     for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
                         String id = (String) documentSnapshot.get("id");
                         int idInt = Integer.parseInt(id);
-                        intId = 0;
-                        if (idInt > intId) {
+                        if (idInt >= intId) {
                             intId = Integer.parseInt(id);
                         }
-
-
                     }
                     mainPicImageView.setDrawingCacheEnabled(true);
                     mainPicImageView.buildDrawingCache();
@@ -309,44 +308,40 @@ public class AddActivity extends AppCompatActivity {
 
                             dataToSave.put("onMarket", dateFormat.format(date));
 
-
                             mDocRef.set(dataToSave, SetOptions.merge());
-
-                            ////////////////////////// SENDING DATA TO SQL DATABASE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
-                            database = Room.databaseBuilder(this,
-                                    RealEstateManagerDatabase.class, "MyDatabase.db")
-                                    .allowMainThreadQueries()
-                                    .build();
-
-                            int biggestId = 0;
-
-                            List<DatabaseHouseItem> listOfItems = database.itemDao().getItems();
-                            if (listOfItems != null) {
-                                for (int i = 0; i < listOfItems.size(); i++) {
-                                    String id = listOfItems.get(i).getId();
-                                    int idInt = Integer.parseInt(id);
-                                    biggestId = 0;
-                                    if (idInt > biggestId) {
-                                        biggestId = Integer.parseInt(id);
-                                    }
-                                }
-                            }
-
-                            database.itemDao().insertItem(new DatabaseHouseItem(descriptionET.getText().toString(), surfaceET.getText().toString(),
-                                    String.valueOf(biggestId + 1), String.valueOf(roomsNP.getValue()), String.valueOf(bedroomsNP.getValue()),
-                                    String.valueOf(bathroomsNP.getValue()), locationET.getText().toString(),
-                                    mPrefs.getString("username", "Realtor"), dateFormat.format(date),
-                                    null, url, priceET.getText().toString().replace(",", ""), cityET.getText().toString(), typeET.getText().toString(), interestsArray, arrayOfPics, arrayOfDesc));
-
-                            List<DatabaseHouseItem> doesItWork = database.itemDao().getItems();
-
 
                         });
                     });
-
                 });
 
+                ////////////////////////// SENDING DATA TO SQL DATABASE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+                DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                Date date = new Date();
+
+                database = Room.databaseBuilder(this,
+                        RealEstateManagerDatabase.class, "MyDatabase.db")
+                        .allowMainThreadQueries()
+                        .build();
+
+                int biggestId = 0;
+
+                List<DatabaseHouseItem> listOfItems = database.itemDao().getItems();
+                if (listOfItems != null) {
+                    for (int i = 0; i < listOfItems.size(); i++) {
+                        String id = listOfItems.get(i).getId();
+                        int idInt = Integer.parseInt(id);
+                        if (idInt > biggestId) {
+                            biggestId = Integer.parseInt(id);
+                        }
+                    }
+                }
+
+                database.itemDao().insertItem(new DatabaseHouseItem(descriptionET.getText().toString(), surfaceET.getText().toString(),
+                        String.valueOf(biggestId + 1), String.valueOf(roomsNP.getValue()), String.valueOf(bedroomsNP.getValue()),
+                        String.valueOf(bathroomsNP.getValue()), locationET.getText().toString(),
+                        mPrefs.getString("username", "Realtor"), dateFormat.format(date),
+                        null, url, priceET.getText().toString().replace(",", ""), cityET.getText().toString(), typeET.getText().toString(), interestsArray, localPathsArray, arrayOfDesc));
 
                 finish();
 
@@ -589,6 +584,7 @@ public class AddActivity extends AppCompatActivity {
         }
         if (requestCode == PICK_IMAGE_REQUEST_ADD && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Picasso.get().load(data.getData()).into(addAPictureIV);
+            localPathsArray.add(String.valueOf(data.getData()));
             setCorrectTVs();
         }
     }

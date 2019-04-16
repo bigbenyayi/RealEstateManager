@@ -20,268 +20,272 @@
             android:text="Media"
             android:textSize="30sp" />
 
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/horizontalRecyclerView"
+        <RelativeLayout
+            android:id="@+id/relativeLayoutInvisibility"
             android:layout_width="wrap_content"
-            android:layout_height="150dp"
-            android:layout_below="@+id/media" />
+            android:layout_height="wrap_content">
 
-
-        <!--
-            <ImageView
-                android:id="@+id/pictures"
-                android:layout_width="150dp"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/horizontalRecyclerView"
+                android:layout_width="wrap_content"
                 android:layout_height="150dp"
-                android:layout_below="@+id/media"
-                android:layout_marginStart="20dp" />
-        -->
-        <!-- //////////////////////////// DESCRIPTION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\  -->
-
-        <TextView
-            android:id="@+id/description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/horizontalRecyclerView"
-            android:layout_marginStart="20dp"
-            android:text="Description"
-            android:textSize="30sp" />
-
-        <TextView
-            android:id="@+id/realEstateInCharge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/description"
-            android:layout_marginStart="20dp"
-            android:layout_marginBottom="15dp"
-            android:text="Real Estate Agent: Alvaro Morata"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+                android:layout_marginTop="60dp" />
 
 
-        <TextView
-            android:id="@+id/descriptionTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/realEstateInCharge"
-            android:layout_marginStart="20dp"
-            android:text="I have no details to show you..."
-            android:textColor="#6a6a6a"
-            android:textSize="15sp" />
-
-
-        <TextView
-            android:id="@+id/onTheMarketSinceTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/toolbar"
-            android:layout_alignParentRight="true"
-            android:text="On the market since: 23/12/18" />
-
-        <TextView
-            android:id="@+id/soldTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/onTheMarketSinceTV"
-            android:layout_alignParentRight="true"
-            android:text="Sold: 26/12/18" />
-
-        <!-- //////////////////////////// CHARACTERISTICS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\  -->
-
-        <!-- ///////// Surface \\\\\\\  -->
-
-        <LinearLayout
-            android:id="@+id/LL1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/descriptionTV"
-            android:orientation="horizontal"
-            android:weightSum="2">
+            <!--
+                <ImageView
+                    android:id="@+id/pictures"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_below="@+id/media"
+                    android:layout_marginStart="20dp" />
+            -->
+            <!-- //////////////////////////// DESCRIPTION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\  -->
 
             <TextView
-                android:id="@+id/surface"
-                android:layout_width="0dp"
+                android:id="@+id/description"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Surface"
-                android:textAlignment="center"
-                android:textSize="22sp" />
+                android:layout_below="@+id/horizontalRecyclerView"
+                android:layout_marginStart="20dp"
+                android:text="Description"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/realEstateInCharge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/description"
+                android:layout_marginStart="20dp"
+                android:layout_marginBottom="15dp"
+                android:text="Real Estate Agent: Alvaro Morata"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
 
             <TextView
-                android:id="@+id/nbrOfBathrooms"
-                android:layout_width="0dp"
+                android:id="@+id/descriptionTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/realEstateInCharge"
+                android:layout_marginStart="20dp"
+                android:text="I have no details to show you..."
+                android:textColor="#6a6a6a"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/onTheMarketSinceTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/toolbar"
+                android:layout_alignParentRight="true"
+                android:text="On the market since: 23/12/18" />
+
+            <TextView
+                android:id="@+id/soldTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/onTheMarketSinceTV"
+                android:layout_alignParentRight="true"
+                android:text="Sold: 26/12/18" />
+
+            <!-- //////////////////////////// CHARACTERISTICS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\  -->
+
+            <!-- ///////// Surface \\\\\\\  -->
+
+            <LinearLayout
+                android:id="@+id/LL1"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/descriptionTV"
-                android:layout_weight="1"
-                android:text="Bathrooms"
-                android:textAlignment="center"
-                android:textSize="22sp" />
-        </LinearLayout>
+                android:orientation="horizontal"
+                android:weightSum="2">
 
-        <LinearLayout
-            android:id="@+id/LL2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/LL1"
-            android:orientation="horizontal"
-            android:weightSum="2">
+                <TextView
+                    android:id="@+id/surface"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Surface"
+                    android:textAlignment="center"
+                    android:textSize="22sp" />
 
-            <TextView
-                android:id="@+id/surfaceTV"
-                android:layout_width="0dp"
+
+                <TextView
+                    android:id="@+id/nbrOfBathrooms"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/descriptionTV"
+                    android:layout_weight="1"
+                    android:text="Bathrooms"
+                    android:textAlignment="center"
+                    android:textSize="22sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/LL2"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="700m²"
-                android:textAlignment="center" />
+                android:layout_below="@+id/LL1"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <TextView
+                    android:id="@+id/surfaceTV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="700m²"
+                    android:textAlignment="center" />
 
 
-            <!-- ///////// Number Of Bathrooms \\\\\\\  -->
+                <!-- ///////// Number Of Bathrooms \\\\\\\  -->
 
 
-            <TextView
-                android:id="@+id/nbrOfBathroomsTV"
-                android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/nbrOfBathroomsTV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="3"
+                    android:textAlignment="center" />
+            </LinearLayout>
+
+            <!-- ///////// Number Of Bedrooms \\\\\\\\  -->
+
+            <LinearLayout
+                android:id="@+id/LL3"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="3"
-                android:textAlignment="center" />
-        </LinearLayout>
+                android:layout_below="@+id/LL2"
+                android:orientation="horizontal"
+                android:weightSum="2">
 
-        <!-- ///////// Number Of Bedrooms \\\\\\\\  -->
+                <TextView
+                    android:id="@+id/nbrOfBedrooms"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_weight="1"
+                    android:text="Bedrooms"
+                    android:textAlignment="center"
+                    android:textSize="22sp" />
 
-        <LinearLayout
-            android:id="@+id/LL3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/LL2"
-            android:orientation="horizontal"
-            android:weightSum="2">
+                <TextView
+                    android:id="@+id/nbrOfRooms"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_weight="1"
+                    android:text="Rooms"
+                    android:textAlignment="center"
+                    android:textSize="22sp" />
 
-            <TextView
-                android:id="@+id/nbrOfBedrooms"
-                android:layout_width="0dp"
+
+            </LinearLayout>
+
+
+            <!-- ///////// Number Of Rooms \\\\\\\\  -->
+            <LinearLayout
+                android:id="@+id/LL4"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/LL3"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <TextView
+                    android:id="@+id/nbrOfBedroomsTV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="12"
+                    android:textAlignment="center" />
+
+                <TextView
+                    android:id="@+id/nbrOfRoomsTV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="25"
+                    android:textAlignment="center" />
+            </LinearLayout>
+
+            <!-- ///////// Address \\\\\\\\  -->
+            <LinearLayout
+                android:id="@+id/LL5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/LL4"
                 android:layout_marginTop="20dp"
-                android:layout_weight="1"
-                android:text="Bedrooms"
-                android:textAlignment="center"
-                android:textSize="22sp" />
+                android:orientation="horizontal"
+                android:weightSum="2">
 
-            <TextView
-                android:id="@+id/nbrOfRooms"
-                android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/address"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Address"
+                    android:textAlignment="center"
+                    android:textSize="22sp" />
+
+                <TextView
+                    android:id="@+id/pointsOfInterest"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Nearby interests"
+                    android:textAlignment="center"
+                    android:textSize="22sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/LL6"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_weight="1"
-                android:text="Rooms"
-                android:textAlignment="center"
-                android:textSize="22sp" />
+                android:layout_below="@+id/LL5"
+                android:orientation="horizontal"
+                android:weightSum="2">
 
+                <TextView
+                    android:id="@+id/addressTV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:text="25"
+                    android:textAlignment="center" />
 
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/pointsOfInterestTV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Park, Library, School, Football center"
+                    android:textAlignment="center" />
+            </LinearLayout>
 
+            <FrameLayout
+                android:id="@+id/miniMapFrameLayout"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_below="@+id/seeOnMapButton"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="20dp" />
 
-        <!-- ///////// Number Of Rooms \\\\\\\\  -->
-        <LinearLayout
-            android:id="@+id/LL4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/LL3"
-            android:orientation="horizontal"
-            android:weightSum="2">
-
-            <TextView
-                android:id="@+id/nbrOfBedroomsTV"
-                android:layout_width="0dp"
+            <Button
+                android:id="@+id/seeOnMapButton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="12"
-                android:textAlignment="center" />
-
-            <TextView
-                android:id="@+id/nbrOfRoomsTV"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="25"
-                android:textAlignment="center" />
-        </LinearLayout>
-
-        <!-- ///////// Address \\\\\\\\  -->
-        <LinearLayout
-            android:id="@+id/LL5"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/LL4"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal"
-            android:weightSum="2">
-
-            <TextView
-                android:id="@+id/address"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Address"
-                android:textAlignment="center"
-                android:textSize="22sp" />
-
-            <TextView
-                android:id="@+id/pointsOfInterest"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Nearby interests"
-                android:textAlignment="center"
-                android:textSize="22sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/LL6"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/LL5"
-            android:orientation="horizontal"
-            android:weightSum="2">
-
-            <TextView
-                android:id="@+id/addressTV"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:text="25"
-                android:textAlignment="center" />
-
-            <TextView
-                android:id="@+id/pointsOfInterestTV"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Park, Library, School, Football center"
-                android:textAlignment="center" />
-        </LinearLayout>
-
-        <FrameLayout
-            android:id="@+id/miniMapFrameLayout"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_below="@+id/seeOnMapButton"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="20dp" />
-
-        <Button
-            android:id="@+id/seeOnMapButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/LL6"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="5dp"
-            android:background="@color/colorAccent"
-            android:padding="10dp"
-            android:text="See on map" />
+                android:layout_below="@+id/LL6"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="5dp"
+                android:background="@color/colorAccent"
+                android:padding="10dp"
+                android:text="See on map" />
+        </RelativeLayout>
     </RelativeLayout>
 
 </android.support.v4.widget.NestedScrollView>

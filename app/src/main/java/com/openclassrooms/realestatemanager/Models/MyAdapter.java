@@ -64,7 +64,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         Picasso.get().load(listItem.getPicture()).into(viewHolder.recyclerViewPicture);
 
         viewHolder.recyclerViewRelativeLayout.setOnClickListener(view -> {
-           setClickAction(listItem.getId());
+            setClickAction(listItem.getId());
 
             for (View tempItemView : itemViewList) {
                 TextView price = tempItemView.findViewById(R.id.recyclerViewPriceTV);
@@ -119,8 +119,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         if (detailFragment != null && detailFragment.isVisible()) {
             //TABLET : Update directly TextView
             mPref.edit().putString("id", id).apply();
-            detailFragment.configureHorizontalRecyclerView();
-            detailFragment.updateTextView();
+            if (Utils.isInternetAvailable(context)) {
+                detailFragment.configureHorizontalRecyclerView();
+                detailFragment.updateTextView();
+            }else {
+                detailFragment.configureHorizontalRecyclerViewWhenOffline();
+                detailFragment.updateTextViewWhenOffline();
+            }
             mPref.edit().putString("id", id).apply();
 
 

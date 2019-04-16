@@ -119,6 +119,8 @@ public class DetailFragment extends BaseFragment {
     private CollectionReference notebookRef = FirebaseFirestore.getInstance().collection("house");
     boolean isTablet;
 
+    RelativeLayout relativeLayout;
+
 
     RecyclerView recyclerView;
 
@@ -150,50 +152,31 @@ public class DetailFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        recyclerView = result.findViewById(R.id.horizontalRecyclerView);
         isTablet = getResources().getBoolean(R.bool.isTablet);
-
-
-        setHasOptionsMenu(true);
-
         database = Room.databaseBuilder(getContext(),
                 RealEstateManagerDatabase.class, "MyDatabase.db")
                 .allowMainThreadQueries()
                 .build();
 
+        fetchingViewFromXML(result);
+        setTheInvisibles();
+
+        setHasOptionsMenu(true);
+
         Intent iin = getActivity().getIntent();
         Bundle b = iin.getExtras();
 
         if (Utils.isInternetAvailable(getContext())) {
-
             configureHorizontalRecyclerView();
+            seeOnMapButton.setVisibility(View.VISIBLE);
+            fl.setVisibility(View.VISIBLE);
+            fl.setLayoutParams(new RelativeLayout.LayoutParams(200, 200));
         } else {
             configureHorizontalRecyclerViewWhenOffline();
+            seeOnMapButton.setVisibility(View.INVISIBLE);
+            fl.setVisibility(View.INVISIBLE);
+            fl.setLayoutParams(new RelativeLayout.LayoutParams(0, 0));
         }
-        description = result.findViewById(R.id.descriptionTV);
-        surface = result.findViewById(R.id.surfaceTV);
-        rooms = result.findViewById(R.id.nbrOfRoomsTV);
-        bedrooms = result.findViewById(R.id.nbrOfBedroomsTV);
-        bathrooms = result.findViewById(R.id.nbrOfBathroomsTV);
-        address = result.findViewById(R.id.addressTV);
-        pointsOfInterest = result.findViewById(R.id.pointsOfInterestTV);
-        realtor = result.findViewById(R.id.realEstateInCharge);
-        market = result.findViewById(R.id.onTheMarketSinceTV);
-        sold = result.findViewById(R.id.soldTV);
-        seeOnMapButton = result.findViewById(R.id.seeOnMapButton);
-
-
-        inter = result.findViewById(R.id.pointsOfInterest);
-        desc = result.findViewById(R.id.description);
-        surf = result.findViewById(R.id.surface);
-        roo = result.findViewById(R.id.nbrOfRooms);
-        bed = result.findViewById(R.id.nbrOfBedrooms);
-        bath = result.findViewById(R.id.nbrOfBathrooms);
-        add = result.findViewById(R.id.address);
-        media = result.findViewById(R.id.media);
-        fl = result.findViewById(R.id.miniMapFrameLayout);
-
-        setTheInvisibles();
 
         media.setText("Please select a house to see the details");
 
@@ -207,29 +190,39 @@ public class DetailFragment extends BaseFragment {
         return result;
     }
 
-    private void setTheInvisibles() {
-        surface.setVisibility(View.INVISIBLE);
-        rooms.setVisibility(View.INVISIBLE);
-        bedrooms.setVisibility(View.INVISIBLE);
-        bathrooms.setVisibility(View.INVISIBLE);
-        address.setVisibility(View.INVISIBLE);
-        desc.setVisibility(View.INVISIBLE);
-        surf.setVisibility(View.INVISIBLE);
-        roo.setVisibility(View.INVISIBLE);
-        bed.setVisibility(View.INVISIBLE);
-        bath.setVisibility(View.INVISIBLE);
-        add.setVisibility(View.INVISIBLE);
-        description.setVisibility(View.INVISIBLE);
-        recyclerView.setVisibility(View.INVISIBLE);
-        sold.setVisibility(View.INVISIBLE);
-        realtor.setVisibility(View.INVISIBLE);
-        market.setVisibility(View.INVISIBLE);
-        pointsOfInterest.setVisibility(View.VISIBLE);
-        inter.setVisibility(View.INVISIBLE);
-        seeOnMapButton.setVisibility(View.INVISIBLE);
+    private void fetchingViewFromXML(View result) {
+        description = result.findViewById(R.id.descriptionTV);
+        surface = result.findViewById(R.id.surfaceTV);
+        rooms = result.findViewById(R.id.nbrOfRoomsTV);
+        bedrooms = result.findViewById(R.id.nbrOfBedroomsTV);
+        bathrooms = result.findViewById(R.id.nbrOfBathroomsTV);
+        address = result.findViewById(R.id.addressTV);
+        pointsOfInterest = result.findViewById(R.id.pointsOfInterestTV);
+        realtor = result.findViewById(R.id.realEstateInCharge);
+        market = result.findViewById(R.id.onTheMarketSinceTV);
+        sold = result.findViewById(R.id.soldTV);
+        seeOnMapButton = result.findViewById(R.id.seeOnMapButton);
+
+        inter = result.findViewById(R.id.pointsOfInterest);
+        desc = result.findViewById(R.id.description);
+        surf = result.findViewById(R.id.surface);
+        roo = result.findViewById(R.id.nbrOfRooms);
+        bed = result.findViewById(R.id.nbrOfBedrooms);
+        bath = result.findViewById(R.id.nbrOfBathrooms);
+        add = result.findViewById(R.id.address);
+        media = result.findViewById(R.id.media);
+        fl = result.findViewById(R.id.miniMapFrameLayout);
+        recyclerView = result.findViewById(R.id.horizontalRecyclerView);
+        relativeLayout = result.findViewById(R.id.relativeLayoutInvisibility);
+
     }
 
-    private void updateTextViewWhenOffline() {
+    private void setTheInvisibles() {
+        relativeLayout.setVisibility(View.INVISIBLE);
+        relativeLayout.setLayoutParams(new RelativeLayout.LayoutParams(0,0));
+    }
+
+    public void updateTextViewWhenOffline() {
 
         Intent iin = getActivity().getIntent();
         Bundle b = iin.getExtras();
@@ -320,36 +313,22 @@ public class DetailFragment extends BaseFragment {
         add.setText("Address");
         media.setText("Media");
 
-        surface.setVisibility(View.VISIBLE);
-        rooms.setVisibility(View.VISIBLE);
-        bedrooms.setVisibility(View.VISIBLE);
-        bathrooms.setVisibility(View.VISIBLE);
-        address.setVisibility(View.VISIBLE);
-        recyclerView.setVisibility(View.VISIBLE);
-        desc.setVisibility(View.VISIBLE);
-        surf.setVisibility(View.VISIBLE);
-        roo.setVisibility(View.VISIBLE);
-        bed.setVisibility(View.VISIBLE);
-        bath.setVisibility(View.VISIBLE);
-        add.setVisibility(View.VISIBLE);
+        relativeLayout.setVisibility(View.VISIBLE);
+        relativeLayout.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         media.setVisibility(View.VISIBLE);
-        description.setVisibility(View.VISIBLE);
-        sold.setVisibility(View.VISIBLE);
-        realtor.setVisibility(View.VISIBLE);
-        market.setVisibility(View.VISIBLE);
-        pointsOfInterest.setVisibility(View.VISIBLE);
-        inter.setVisibility(View.VISIBLE);
 
         if (isTablet) {
             configureAndDisplayMiniMap();
         } else {
-            seeOnMapButton.setVisibility(View.VISIBLE);
+            if (Utils.isInternetAvailable(getContext())) {
+                seeOnMapButton.setVisibility(View.VISIBLE);
+            }
             fl.setLayoutParams(new RelativeLayout.LayoutParams(0, 0));
 
         }
     }
 
-    private void configureHorizontalRecyclerViewWhenOffline() {
+    public void configureHorizontalRecyclerViewWhenOffline() {
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(horizontalLayoutManager);
 
@@ -388,7 +367,6 @@ public class DetailFragment extends BaseFragment {
         adapter = new MyHorizontalAdapter(getContext(), listItems);
         recyclerView.setAdapter(adapter);
     }
-
 
     public void updateTextView() {
 
@@ -485,25 +463,10 @@ public class DetailFragment extends BaseFragment {
         add.setText("Address");
         media.setText("Media");
 
-        surface.setVisibility(View.VISIBLE);
-        rooms.setVisibility(View.VISIBLE);
-        bedrooms.setVisibility(View.VISIBLE);
-        bathrooms.setVisibility(View.VISIBLE);
-        address.setVisibility(View.VISIBLE);
-        recyclerView.setVisibility(View.VISIBLE);
-        desc.setVisibility(View.VISIBLE);
-        surf.setVisibility(View.VISIBLE);
-        roo.setVisibility(View.VISIBLE);
-        bed.setVisibility(View.VISIBLE);
-        bath.setVisibility(View.VISIBLE);
-        add.setVisibility(View.VISIBLE);
+        relativeLayout.setVisibility(View.VISIBLE);
+        relativeLayout.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         media.setVisibility(View.VISIBLE);
-        description.setVisibility(View.VISIBLE);
-        sold.setVisibility(View.VISIBLE);
-        realtor.setVisibility(View.VISIBLE);
-        market.setVisibility(View.VISIBLE);
-        pointsOfInterest.setVisibility(View.VISIBLE);
-        inter.setVisibility(View.VISIBLE);
+
 
         if (isTablet) {
             configureAndDisplayMiniMap();

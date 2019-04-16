@@ -43,10 +43,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     LatLng location;
 
 
-    public MapsFragment() {
-
-        // Required empty public constructor
-    }
+    public MapsFragment() {// Required empty public constructor
+        }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,7 +52,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
         geocoder = new Geocoder(getContext(), Locale.getDefault());
         SharedPreferences mPrefs = getContext().getSharedPreferences("SHARED", Context.MODE_PRIVATE);
-
 
         try {
             addresses = geocoder.getFromLocationName(mPrefs.getString("miniMapLocation", null), 1);
