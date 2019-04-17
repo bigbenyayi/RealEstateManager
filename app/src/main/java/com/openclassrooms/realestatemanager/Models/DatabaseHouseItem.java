@@ -8,6 +8,7 @@ import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.TypeConverters;
 import android.arch.persistence.room.Update;
+import android.content.ContentValues;
 import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
@@ -153,29 +154,10 @@ public class DatabaseHouseItem {
         this.saleDate = saleDate;
     }
 
-//    public ArrayList<String> getPointsOfInterest() {
-//        return pointsOfInterest;
-//    }
-//
-//    public void setPointsOfInterest(ArrayList<String> pointsOfInterest) {
-//        this.pointsOfInterest = pointsOfInterest;
-//    }
-//
-//    public ArrayList<String> getPictures() {
-//        return pictures;
-//    }
-//
-//    public void setPictures(ArrayList<String> pictures) {
-//        this.pictures = pictures;
-//    }
-//
-//    public ArrayList<String> getRooms() {
-//        return rooms;
-//    }
-//
-//    public void setRooms(ArrayList<String> rooms) {
-//        this.rooms = rooms;
-//    }
+
+    public void setRooms(ArrayList<String> rooms) {
+        this.rooms = rooms;
+    }
 
     public String getMainPicture() {
         return mainPicture;
@@ -204,5 +186,15 @@ public class DatabaseHouseItem {
     public String getType() {
         return type;
     }
+
+//    public static DatabaseHouseItem fromContentValues(ContentValues values) {
+//        final DatabaseHouseItem item = new DatabaseHouseItem();
+//        if (values.containsKey("text")) item.setText(values.getAsString("text"));
+//        if (values.containsKey("category")) item.setCategory(values.getAsInteger("category"));
+//        if (values.containsKey("isSelected")) item.setSelected(values.getAsBoolean("isSelected"));
+//        if (values.containsKey("userId")) item.setUserId(values.getAsLong("userId"));
+//        if (values.containsKey("image")) item.setImage(values.getAsString("image"));
+//        return item;
+//    }
 }
 

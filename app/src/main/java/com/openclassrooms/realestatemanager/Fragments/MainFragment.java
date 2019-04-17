@@ -5,7 +5,9 @@ import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -40,6 +42,7 @@ import com.openclassrooms.realestatemanager.Models.SearchObject;
 import com.openclassrooms.realestatemanager.Models.Utils;
 import com.openclassrooms.realestatemanager.R;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -151,6 +154,27 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                     database.itemDao().insertItem(new DatabaseHouseItem(model.getDescription(), model.getSurface(), model.getId(), model.getNumberOfRooms(), model.getNumberOfBedrooms(),
                             model.getNumberOfBathrooms(), model.getLocation(), model.getRealtor(), model.getOnMarket(), model.getSold(), model.getMainPicture(),
                             model.getPrice(), model.getCity(), model.getType(), model.getPointOfInterest(), model.getPictures(), model.getRooms()));
+
+                    //Loading all the pictures when online so that they can be displayed offline
+                    if (model.getPictures() != null) {
+                        for (int i = 0; i < model.getPictures().size(); i++)
+                            Picasso.get().load(model.getPictures().get(i)).into(new Target() {
+                                @Override
+                                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+
+                                }
+
+                                @Override
+                                public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+
+                                }
+
+                                @Override
+                                public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                                }
+                            });
+                    }
 
                     if (mSearchObject.getRoomsMax() != 80) {
                         if (model.getPictures() == null) {

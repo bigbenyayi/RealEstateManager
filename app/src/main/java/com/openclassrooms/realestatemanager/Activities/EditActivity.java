@@ -48,6 +48,7 @@ import com.openclassrooms.realestatemanager.Models.MyHorizontalAdapter;
 import com.openclassrooms.realestatemanager.Models.MyHorizontalPictureAdapter;
 import com.openclassrooms.realestatemanager.Models.RealEstateManagerDatabase;
 import com.openclassrooms.realestatemanager.Models.SimpleRVAdapter;
+import com.openclassrooms.realestatemanager.Models.Utils;
 import com.openclassrooms.realestatemanager.R;
 import com.squareup.picasso.Picasso;
 
@@ -132,6 +133,8 @@ public class EditActivity extends AppCompatActivity {
     Boolean soldStatusChanged = false;
     DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     Date date = new Date();
+    String dataPathForMainPicture;
+    String checkingMainPictureChange;
 
     private RealEstateManagerDatabase database;
 
@@ -150,16 +153,19 @@ public class EditActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
+
+        database = Room.databaseBuilder(this,
+                RealEstateManagerDatabase.class, "MyDatabase.db")
+                .allowMainThreadQueries()
+                .build();
+
         fetchingAllViewFromXML();
         setActionDoneOnEditTexts();
         setInitialViews();
         setButtonAction();
         setImagePickers();
 
-        database = Room.databaseBuilder(this,
-                RealEstateManagerDatabase.class, "MyDatabase.db")
-                .allowMainThreadQueries()
-                .build();
+
 
         soldButton.setOnClickListener(v -> {
             if (sold) {
@@ -177,6 +183,8 @@ public class EditActivity extends AppCompatActivity {
                 sold = true;
             }
         });
+
+
 
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         horizontalRecyclerViewAdd.setLayoutManager(horizontalLayoutManager);
@@ -299,9 +307,10 @@ public class EditActivity extends AppCompatActivity {
 
                                 String onMarketSince = null;
                                 List<DatabaseHouseItem> lol = database.itemDao().getItems();
-                                for (int i = 0; i<lol.size(); i++){
-                                    if (lol.get(i).getId().equals(id)){
+                                for (int i = 0; i < lol.size(); i++) {
+                                    if (lol.get(i).getId().equals(id)) {
                                         onMarketSince = lol.get(i).getOnMarket();
+
 
                                     }
 
@@ -314,7 +323,7 @@ public class EditActivity extends AppCompatActivity {
                                 }
                                 database.itemDao().insertItem(new DatabaseHouseItem(descriptionET.getText().toString(), surfaceET.getText().toString(), id, String.valueOf(roomsNP.getValue()),
                                         String.valueOf(bedroomsNP.getValue()), String.valueOf(bathroomsNP.getValue()), locationET.getText().toString(), mPrefs.getString("username", "Realtor"),
-                                        onMarketSince, stillOnMarket, url, priceET.getText().toString().replace(",", ""), cityET.getText().toString(), typeET.getText().toString(),
+                                        onMarketSince, stillOnMarket, dataPathForMainPicture, priceET.getText().toString().replace(",", ""), cityET.getText().toString(), typeET.getText().toString(),
                                         interestsArray, arrayOfPics, arrayOfDesc));
 
                                 ////////////////////////// SENDING DATA TO FIRESTORE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -333,10 +342,11 @@ public class EditActivity extends AppCompatActivity {
                                         if (!(("" + documentSnapshot.get("mainPicture")).equals(url))) {
                                             dataToSave.put("mainPicture", url);
                                         }
-
-                                        for (int i = 0; i < adapter.getUpdatedlist().size(); i++) {
-                                            arrayOfPics.add(adapter.getUpdatedlist().get(i).getPictureUrl());
-                                            arrayOfDesc.add(adapter.getUpdatedlist().get(i).getRoom());
+                                        if (adapter.getUpdatedlist().size() > 0) {
+                                            for (int i = 0; i < adapter.getUpdatedlist().size(); i++) {
+                                                arrayOfPics.add(adapter.getUpdatedlist().get(i).getPictureUrl());
+                                                arrayOfDesc.add(adapter.getUpdatedlist().get(i).getRoom());
+                                            }
                                         }
                                         dataToSave.put("pictures", arrayOfPics);
                                         dataToSave.put("rooms", arrayOfDesc);
@@ -352,9 +362,11 @@ public class EditActivity extends AppCompatActivity {
                                         interestsArray.clear();
                                         if (schoolCB.isChecked()) {
                                             interestsArray.add("School");
-                                        }if (restaurantCB.isChecked()) {
+                                        }
+                                        if (restaurantCB.isChecked()) {
                                             interestsArray.add("Restaurant");
-                                        }if (parkCB.isChecked()) {
+                                        }
+                                        if (parkCB.isChecked()) {
                                             interestsArray.add("Park");
                                         }
                                         dataToSave.put("pointOfInterest", interestsArray);
@@ -374,10 +386,11 @@ public class EditActivity extends AppCompatActivity {
                         String onMarketSince = null;
                         String mainPicUrlFromDatabase = null;
                         List<DatabaseHouseItem> lol = database.itemDao().getItems();
-                        for (int i = 0; i<lol.size(); i++){
-                            if (lol.get(i).getId().equals(id)){
+                        for (int i = 0; i < lol.size(); i++) {
+                            if (lol.get(i).getId().equals(id)) {
                                 onMarketSince = lol.get(i).getOnMarket();
                                 mainPicUrlFromDatabase = lol.get(i).getMainPicture();
+                                checkingMainPictureChange = lol.get(i).getMainPicture();
                             }
                         }
                         String stillOnMarket = null;
@@ -386,6 +399,7 @@ public class EditActivity extends AppCompatActivity {
                                 stillOnMarket = dateFormat.format(date);
                             }
                         }
+
                         database.itemDao().insertItem(new DatabaseHouseItem(descriptionET.getText().toString(), surfaceET.getText().toString(), id, String.valueOf(roomsNP.getValue()),
                                 String.valueOf(bedroomsNP.getValue()), String.valueOf(bathroomsNP.getValue()), locationET.getText().toString(), mPrefs.getString("username", "Realtor"),
                                 onMarketSince, stillOnMarket, mainPicUrlFromDatabase,
@@ -477,16 +491,28 @@ public class EditActivity extends AppCompatActivity {
         roomsNP.setMinValue(0);
         roomsNP.setMaxValue(40);
 
-        notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
-            Intent iin = getIntent();
-            Bundle b = iin.getExtras();
-            String id;
+        Intent iin = getIntent();
+        Bundle b = iin.getExtras();
+        String id;
 
-            if (b != null) {
-                id = (String) b.get("id");
-            } else {
-                id = mPrefs.getString("id", null);
+        if (b != null) {
+            id = (String) b.get("id");
+        } else {
+            id = mPrefs.getString("id", null);
+        }
+
+
+        List<DatabaseHouseItem> listOfDatabaseItems = database.itemDao().getItems();
+        for (int i = 0; i < listOfDatabaseItems.size(); i++) {
+            if (listOfDatabaseItems.get(i).getId().equals(id)) {
+                if (!(Utils.isInternetAvailable(this))) {
+                    Picasso.get().load(listOfDatabaseItems.get(i).getMainPicture()).into(mainPicImageView);
+                }
             }
+        }
+
+
+        notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
 
             for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
 
@@ -526,7 +552,6 @@ public class EditActivity extends AppCompatActivity {
                             .fit().centerInside()
                             .into(mainPicImageView);
 
-                    //   Picasso.get().load((String) documentSnapshot.get("mainPicture")).into(mainPicImageView);
                     descriptionET.setText((String) documentSnapshot.get("description"));
                     locationET.setText((String) documentSnapshot.get("location"));
                     //RECYCLER
@@ -552,6 +577,7 @@ public class EditActivity extends AppCompatActivity {
                 }
             }
         });
+
 
         priceET.addTextChangedListener(new TextWatcher() {
 
@@ -767,7 +793,7 @@ public class EditActivity extends AppCompatActivity {
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             mainPicGetsChanged = true;
             mainImageUri = data.getData();
-
+            dataPathForMainPicture = mainImageUri.toString();
             Picasso.get().load(mainImageUri).into(mainPicImageView);
             setCorrectTVs();
         }
