@@ -362,8 +362,11 @@ public class DetailFragment extends BaseFragment {
                     photoItems.add(pictures.get(j));
                     roomItems.add(rooms.get(j));
                 }
+
+
             }
         }
+
         adapter = new MyHorizontalAdapter(getContext(), listItems);
         recyclerView.setAdapter(adapter);
     }

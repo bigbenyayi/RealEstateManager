@@ -133,6 +133,7 @@ public class AddActivity extends AppCompatActivity {
     ArrayList<HorizontalRecyclerViewItem> listOfPicturesAndDesc = new ArrayList<>();
     List<String> arrayOfPics = new ArrayList<>();
     List<String> arrayOfDesc = new ArrayList<>();
+    List<String> arrayOfDescOffline = new ArrayList<>();
 
     FirebaseStorage storage = FirebaseStorage.getInstance();
     private MyHorizontalAdapter adapter;
@@ -397,11 +398,16 @@ public class AddActivity extends AppCompatActivity {
                     }
                 }
 
+                for (int i = 0; i < adapter.getUpdatedlist().size(); i++) {
+                    arrayOfDescOffline.add(adapter.getUpdatedlist().get(i).getRoom());
+                }
+
+
                 database.itemDao().insertItem(new DatabaseHouseItem(descriptionET.getText().toString(), surfaceET.getText().toString(),
                         String.valueOf(biggestId + 1), String.valueOf(roomsNP.getValue()), String.valueOf(bedroomsNP.getValue()),
                         String.valueOf(bathroomsNP.getValue()), locationET.getText().toString(),
                         mPrefs.getString("username", "Realtor"), dateFormat.format(date),
-                        null, dataPathForMainPicture, priceET.getText().toString().replace(",", ""), cityET.getText().toString(), typeET.getText().toString(), interestsArray, localPathsArray, arrayOfDesc));
+                        null, dataPathForMainPicture, priceET.getText().toString().replace(",", ""), cityET.getText().toString(), typeET.getText().toString(), interestsArray, localPathsArray, arrayOfDescOffline));
 
                 if (!Utils.isInternetAvailable(this)) {
                     finish();
