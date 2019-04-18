@@ -466,7 +466,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                             }
                         }
                     } else {
-                       
+
                         list3items.add(new RecyclerWith3Items(listOfItems.get(i).getId(), listOfItems.get(i).getType(),
                                 listOfItems.get(i).getCity(), fastGet.getPrice(), listOfItems.get(i).getMainPicture()));
 

@@ -210,7 +210,7 @@ public class AddActivity extends AppCompatActivity {
 
             progressBar.setVisibility(View.GONE);
             addAPictureButton.setEnabled(true);
-            addButton.setEnabled(true);
+            addButton.setEnabled(false);
 
 
         });
@@ -449,6 +449,8 @@ public class AddActivity extends AppCompatActivity {
         roomsNP.setMinValue(0);
         roomsNP.setMaxValue(40);
 
+        addButton.setEnabled(false);
+
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -654,6 +656,7 @@ public class AddActivity extends AppCompatActivity {
         if (requestCode == PICK_IMAGE_REQUEST_ADD && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Picasso.get().load(data.getData()).into(addAPictureIV);
             urlAdd = data.getData().toString();
+            addButton.setEnabled(true);
             setCorrectTVs();
         }
     }
