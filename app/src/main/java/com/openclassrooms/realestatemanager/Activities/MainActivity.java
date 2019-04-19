@@ -1,14 +1,10 @@
 package com.openclassrooms.realestatemanager.Activities;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.persistence.room.Room;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -16,37 +12,22 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.common.collect.Maps;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.openclassrooms.realestatemanager.Fragments.DetailFragment;
 import com.openclassrooms.realestatemanager.Fragments.MainFragment;
-import com.openclassrooms.realestatemanager.Models.DatabaseHouseItem;
 import com.openclassrooms.realestatemanager.Models.DialogBuilder;
-import com.openclassrooms.realestatemanager.Models.ItemDao;
-import com.openclassrooms.realestatemanager.Models.RealEstateManagerDatabase;
 import com.openclassrooms.realestatemanager.Models.Utils;
 import com.openclassrooms.realestatemanager.R;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements MainFragment.OnButtonClickedListener, NavigationView.OnNavigationItemSelectedListener, DialogBuilder.AlertDialogListener {
 
@@ -77,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
 
 
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_dehaze_white_24dp);
 
 

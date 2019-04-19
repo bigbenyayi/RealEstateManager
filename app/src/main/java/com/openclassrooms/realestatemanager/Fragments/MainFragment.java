@@ -8,10 +8,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -22,7 +19,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,7 +29,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.openclassrooms.realestatemanager.Activities.DetailActivity;
 import com.openclassrooms.realestatemanager.Models.DatabaseHouseItem;
-import com.openclassrooms.realestatemanager.Models.DialogBuilder;
 import com.openclassrooms.realestatemanager.Models.MyAdapter;
 import com.openclassrooms.realestatemanager.Models.RealEstateManagerDatabase;
 import com.openclassrooms.realestatemanager.Models.RecyclerViewItem;
@@ -44,21 +39,13 @@ import com.openclassrooms.realestatemanager.R;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
-import java.util.Locale;
+import java.util.Objects;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -96,7 +83,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
         // Inflate the layout of MainFragment
         View result = inflater.inflate(R.layout.fragment_main, container, false);
-        SharedPreferences mPrefs = getContext().getSharedPreferences("SHARED", MODE_PRIVATE);
+        SharedPreferences mPrefs = Objects.requireNonNull(getContext()).getSharedPreferences("SHARED", MODE_PRIVATE);
 
         mSearchObject = new SearchObject(mPrefs.getString("city", null),
                 mPrefs.getInt("roomsMin", 0),
@@ -393,7 +380,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         if (theAdapter != null) {
             theAdapter.startListening();
         }
-        if (!Utils.isInternetAvailable(getContext())) {
+        if (!Utils.isInternetAvailable(Objects.requireNonNull(getContext()))) {
             @SuppressLint("SimpleDateFormat") DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
             List<RecyclerWith3Items> list3items = new ArrayList<>();
 
@@ -542,7 +529,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             if (tabletSize) {
                 configureAndShowDetailFragment();
             }
-            SharedPreferences mPref = getActivity().getSharedPreferences("SHARED", MODE_PRIVATE);
+            SharedPreferences mPref = Objects.requireNonNull(getActivity()).getSharedPreferences("SHARED", MODE_PRIVATE);
 
             //     Check if DetailFragment is visible (Tablet)
             if (detailFragment != null && detailFragment.isVisible()) {
@@ -569,7 +556,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
     public void configureAndShowDetailFragment() {
         // Get FragmentManager (Support) and Try to find existing instance of fragment in FrameLayout container
-        detailFragment = (DetailFragment) ((AppCompatActivity) getContext()).getSupportFragmentManager().findFragmentById(R.id.frame_layout_detail);
+        detailFragment = (DetailFragment) ((AppCompatActivity) Objects.requireNonNull(getContext())).getSupportFragmentManager().findFragmentById(R.id.frame_layout_detail);
 
         if (detailFragment == null) {
             // Create new main fragment

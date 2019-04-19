@@ -25,7 +25,6 @@ import java.util.List;
 import butterknife.ButterKnife;
 
 import static android.content.Context.MODE_PRIVATE;
-import static java.security.AccessController.getContext;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 

@@ -1,23 +1,17 @@
 package com.openclassrooms.realestatemanager.Activities;
 
-import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -28,8 +22,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.openclassrooms.realestatemanager.Models.DatabaseHouseItem;
-import com.openclassrooms.realestatemanager.Models.RealEstateManagerDatabase;
 import com.openclassrooms.realestatemanager.Models.Utils;
 import com.openclassrooms.realestatemanager.R;
 
@@ -37,8 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import okhttp3.internal.Util;
+import java.util.Objects;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
@@ -74,12 +65,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        Objects.requireNonNull(mapFragment).getMapAsync(this);
 
 
         mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_24dp);
 
         geocoder = new Geocoder(this, Locale.getDefault());
@@ -91,15 +82,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
                     try {
                         addresses = geocoder.getFromLocationName((String) documentSnapshot.get("location"), 1);
+                        locations.add(new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude()));
+                        ids.add((String) documentSnapshot.get("id"));
+                        Log.d("location", String.valueOf(addresses.get(0).getLatitude() + "," + addresses.get(0).getLongitude()));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    locations.add(new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude()));
-                    ids.add((String) documentSnapshot.get("id"));
-                    Log.d("location", String.valueOf(addresses.get(0).getLatitude() + "," + addresses.get(0).getLongitude()));
                 }
                 AddPinsOnMap();
-
             });
         }
     }

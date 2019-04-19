@@ -7,11 +7,9 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.Espresso;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.openclassrooms.realestatemanager.Activities.AddActivity;
 import com.openclassrooms.realestatemanager.Activities.EditActivity;
 
 import org.junit.Rule;
@@ -26,9 +24,7 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -49,8 +45,6 @@ public class EditActivityUITest {
                     null,
                     false);
 
-    Button nextButton;
-    Button backButton;
     TextView title;
 
 

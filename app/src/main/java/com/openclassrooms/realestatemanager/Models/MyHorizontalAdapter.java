@@ -10,12 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.openclassrooms.realestatemanager.Activities.AddActivity;
-import com.openclassrooms.realestatemanager.Activities.EditActivity;
 import com.openclassrooms.realestatemanager.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MyHorizontalAdapter extends RecyclerView.Adapter<MyHorizontalAdapter.ViewHolder> {
 

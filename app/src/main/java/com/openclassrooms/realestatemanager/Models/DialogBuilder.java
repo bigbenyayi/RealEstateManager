@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,18 +15,14 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.openclassrooms.realestatemanager.Activities.MainActivity;
 import com.openclassrooms.realestatemanager.R;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
-
-import butterknife.internal.ListenerClass;
+import java.util.Objects;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -70,7 +65,7 @@ public class DialogBuilder extends AppCompatDialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        LayoutInflater inflate = getActivity().getLayoutInflater();
+        LayoutInflater inflate = Objects.requireNonNull(getActivity()).getLayoutInflater();
         view = inflate.inflate(R.layout.layout_dialog, null);
 
         builder = new AlertDialog.Builder(getActivity());
@@ -114,7 +109,7 @@ public class DialogBuilder extends AppCompatDialogFragment {
         };
 
         beginDateET.setOnClickListener(v -> {
-            new DatePickerDialog(getContext(), date, myCalendar
+            new DatePickerDialog(Objects.requireNonNull(getContext()), date, myCalendar
                     .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                     myCalendar.get(Calendar.DAY_OF_MONTH)).show();
         });
@@ -141,7 +136,7 @@ public class DialogBuilder extends AppCompatDialogFragment {
         };
 
         endDateET.setOnClickListener(v -> {
-            new DatePickerDialog(getContext(), endDate, myCalendar
+            new DatePickerDialog(Objects.requireNonNull(getContext()), endDate, myCalendar
                     .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                     myCalendar.get(Calendar.DAY_OF_MONTH)).show();
         });
@@ -163,7 +158,7 @@ public class DialogBuilder extends AppCompatDialogFragment {
                 .setNegativeButton("Cancel", (dialog, which) -> {
                     mListener.fetchData(null, 80, 80, false, false, null, null, 80, 80, false,
                             false, false, 80, 80, 80, 80);
-                    SharedPreferences mPrefs = getContext().getSharedPreferences("SHARED", MODE_PRIVATE);
+                    SharedPreferences mPrefs = Objects.requireNonNull(getContext()).getSharedPreferences("SHARED", MODE_PRIVATE);
                     mPrefs.edit().putInt("roomsMax", 80).apply();
                     Intent myIntent = new Intent(getContext(), MainActivity.class);
                     myIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);

@@ -1,12 +1,11 @@
 package com.openclassrooms.realestatemanager.Models;
 
-import org.json.JSONArray;
-
-import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("ALL")
 public class DetailHouse {
     String description;
+    @SuppressWarnings("WeakerAccess")
     String surface;
     String nbrOfRooms;
     String nbrOfBedrooms;

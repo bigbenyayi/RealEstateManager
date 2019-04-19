@@ -2,8 +2,6 @@ package com.openclassrooms.realestatemanager;
 
 import android.app.Instrumentation;
 import android.content.Context;
-import android.opengl.ETC1;
-import android.os.SystemClock;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.Espresso;
 import android.support.test.rule.ActivityTestRule;
@@ -13,18 +11,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.openclassrooms.realestatemanager.Activities.AddActivity;
-import com.openclassrooms.realestatemanager.Models.Utils;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
-import static android.support.test.espresso.Espresso.closeSoftKeyboard;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;

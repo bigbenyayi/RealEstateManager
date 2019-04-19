@@ -4,15 +4,10 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.arch.persistence.room.Room;
-import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,11 +16,9 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -36,7 +29,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -50,8 +42,6 @@ import com.openclassrooms.realestatemanager.Models.DatabaseHouseItem;
 import com.openclassrooms.realestatemanager.Models.HorizontalRecyclerViewItem;
 import com.openclassrooms.realestatemanager.Models.MyHorizontalAdapter;
 import com.openclassrooms.realestatemanager.Models.RealEstateManagerDatabase;
-import com.openclassrooms.realestatemanager.Models.RecyclerWith3Items;
-import com.openclassrooms.realestatemanager.Models.SimpleRVAdapter;
 import com.openclassrooms.realestatemanager.Models.Utils;
 import com.openclassrooms.realestatemanager.R;
 import com.squareup.picasso.Picasso;
@@ -64,6 +54,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 public class AddActivity extends AppCompatActivity {
@@ -76,45 +67,23 @@ public class AddActivity extends AppCompatActivity {
 
     TextView title;
     //Basics
-    TextView typeTV;
     EditText typeET;
-    TextView priceTV;
     EditText priceET;
-    TextView cityTV;
     EditText cityET;
-    ImageView typeIcon;
-    ImageView priceIcon;
-    ImageView cityIcon;
+
     Button chooseMainPicButton;
-    TextView uploadFileTV;
     ImageView mainPicImageView;
     Uri mainImageUri;
     //Details
-    TextView descriptionTV;
     EditText descriptionET;
-    TextView locationTV;
     EditText locationET;
-    ImageView descriptionIcon;
-    ImageView locationIcon;
-    TextView sidePicturesTV;
     Button addAPictureButton;
     ImageView addAPictureIV;
     EditText pictureDescriptionET;
     Button addButton;
     RecyclerView horizontalRecyclerViewAdd;
     //Cara
-    TextView pointOfInterestTV;
-    EditText pointOfInterestET;
-    TextView surfaceTV;
     EditText surfaceET;
-    TextView bathroomTV;
-    TextView bedroomTV;
-    TextView roomTV;
-    ImageView surfaceIcon;
-    ImageView bedroomsIcon;
-    ImageView bathroomsIcon;
-    ImageView roomsIcon;
-    ImageView interestsIcon;
     ProgressBar progressBar;
     CheckBox restaurantCB;
     CheckBox schoolCB;
@@ -250,7 +219,7 @@ public class AddActivity extends AppCompatActivity {
 
                     for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
                         String id = (String) documentSnapshot.get("id");
-                        int idInt = Integer.parseInt(id);
+                        int idInt = Integer.parseInt(Objects.requireNonNull(id));
                         if (idInt >= intId) {
                             intId = Integer.parseInt(id);
                         }
@@ -276,7 +245,7 @@ public class AddActivity extends AppCompatActivity {
                     UploadTask uploadTask2 = firememeRef2.putBytes(data2, metadata2);
 
                     uploadTask2.addOnSuccessListener(taskSnapshot -> {
-                        taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(uri -> {
+                        Objects.requireNonNull(taskSnapshot.getMetadata().getReference()).getDownloadUrl().addOnSuccessListener(uri -> {
 
                             // SAVE EVERYTHING TO FIRESTOOOORE HERE
 
@@ -323,7 +292,7 @@ public class AddActivity extends AppCompatActivity {
                                     progressBar.setVisibility(View.VISIBLE);
 
                                     UploadTask uploadTask = firememeRef.putBytes(data, metadata);
-                                    uploadTask.addOnSuccessListener(AddActivity.this, taskSnapshot2 -> taskSnapshot2.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(uri2 -> {
+                                    uploadTask.addOnSuccessListener(AddActivity.this, taskSnapshot2 -> Objects.requireNonNull(taskSnapshot2.getMetadata().getReference()).getDownloadUrl().addOnSuccessListener(uri2 -> {
 
                                         urlAdd = uri2.toString();
                                         arrayOfPics.add(uri2.toString());
@@ -362,7 +331,7 @@ public class AddActivity extends AppCompatActivity {
                             dataToSave.put("price", priceET.getText().toString().replace(",", ""));
                             dataToSave.put("surface", surfaceET.getText().toString());
                             dataToSave.put("type", typeET.getText().toString());
-                            dataToSave.put("realtor", mPrefs.getString("username", "Realtor"));
+                            dataToSave.put("realtor", Objects.requireNonNull(mPrefs.getString("username", "Realtor")));
 
                             DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
                             Date date = new Date();
@@ -463,27 +432,16 @@ public class AddActivity extends AppCompatActivity {
         charaRL = findViewById(R.id.charaRL);
 
         //Basics
-        typeTV = findViewById(R.id.houseTypeTV);
         typeET = findViewById(R.id.houseTypeET);
-        priceTV = findViewById(R.id.priceTV);
         priceET = findViewById(R.id.priceET);
-        cityTV = findViewById(R.id.cityTV);
         cityET = findViewById(R.id.cityET);
         chooseMainPicButton = findViewById(R.id.choosePictureButton);
-        uploadFileTV = findViewById(R.id.mainPictureTV);
         mainPicImageView = findViewById(R.id.mainPicIV);
-        cityIcon = findViewById(R.id.cityIcon);
-        priceIcon = findViewById(R.id.priceIcon);
-        typeIcon = findViewById(R.id.houseTypeIcon);
+
 
         //Details
-        descriptionTV = findViewById(R.id.descriptionTV);
         descriptionET = findViewById(R.id.descriptionET);
-        locationTV = findViewById(R.id.locationTV);
         locationET = findViewById(R.id.locationET);
-        locationIcon = findViewById(R.id.locationIcon);
-        descriptionIcon = findViewById(R.id.descriptionIcon);
-        sidePicturesTV = findViewById(R.id.sidePicturesTV);
         addAPictureButton = findViewById(R.id.addAPictureButton);
         addAPictureIV = findViewById(R.id.sidePicturesIV);
         pictureDescriptionET = findViewById(R.id.photoDescriptionET);
@@ -492,22 +450,11 @@ public class AddActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
 
         //Cara
-        pointOfInterestTV = findViewById(R.id.pointsOfInterestTV);
-        surfaceIcon = findViewById(R.id.surfaceIcon);
-        roomsIcon = findViewById(R.id.roomsIcon);
-        bedroomsIcon = findViewById(R.id.bedroomsIcon);
-        bathroomsIcon = findViewById(R.id.bathroomsIcon);
-        interestsIcon = findViewById(R.id.interestsIcon);
         restaurantCB = findViewById(R.id.restaurantCB);
         schoolCB = findViewById(R.id.schoolCB);
         parkCB = findViewById(R.id.parkCB);
 
-
-        surfaceTV = findViewById(R.id.surfaceTV);
         surfaceET = findViewById(R.id.surfaceET);
-        bathroomTV = findViewById(R.id.bathroomsTV);
-        bedroomTV = findViewById(R.id.bedroomsTV);
-        roomTV = findViewById(R.id.roomsTV);
 
         //Buttons
         backButton = findViewById(R.id.backButton);

@@ -2,11 +2,8 @@ package com.openclassrooms.realestatemanager.Fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -22,15 +19,12 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.openclassrooms.realestatemanager.R;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 
 public class MapsFragment extends Fragment implements OnMapReadyCallback {
@@ -51,7 +45,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         super.onCreate(savedInstanceState);
 
         geocoder = new Geocoder(getContext(), Locale.getDefault());
-        SharedPreferences mPrefs = getContext().getSharedPreferences("SHARED", Context.MODE_PRIVATE);
+        SharedPreferences mPrefs = Objects.requireNonNull(getContext()).getSharedPreferences("SHARED", Context.MODE_PRIVATE);
 
         try {
             addresses = geocoder.getFromLocationName(mPrefs.getString("miniMapLocation", null), 1);
@@ -65,7 +59,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private boolean checkPlayServices() {
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getContext());
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(Objects.requireNonNull(getContext()));
         if (resultCode != ConnectionResult.SUCCESS) {
             if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
                 GooglePlayServicesUtil.getErrorDialog(resultCode, getActivity(),
@@ -85,7 +79,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         configurePlayServiceMaps();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getActivity().getSupportFragmentManager()
+        SupportMapFragment mapFragment = (SupportMapFragment) Objects.requireNonNull(getActivity()).getSupportFragmentManager()
                 .findFragmentById(R.id.mapFrag);
 
         // Inflate the layout for this fragment

@@ -18,7 +18,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -30,10 +29,8 @@ import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.SetOptions;
@@ -44,10 +41,8 @@ import com.google.firebase.storage.UploadTask;
 import com.openclassrooms.realestatemanager.Models.DatabaseHouseItem;
 import com.openclassrooms.realestatemanager.Models.FirebaseRequestHandler;
 import com.openclassrooms.realestatemanager.Models.HorizontalRecyclerViewItem;
-import com.openclassrooms.realestatemanager.Models.MyHorizontalAdapter;
 import com.openclassrooms.realestatemanager.Models.MyHorizontalPictureAdapter;
 import com.openclassrooms.realestatemanager.Models.RealEstateManagerDatabase;
-import com.openclassrooms.realestatemanager.Models.SimpleRVAdapter;
 import com.openclassrooms.realestatemanager.Models.Utils;
 import com.openclassrooms.realestatemanager.R;
 import com.squareup.picasso.Picasso;
@@ -60,8 +55,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
+@SuppressWarnings("ConstantConditions")
 public class EditActivity extends AppCompatActivity {
 
     TextView title;
@@ -70,27 +67,16 @@ public class EditActivity extends AppCompatActivity {
     RelativeLayout charaRL;
 
     //Basics
-    TextView typeTV;
     EditText typeET;
-    TextView priceTV;
     EditText priceET;
-    TextView cityTV;
     EditText cityET;
-    ImageView typeIcon;
-    ImageView priceIcon;
-    ImageView cityIcon;
+
     Button chooseMainPicButton;
-    TextView uploadFileTV;
     ImageView mainPicImageView;
     Uri mainImageUri;
     //Details
-    TextView descriptionTV;
     EditText descriptionET;
-    TextView locationTV;
     EditText locationET;
-    ImageView descriptionIcon;
-    ImageView locationIcon;
-    TextView sidePicturesTV;
     Button addAPictureButton;
     ImageView addAPictureIV;
     EditText pictureDescriptionET;
@@ -98,17 +84,8 @@ public class EditActivity extends AppCompatActivity {
     RecyclerView horizontalRecyclerViewAdd;
     Button soldButton;
     //Cara
-    TextView pointOfInterestTV;
-    TextView surfaceTV;
+
     EditText surfaceET;
-    TextView bathroomTV;
-    TextView bedroomTV;
-    TextView roomTV;
-    ImageView surfaceIcon;
-    ImageView bedroomsIcon;
-    ImageView bathroomsIcon;
-    ImageView roomsIcon;
-    ImageView interestsIcon;
     ProgressBar progressBar;
     Boolean mainPicGetsChanged = false;
     CheckBox restaurantCB;
@@ -219,7 +196,7 @@ public class EditActivity extends AppCompatActivity {
             progressBar.setVisibility(View.VISIBLE);
 
             UploadTask uploadTask = firememeRef.putBytes(data, metadata);
-            uploadTask.addOnSuccessListener(this, taskSnapshot -> taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(uri -> {
+            uploadTask.addOnSuccessListener(this, taskSnapshot -> Objects.requireNonNull(taskSnapshot.getMetadata().getReference()).getDownloadUrl().addOnSuccessListener(uri -> {
 
                 urlAdd = uri.toString();
                 listOfPicturesAndDesc.add(new HorizontalRecyclerViewItem(urlAdd, pictureDescriptionET.getText().toString()));
@@ -299,7 +276,7 @@ public class EditActivity extends AppCompatActivity {
                         UploadTask uploadTask = firememeRef.putBytes(data, metadata);
 
                         uploadTask.addOnSuccessListener(taskSnapshot -> {
-                            taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(uri -> {
+                            Objects.requireNonNull(taskSnapshot.getMetadata().getReference()).getDownloadUrl().addOnSuccessListener(uri -> {
 
                                 url = uri.toString();
 
@@ -321,7 +298,7 @@ public class EditActivity extends AppCompatActivity {
                                         stillOnMarket = dateFormat.format(date);
                                     }
                                 }
-                                database.itemDao().insertItem(new DatabaseHouseItem(descriptionET.getText().toString(), surfaceET.getText().toString(), id, String.valueOf(roomsNP.getValue()),
+                                database.itemDao().insertItem(new DatabaseHouseItem(descriptionET.getText().toString(), surfaceET.getText().toString(), Objects.requireNonNull(id), String.valueOf(roomsNP.getValue()),
                                         String.valueOf(bedroomsNP.getValue()), String.valueOf(bathroomsNP.getValue()), locationET.getText().toString(), mPrefs.getString("username", "Realtor"),
                                         onMarketSince, stillOnMarket, dataPathForMainPicture, priceET.getText().toString().replace(",", ""), cityET.getText().toString(), typeET.getText().toString(),
                                         interestsArray, arrayOfPics, arrayOfDesc));
@@ -400,7 +377,7 @@ public class EditActivity extends AppCompatActivity {
                             }
                         }
 
-                        database.itemDao().insertItem(new DatabaseHouseItem(descriptionET.getText().toString(), surfaceET.getText().toString(), id, String.valueOf(roomsNP.getValue()),
+                        database.itemDao().insertItem(new DatabaseHouseItem(descriptionET.getText().toString(), surfaceET.getText().toString(), Objects.requireNonNull(id), String.valueOf(roomsNP.getValue()),
                                 String.valueOf(bedroomsNP.getValue()), String.valueOf(bathroomsNP.getValue()), locationET.getText().toString(), mPrefs.getString("username", "Realtor"),
                                 onMarketSince, stillOnMarket, mainPicUrlFromDatabase,
                                 priceET.getText().toString().replace(",", ""), cityET.getText().toString(), typeET.getText().toString(),
@@ -517,7 +494,7 @@ public class EditActivity extends AppCompatActivity {
             for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
 
 
-                if (id.equals(documentSnapshot.get("id"))) {
+                if (Objects.requireNonNull(id).equals(documentSnapshot.get("id"))) {
                     typeET.setText((String) documentSnapshot.get("type"));
                     sold = documentSnapshot.get("sold") != null;
                     if (sold) {
@@ -530,13 +507,13 @@ public class EditActivity extends AppCompatActivity {
                         }
                     }
                     String priceString = (String) documentSnapshot.get("price");
-                    int priceInt = Integer.valueOf(priceString);
+                    int priceInt = Integer.valueOf(Objects.requireNonNull(priceString));
                     String priceWithComas = String.format("%,d", priceInt);
                     priceET.setText(priceWithComas);
                     ArrayList<String> size = (ArrayList) documentSnapshot.get("pictures");
                     ArrayList<String> size2 = (ArrayList) documentSnapshot.get("rooms");
-                    for (int i = 0; i < size.size(); i++) {
-                        listOfPicturesAndDesc.add(new HorizontalRecyclerViewItem(size.get(i), size2.get(i)));
+                    for (int i = 0; i < Objects.requireNonNull(size).size(); i++) {
+                        listOfPicturesAndDesc.add(new HorizontalRecyclerViewItem(size.get(i), Objects.requireNonNull(size2).get(i)));
                     }
                     adapter = new MyHorizontalPictureAdapter(this, listOfPicturesAndDesc);
                     horizontalRecyclerViewAdd.setAdapter(adapter);
@@ -558,12 +535,12 @@ public class EditActivity extends AppCompatActivity {
                     surfaceET.setText((String) documentSnapshot.get("surface"));
                     surfaceET.setText(surfaceET.getText().toString().replace("m²", ""));
 
-                    bathroomsNP.setValue(Integer.valueOf((String) documentSnapshot.get("numberOfBathrooms")));
-                    bedroomsNP.setValue(Integer.valueOf((String) documentSnapshot.get("numberOfBedrooms")));
-                    roomsNP.setValue(Integer.valueOf((String) documentSnapshot.get("numberOfRooms")));
+                    bathroomsNP.setValue(Integer.valueOf((String) Objects.requireNonNull(documentSnapshot.get("numberOfBathrooms"))));
+                    bedroomsNP.setValue(Integer.valueOf((String) Objects.requireNonNull(documentSnapshot.get("numberOfBedrooms"))));
+                    roomsNP.setValue(Integer.valueOf((String) Objects.requireNonNull(documentSnapshot.get("numberOfRooms"))));
                     interestsArray = (ArrayList<String>) documentSnapshot.get("pointOfInterest");
 
-                    for (int i = 0; i < interestsArray.size(); i++) {
+                    for (int i = 0; i < Objects.requireNonNull(interestsArray).size(); i++) {
                         if (interestsArray.get(i).equalsIgnoreCase("Park")) {
                             parkCB.setChecked(true);
                         }
@@ -631,28 +608,16 @@ public class EditActivity extends AppCompatActivity {
         detailRL = findViewById(R.id.detailRL);
 
         //Basics
-        typeTV = findViewById(R.id.houseTypeTV);
         typeET = findViewById(R.id.houseTypeET);
-        priceTV = findViewById(R.id.priceTV);
         priceET = findViewById(R.id.priceET);
-        cityTV = findViewById(R.id.cityTV);
         cityET = findViewById(R.id.cityET);
         chooseMainPicButton = findViewById(R.id.choosePictureButton);
-        uploadFileTV = findViewById(R.id.mainPictureTV);
         mainPicImageView = findViewById(R.id.mainPicIV);
-        cityIcon = findViewById(R.id.cityIcon);
-        priceIcon = findViewById(R.id.priceIcon);
-        typeIcon = findViewById(R.id.houseTypeIcon);
         soldButton = findViewById(R.id.soldButton);
 
         //Details
-        descriptionTV = findViewById(R.id.descriptionTV);
         descriptionET = findViewById(R.id.descriptionET);
-        locationTV = findViewById(R.id.locationTV);
         locationET = findViewById(R.id.locationET);
-        locationIcon = findViewById(R.id.locationIcon);
-        descriptionIcon = findViewById(R.id.descriptionIcon);
-        sidePicturesTV = findViewById(R.id.sidePicturesTV);
         addAPictureButton = findViewById(R.id.addAPictureButton);
         addAPictureIV = findViewById(R.id.sidePicturesIV);
         pictureDescriptionET = findViewById(R.id.photoDescriptionET);
@@ -661,12 +626,6 @@ public class EditActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
 
         //Cara
-        pointOfInterestTV = findViewById(R.id.pointsOfInterestTV);
-        surfaceIcon = findViewById(R.id.surfaceIcon);
-        roomsIcon = findViewById(R.id.roomsIcon);
-        bedroomsIcon = findViewById(R.id.bedroomsIcon);
-        bathroomsIcon = findViewById(R.id.bathroomsIcon);
-        interestsIcon = findViewById(R.id.interestsIcon);
         restaurantCB = findViewById(R.id.restaurantCB);
         schoolCB = findViewById(R.id.schoolCB);
         parkCB = findViewById(R.id.parkCB);
@@ -682,19 +641,13 @@ public class EditActivity extends AppCompatActivity {
                 id = mPrefs.getString("id", null);
             }
             for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                if (id.equals(documentSnapshot.get("id"))) {
+                if (Objects.requireNonNull(id).equals(documentSnapshot.get("id"))) {
                     interestArrayFromDB = (ArrayList<String>) documentSnapshot.get("pointOfInterest");
                 }
             }
         });
 
-
-        surfaceTV = findViewById(R.id.surfaceTV);
         surfaceET = findViewById(R.id.surfaceET);
-        bathroomTV = findViewById(R.id.bathroomsTV);
-        bedroomTV = findViewById(R.id.bedroomsTV);
-        roomTV = findViewById(R.id.roomsTV);
-
         //Buttons
         backButton = findViewById(R.id.backButton);
         nextButton = findViewById(R.id.nextButton);

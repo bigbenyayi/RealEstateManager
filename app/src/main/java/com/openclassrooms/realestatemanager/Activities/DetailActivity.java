@@ -3,10 +3,11 @@ package com.openclassrooms.realestatemanager.Activities;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 
 import com.openclassrooms.realestatemanager.Fragments.DetailFragment;
 import com.openclassrooms.realestatemanager.R;
+
+import java.util.Objects;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -27,7 +28,7 @@ public class DetailActivity extends AppCompatActivity {
     private void configureToolbar() {
         mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_24dp);
 
 //        if (isTablet) {

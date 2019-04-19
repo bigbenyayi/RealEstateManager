@@ -1,21 +1,10 @@
 package com.openclassrooms.realestatemanager;
 
 import android.content.Context;
-import android.location.Location;
-import android.net.wifi.WifiManager;
 import android.os.SystemClock;
-import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.common.net.InternetDomainName;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.openclassrooms.realestatemanager.Models.Utils;
 
 import org.junit.Test;
@@ -23,9 +12,7 @@ import org.junit.runner.RunWith;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import static org.junit.Assert.*;
 

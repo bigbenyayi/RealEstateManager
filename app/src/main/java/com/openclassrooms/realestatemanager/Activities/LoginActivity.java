@@ -2,40 +2,27 @@ package com.openclassrooms.realestatemanager.Activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.openclassrooms.realestatemanager.Models.UserHelper;
 import com.openclassrooms.realestatemanager.R;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -112,11 +99,11 @@ public class LoginActivity extends AppCompatActivity {
 
         FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        DocumentReference mDocRef = FirebaseFirestore.getInstance().document("user/" + currentFirebaseUser.getUid());
+        DocumentReference mDocRef = FirebaseFirestore.getInstance().document("user/" + Objects.requireNonNull(currentFirebaseUser).getUid());
 
         Map<String, Object> dataToSave = new HashMap<>();
-        dataToSave.put("username", currentFirebaseUser.getDisplayName());
-        dataToSave.put("email", currentFirebaseUser.getEmail());
+        dataToSave.put("username", Objects.requireNonNull(currentFirebaseUser.getDisplayName()));
+        dataToSave.put("email", Objects.requireNonNull(currentFirebaseUser.getEmail()));
         mDocRef.set(dataToSave, SetOptions.merge());
 
         SharedPreferences mPrefs = getSharedPreferences("SHARED", MODE_PRIVATE);

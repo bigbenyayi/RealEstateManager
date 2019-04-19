@@ -6,44 +6,26 @@ import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewManager;
-import android.widget.AbsoluteLayout;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageMetadata;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-import com.openclassrooms.realestatemanager.Activities.AddActivity;
 import com.openclassrooms.realestatemanager.Activities.EditActivity;
 import com.openclassrooms.realestatemanager.Activities.MapsActivity;
 import com.openclassrooms.realestatemanager.Models.DatabaseHouseItem;
@@ -52,25 +34,12 @@ import com.openclassrooms.realestatemanager.Models.HorizontalRecyclerViewItem;
 import com.openclassrooms.realestatemanager.Models.MyHorizontalAdapter;
 import com.openclassrooms.realestatemanager.Models.MyHorizontalPictureAdapter;
 import com.openclassrooms.realestatemanager.Models.RealEstateManagerDatabase;
-import com.openclassrooms.realestatemanager.Models.SimpleRVAdapter;
 import com.openclassrooms.realestatemanager.Models.Utils;
 import com.openclassrooms.realestatemanager.R;
-import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayOutputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
-import static android.app.Activity.RESULT_OK;
+import java.util.Objects;
 
 
 public class DetailFragment extends BaseFragment {
@@ -224,14 +193,14 @@ public class DetailFragment extends BaseFragment {
 
     public void updateTextViewWhenOffline() {
 
-        Intent iin = getActivity().getIntent();
+        Intent iin = Objects.requireNonNull(getActivity()).getIntent();
         Bundle b = iin.getExtras();
         String id;
 
         if (b != null) {
             id = (String) b.get("id");
         } else {
-            SharedPreferences mPrefs = getContext().getSharedPreferences("SHARED", Context.MODE_PRIVATE);
+            SharedPreferences mPrefs = Objects.requireNonNull(getContext()).getSharedPreferences("SHARED", Context.MODE_PRIVATE);
             id = mPrefs.getString("id", "0");
         }
 
@@ -239,7 +208,7 @@ public class DetailFragment extends BaseFragment {
 
         for (int i = 0; i < listOfItems.size(); i++) {
 
-            if (id.equals(listOfItems.get(i).getId())) {
+            if (Objects.requireNonNull(id).equals(listOfItems.get(i).getId())) {
 
                 String descriptionValue = listOfItems.get(i).getDescription();
                 String surfaceValue = listOfItems.get(i).getSurface();
@@ -345,10 +314,11 @@ public class DetailFragment extends BaseFragment {
             if (b != null) {
                 id = (String) b.get("id");
             } else {
-                SharedPreferences mPrefs = getContext().getSharedPreferences("SHARED", Context.MODE_PRIVATE);
+                SharedPreferences mPrefs = Objects.requireNonNull(getContext()).getSharedPreferences("SHARED", Context.MODE_PRIVATE);
                 id = mPrefs.getString("id", null);
             }
 
+            assert id != null;
             if (id.equals(listOfItems.get(i).getId())) {
 
                 List<String> pictures = listOfItems.get(i).getPictures();
@@ -373,14 +343,14 @@ public class DetailFragment extends BaseFragment {
 
     public void updateTextView() {
 
-        Intent iin = getActivity().getIntent();
+        Intent iin = Objects.requireNonNull(getActivity()).getIntent();
         Bundle b = iin.getExtras();
         String id;
 
         if (b != null) {
             id = (String) b.get("id");
         } else {
-            SharedPreferences mPrefs = getContext().getSharedPreferences("SHARED", Context.MODE_PRIVATE);
+            SharedPreferences mPrefs = Objects.requireNonNull(getContext()).getSharedPreferences("SHARED", Context.MODE_PRIVATE);
             id = mPrefs.getString("id", "0");
         }
 
@@ -388,6 +358,7 @@ public class DetailFragment extends BaseFragment {
 
             for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
 
+                assert id != null;
                 if (id.equals(documentSnapshot.get("id"))) {
 
                     String descriptionValue = (String) documentSnapshot.get("description");
@@ -486,17 +457,18 @@ public class DetailFragment extends BaseFragment {
         notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
 
             for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                Intent iin = getActivity().getIntent();
+                Intent iin = Objects.requireNonNull(getActivity()).getIntent();
                 Bundle b = iin.getExtras();
                 String id;
 
                 if (b != null) {
                     id = (String) b.get("id");
                 } else {
-                    SharedPreferences mPrefs = getContext().getSharedPreferences("SHARED", Context.MODE_PRIVATE);
+                    SharedPreferences mPrefs = Objects.requireNonNull(getContext()).getSharedPreferences("SHARED", Context.MODE_PRIVATE);
                     id = mPrefs.getString("id", null);
                 }
 
+                assert id != null;
                 if (id.equals(documentSnapshot.get("id"))) {
 
                     ArrayList<String> pictures = (ArrayList<String>) documentSnapshot.get("pictures");
@@ -504,6 +476,7 @@ public class DetailFragment extends BaseFragment {
 
                     for (int j = 0; j < pictures.size(); j++) {
 
+                        assert rooms != null;
                         photoItem = new HorizontalRecyclerViewItem(pictures.get(j), rooms.get(j));
 
                         listItems.add(photoItem);
@@ -521,9 +494,9 @@ public class DetailFragment extends BaseFragment {
 
     public void configureAndDisplayMiniMap() {
 
-        SharedPreferences mPrefs = getContext().getSharedPreferences("SHARED", Context.MODE_PRIVATE);
+        SharedPreferences mPrefs = Objects.requireNonNull(getContext()).getSharedPreferences("SHARED", Context.MODE_PRIVATE);
 
-        Intent iin = getActivity().getIntent();
+        Intent iin = Objects.requireNonNull(getActivity()).getIntent();
         Bundle b = iin.getExtras();
         String id;
 
@@ -537,7 +510,7 @@ public class DetailFragment extends BaseFragment {
             if (houseItem != null) {
                 mPrefs.edit().putString("miniMapLocation", houseItem.getAddress()).apply();
 
-                mapsFragment = (MapsFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.miniMapFrameLayout);
+                mapsFragment = (MapsFragment) Objects.requireNonNull(getActivity()).getSupportFragmentManager().findFragmentById(R.id.miniMapFrameLayout);
                 if (mapsFragment == null) {
                     mapsFragment = new MapsFragment();
                     getActivity().getSupportFragmentManager().beginTransaction()
@@ -549,6 +522,7 @@ public class DetailFragment extends BaseFragment {
 
                     for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
 
+                        assert id != null;
                         if (id.equals(documentSnapshot.get("id"))) {
                             mPrefs.edit().putString("miniMapLocation", (String) documentSnapshot.get("location")).apply();
 
@@ -574,7 +548,7 @@ public class DetailFragment extends BaseFragment {
 
         switch (item.getItemId()) {
             case (android.R.id.home):
-                getActivity().onBackPressed();
+                Objects.requireNonNull(getActivity()).onBackPressed();
                 break;
             case R.id.navbar_edit:
                 Intent addIntent = new Intent(getContext(), EditActivity.class);
@@ -586,7 +560,7 @@ public class DetailFragment extends BaseFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        getActivity().getMenuInflater().inflate(R.menu.navbar_menu, menu);
+        Objects.requireNonNull(getActivity()).getMenuInflater().inflate(R.menu.navbar_menu, menu);
 
         super.onCreateOptionsMenu(menu, inflater);
     }
