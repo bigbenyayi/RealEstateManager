@@ -384,7 +384,6 @@ public class DetailFragment extends BaseFragment {
             id = mPrefs.getString("id", "0");
         }
 
-
         notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
 
             for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
@@ -402,7 +401,6 @@ public class DetailFragment extends BaseFragment {
                     String soldValue = (String) documentSnapshot.get("sold");
                     pointsOfInterestValue = (ArrayList<String>) documentSnapshot.get("pointOfInterest");
                     ArrayList<String> pictures = (ArrayList<String>) documentSnapshot.get("pictures");
-
 
                     houseItem = new DetailHouse(descriptionValue, surfaceValue, nbrOfRooms,
                             nbrOfBedrooms, nbrOfBathrooms, location,
@@ -445,8 +443,6 @@ public class DetailFragment extends BaseFragment {
                         Log.d("house", houseItem.getPointsOfInterest().get(0) + "ELSEEEEEE");
 
                     }
-
-
                 }
             }
             seeOnMapButton.setOnClickListener(v -> {
@@ -470,7 +466,6 @@ public class DetailFragment extends BaseFragment {
         relativeLayout.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         media.setVisibility(View.VISIBLE);
 
-
         if (isTablet) {
             configureAndDisplayMiniMap();
         } else {
@@ -478,8 +473,6 @@ public class DetailFragment extends BaseFragment {
             fl.setLayoutParams(new RelativeLayout.LayoutParams(0, 0));
 
         }
-
-
     }
 
     public void configureHorizontalRecyclerView() {

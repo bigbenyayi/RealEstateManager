@@ -9,6 +9,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.common.net.InternetDomainName;
 import com.google.firebase.firestore.CollectionReference;
@@ -22,7 +23,9 @@ import org.junit.runner.RunWith;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -32,8 +35,9 @@ import static org.junit.Assert.*;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 @RunWith(AndroidJUnit4.class)
-public class ExampleInstrumentedTest {
+public class UtilsTests {
     private boolean internetConnection;
+
     @Test
     public void useAppContext() throws Exception {
         // Context of the app under test.
@@ -76,20 +80,28 @@ public class ExampleInstrumentedTest {
 
         internetConnection = false;
 
+
+
         //Task that needs internet (if nothing then API call but cba) then internetConnection = true
 
-        SystemClock.sleep(5000); //Waiting for internet check
+        SystemClock.sleep(1000); //Waiting for internet check
         assertEquals(Utils.isInternetAvailable(appContext), internetConnection);
 
     }
+
     @Test
     public void isTodaysDateExact() throws Exception {
 
         DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
         Date date = new Date();
+
         //or write today's date manually to really check
 
         assertEquals(Utils.getTodayDate(), dateFormat.format(date));
 
     }
+
+
+
+
 }

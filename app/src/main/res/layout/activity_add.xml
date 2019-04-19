@@ -298,7 +298,7 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/horizontalRecyclerViewAdd"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="125dp"
             android:layout_below="@+id/addButton"
             android:layout_marginTop="10dp" />
 
