@@ -210,7 +210,8 @@ public class AddActivity extends AppCompatActivity {
 
         nextButton.setOnClickListener(v -> {
             int n = mPrefs.getInt("addNumber", 0);
-            if (n == 3) {
+            if (n == 3 && localPathsArray.size() > 0) {
+
                 CollectionReference notebookRef = FirebaseFirestore.getInstance().collection("house");
                 mCollectionReference = FirebaseFirestore.getInstance().collection("house");
 
@@ -383,6 +384,8 @@ public class AddActivity extends AppCompatActivity {
                 }
 
 
+            } else if (n == 3) {
+                Toast.makeText(this, "Please add at least one additional picture", Toast.LENGTH_SHORT).show();
             } else {
                 n++;
                 mPrefs.edit().putInt("addNumber", n).apply();
@@ -608,7 +611,6 @@ public class AddActivity extends AppCompatActivity {
         }
     }
 
-    
     public void adapterSendsList(int position) {
         listOfPicturesAndDesc = adapter.getUpdatedlist();
         listOfPicturesAndDesc.remove(position);
