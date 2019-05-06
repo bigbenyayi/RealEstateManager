@@ -608,6 +608,7 @@ public class AddActivity extends AppCompatActivity {
         }
     }
 
+    
     public void adapterSendsList(int position) {
         listOfPicturesAndDesc = adapter.getUpdatedlist();
         listOfPicturesAndDesc.remove(position);
