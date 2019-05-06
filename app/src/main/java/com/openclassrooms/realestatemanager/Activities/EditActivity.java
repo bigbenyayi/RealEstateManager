@@ -3,6 +3,7 @@ package com.openclassrooms.realestatemanager.Activities;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
@@ -29,6 +30,7 @@ import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -86,7 +88,6 @@ public class EditActivity extends AppCompatActivity {
     //Cara
 
     EditText surfaceET;
-    ProgressBar progressBar;
     Boolean mainPicGetsChanged = false;
     CheckBox restaurantCB;
     CheckBox schoolCB;
@@ -143,7 +144,6 @@ public class EditActivity extends AppCompatActivity {
         setImagePickers();
 
 
-
         soldButton.setOnClickListener(v -> {
             if (sold) {
                 soldButton.setText("Sold?");
@@ -160,7 +160,6 @@ public class EditActivity extends AppCompatActivity {
                 sold = true;
             }
         });
-
 
 
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -193,7 +192,6 @@ public class EditActivity extends AppCompatActivity {
 
             addAPictureButton.setEnabled(false);
             addButton.setEnabled(false);
-            progressBar.setVisibility(View.VISIBLE);
 
             UploadTask uploadTask = firememeRef.putBytes(data, metadata);
             uploadTask.addOnSuccessListener(this, taskSnapshot -> Objects.requireNonNull(taskSnapshot.getMetadata().getReference()).getDownloadUrl().addOnSuccessListener(uri -> {
@@ -206,7 +204,6 @@ public class EditActivity extends AppCompatActivity {
 
                 adapter.notifyDataSetChanged();
 
-                progressBar.setVisibility(View.GONE);
                 addAPictureButton.setEnabled(true);
                 addButton.setEnabled(true);
             }));
@@ -238,7 +235,11 @@ public class EditActivity extends AppCompatActivity {
 
         nextButton.setOnClickListener(v -> {
             int n = mPrefs.getInt("addNumber", 0);
-            if (n == 3) {
+            if (n == 3 && adapter.getUpdatedlist().size() > 0) {
+
+                ProgressDialog dialog = ProgressDialog.show(EditActivity.this, "Creating house listing",
+                        "Loading... Please wait", true);
+
                 CollectionReference notebookRef = FirebaseFirestore.getInstance().collection("house");
                 mCollectionReference = FirebaseFirestore.getInstance().collection("house");
 
@@ -434,6 +435,8 @@ public class EditActivity extends AppCompatActivity {
 
                 finish();
 
+            } else if (n == 3) {
+                Toast.makeText(this, "Please choose at least one additional picture", Toast.LENGTH_SHORT).show();
             } else {
                 n++;
                 mPrefs.edit().putInt("addNumber", n).apply();
@@ -623,7 +626,6 @@ public class EditActivity extends AppCompatActivity {
         pictureDescriptionET = findViewById(R.id.photoDescriptionET);
         addButton = findViewById(R.id.addButton);
         horizontalRecyclerViewAdd = findViewById(R.id.horizontalRecyclerViewAdd);
-        progressBar = findViewById(R.id.progressBar);
 
         //Cara
         restaurantCB = findViewById(R.id.restaurantCB);
@@ -713,7 +715,6 @@ public class EditActivity extends AppCompatActivity {
             nextButton.setText("Next (2/3)");
 
             title.setText("Details");
-            progressBar.setVisibility(View.INVISIBLE);
             basicRL.setVisibility(View.INVISIBLE);
             charaRL.setVisibility(View.INVISIBLE);
             detailRL.setVisibility(View.VISIBLE);

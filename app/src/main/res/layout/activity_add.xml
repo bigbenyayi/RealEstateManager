@@ -10,6 +10,8 @@
     android:layout_height="match_parent"
     tools:context=".Activities.AddActivity">
 
+
+
     <TextView
         android:id="@+id/title"
         android:layout_width="match_parent"
@@ -39,6 +41,8 @@
         android:layout_below="@+id/detailRL"
         android:background="@color/colorAccent"
         android:text="Next" />
+
+
 
 
     <!-- BASIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIICS -->
@@ -256,16 +260,7 @@
             android:layout_centerHorizontal="true"
             android:text="Add a picture" />
 
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="@android:style/Widget.ProgressBar.Large"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/sidePicturesIV"
-            android:layout_alignBottom="@+id/sidePicturesIV"
-            android:layout_alignParentEnd="true"
-            android:layout_toEndOf="@+id/sidePicturesIV"
-            android:textAlignment="center" />
+
 
         <ImageView
             android:id="@+id/sidePicturesIV"

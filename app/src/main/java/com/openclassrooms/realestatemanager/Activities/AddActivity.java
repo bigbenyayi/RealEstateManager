@@ -3,6 +3,7 @@ package com.openclassrooms.realestatemanager.Activities;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -84,7 +85,6 @@ public class AddActivity extends AppCompatActivity {
     RecyclerView horizontalRecyclerViewAdd;
     //Cara
     EditText surfaceET;
-    ProgressBar progressBar;
     CheckBox restaurantCB;
     CheckBox schoolCB;
     CheckBox parkCB;
@@ -177,7 +177,6 @@ public class AddActivity extends AppCompatActivity {
             adapter = new MyHorizontalAdapter(AddActivity.this, listOfPicturesAndDesc);
             horizontalRecyclerViewAdd.setAdapter(adapter);
 
-            progressBar.setVisibility(View.GONE);
             addAPictureButton.setEnabled(true);
             addButton.setEnabled(false);
 
@@ -211,6 +210,9 @@ public class AddActivity extends AppCompatActivity {
         nextButton.setOnClickListener(v -> {
             int n = mPrefs.getInt("addNumber", 0);
             if (n == 3 && localPathsArray.size() > 0) {
+
+                ProgressDialog dialog = ProgressDialog.show(AddActivity.this, "Creating house listing",
+                        "Loading... Please wait", true);
 
                 CollectionReference notebookRef = FirebaseFirestore.getInstance().collection("house");
                 mCollectionReference = FirebaseFirestore.getInstance().collection("house");
@@ -290,7 +292,6 @@ public class AddActivity extends AppCompatActivity {
 
                                     addAPictureButton.setEnabled(false);
                                     addButton.setEnabled(false);
-                                    progressBar.setVisibility(View.VISIBLE);
 
                                     UploadTask uploadTask = firememeRef.putBytes(data, metadata);
                                     uploadTask.addOnSuccessListener(AddActivity.this, taskSnapshot2 -> Objects.requireNonNull(taskSnapshot2.getMetadata().getReference()).getDownloadUrl().addOnSuccessListener(uri2 -> {
@@ -450,7 +451,6 @@ public class AddActivity extends AppCompatActivity {
         pictureDescriptionET = findViewById(R.id.photoDescriptionET);
         addButton = findViewById(R.id.addButton);
         horizontalRecyclerViewAdd = findViewById(R.id.horizontalRecyclerViewAdd);
-        progressBar = findViewById(R.id.progressBar);
 
         //Cara
         restaurantCB = findViewById(R.id.restaurantCB);
@@ -568,7 +568,6 @@ public class AddActivity extends AppCompatActivity {
 
             basicRL.setVisibility(View.INVISIBLE);
             charaRL.setVisibility(View.INVISIBLE);
-            progressBar.setVisibility(View.INVISIBLE);
             detailRL.setVisibility(View.VISIBLE);
 
         } else if (mPrefs.getInt("addNumber", 1) == 3) {
