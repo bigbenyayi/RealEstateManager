@@ -210,7 +210,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                                                                     Date beginDate = format.parse(mSearchObject.getBeginDate());
                                                                     Date theDate = format.parse(model.getOnMarket());
                                                                     Date endDate = format.parse(mSearchObject.getEndDate());
-                                                                    if (beginDate.before(theDate) && endDate.after(theDate)) {
+                                                                    if (beginDate.before(theDate) && endDate.after(theDate) || beginDate.getTime() == theDate.getTime() && endDate.getTime() == theDate.getTime()) {
                                                                         layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
                                                                         holder.relativeLayout.setLayoutParams(layoutParams);
                                                                         Log.d("thegreatdebugger", "12th " + model.getCity());
