@@ -185,6 +185,10 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                         layoutParams.height = 0;
                         holder.relativeLayout.setLayoutParams(layoutParams);
 
+                        if (model.getSurface().equals("")){
+                            model.setSurface("0");
+                        }
+
                         Log.d("thegreatdebugger", "1st");
                         if (mSearchObject.getCity() == null || mSearchObject.getCity().equalsIgnoreCase(model.getCity()) || mSearchObject.getCity().equals("")) {
                             Log.d("thegreatdebugger", "2nd");

@@ -72,6 +72,10 @@ public class RecyclerViewItem {
         return surface;
     }
 
+    public void setSurface(String surface) {
+        this.surface = surface;
+    }
+
     public String getMainPicture() {
         return mainPicture;
     }

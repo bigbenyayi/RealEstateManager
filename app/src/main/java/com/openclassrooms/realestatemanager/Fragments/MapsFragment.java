@@ -27,7 +27,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 
-public class MapsFragment extends Fragment implements OnMapReadyCallback {
+public class MapsFragment extends SupportMapFragment implements OnMapReadyCallback {
 
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private GoogleMap mMap;
@@ -90,6 +90,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
         mMap = googleMap;
         if (location != null) {
             mMap.addMarker(new MarkerOptions().position(location));

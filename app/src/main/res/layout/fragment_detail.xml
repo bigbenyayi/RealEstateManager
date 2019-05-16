@@ -265,12 +265,13 @@
                     android:textAlignment="center" />
             </LinearLayout>
 
-            <FrameLayout
+            <fragment
                 android:id="@+id/miniMapFrameLayout"
                 android:layout_width="200dp"
                 android:layout_height="200dp"
                 android:layout_below="@+id/seeOnMapButton"
                 android:layout_centerHorizontal="true"
+                class="com.google.android.gms.maps.SupportMapFragment"
                 android:layout_margin="20dp" />
 
             <Button

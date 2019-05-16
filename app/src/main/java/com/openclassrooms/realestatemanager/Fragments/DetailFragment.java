@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -22,6 +23,7 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.common.collect.Maps;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -72,7 +74,7 @@ public class DetailFragment extends BaseFragment {
     public static final int PICK_IMAGE_REQUEST = 1;
     Uri mainImageUri;
 
-    FrameLayout fl;
+//    Fragment fl;
 
     private RealEstateManagerDatabase database;
 
@@ -138,13 +140,13 @@ public class DetailFragment extends BaseFragment {
         if (Utils.isInternetAvailable(getContext())) {
             configureHorizontalRecyclerView();
             seeOnMapButton.setVisibility(View.VISIBLE);
-            fl.setVisibility(View.VISIBLE);
-            fl.setLayoutParams(new RelativeLayout.LayoutParams(200, 200));
+//            fl.setVisibility(View.VISIBLE);
+//            fl.setLayoutParams(new RelativeLayout.LayoutParams(200, 200));
         } else {
             configureHorizontalRecyclerViewWhenOffline();
             seeOnMapButton.setVisibility(View.INVISIBLE);
-            fl.setVisibility(View.INVISIBLE);
-            fl.setLayoutParams(new RelativeLayout.LayoutParams(0, 0));
+//            fl.setVisibility(View.INVISIBLE);
+//            fl.setLayoutParams(new RelativeLayout.LayoutParams(0, 0));
         }
 
         media.setText("Please select a house to see the details");
@@ -180,7 +182,7 @@ public class DetailFragment extends BaseFragment {
         bath = result.findViewById(R.id.nbrOfBathrooms);
         add = result.findViewById(R.id.address);
         media = result.findViewById(R.id.media);
-        fl = result.findViewById(R.id.miniMapFrameLayout);
+//        fl = result.findViewById(R.id.miniMapFrameLayout);
         recyclerView = result.findViewById(R.id.horizontalRecyclerView);
         relativeLayout = result.findViewById(R.id.relativeLayoutInvisibility);
 
@@ -292,7 +294,7 @@ public class DetailFragment extends BaseFragment {
             if (Utils.isInternetAvailable(getContext())) {
                 seeOnMapButton.setVisibility(View.VISIBLE);
             }
-            fl.setLayoutParams(new RelativeLayout.LayoutParams(0, 0));
+//            fl.setLayoutParams(new RelativeLayout.LayoutParams(0, 0));
 
         }
     }
@@ -441,7 +443,7 @@ public class DetailFragment extends BaseFragment {
             configureAndDisplayMiniMap();
         } else {
             seeOnMapButton.setVisibility(View.VISIBLE);
-            fl.setLayoutParams(new RelativeLayout.LayoutParams(0, 0));
+//            fl.setLayoutParams(new RelativeLayout.LayoutParams(0, 0));
 
         }
     }
