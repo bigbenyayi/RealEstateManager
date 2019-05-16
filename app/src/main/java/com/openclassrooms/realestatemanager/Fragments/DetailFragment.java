@@ -6,6 +6,8 @@ import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -23,6 +25,12 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.common.collect.Maps;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -39,12 +47,14 @@ import com.openclassrooms.realestatemanager.Models.RealEstateManagerDatabase;
 import com.openclassrooms.realestatemanager.Models.Utils;
 import com.openclassrooms.realestatemanager.R;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 
-public class DetailFragment extends BaseFragment {
+public class DetailFragment extends BaseFragment implements OnMapReadyCallback {
 
     TextView description;
     TextView surface;
@@ -57,6 +67,7 @@ public class DetailFragment extends BaseFragment {
     TextView market;
     TextView pointsOfInterest;
     Boolean editing = false;
+    MapsFragment mMap;
 
     FirebaseStorage storage = FirebaseStorage.getInstance();
     List<String> pointsOfInterestValue = new ArrayList<>();
@@ -73,6 +84,11 @@ public class DetailFragment extends BaseFragment {
     Button seeOnMapButton;
     public static final int PICK_IMAGE_REQUEST = 1;
     Uri mainImageUri;
+
+    Geocoder geocoder;
+    List<Address> addresses;
+    LatLng location;
+
 
 //    Fragment fl;
 
@@ -173,6 +189,13 @@ public class DetailFragment extends BaseFragment {
         market = result.findViewById(R.id.onTheMarketSinceTV);
         sold = result.findViewById(R.id.soldTV);
         seeOnMapButton = result.findViewById(R.id.seeOnMapButton);
+        mMap = (MapsFragment) getChildFragmentManager().findFragmentById(R.id.miniMapFrameLayout);
+        if (mMap == null) {
+            mMap = (MapsFragment) SupportMapFragment.newInstance();
+            mMap.getMapAsync(this);
+
+        }
+
 
         inter = result.findViewById(R.id.pointsOfInterest);
         desc = result.findViewById(R.id.description);
@@ -190,7 +213,7 @@ public class DetailFragment extends BaseFragment {
 
     private void setTheInvisibles() {
         relativeLayout.setVisibility(View.INVISIBLE);
-        relativeLayout.setLayoutParams(new RelativeLayout.LayoutParams(0,0));
+        relativeLayout.setLayoutParams(new RelativeLayout.LayoutParams(0, 0));
     }
 
     public void updateTextViewWhenOffline() {
@@ -512,12 +535,12 @@ public class DetailFragment extends BaseFragment {
             if (houseItem != null) {
                 mPrefs.edit().putString("miniMapLocation", houseItem.getAddress()).apply();
 
-                mapsFragment = (MapsFragment) Objects.requireNonNull(getActivity()).getSupportFragmentManager().findFragmentById(R.id.miniMapFrameLayout);
-                if (mapsFragment == null) {
-                    mapsFragment = new MapsFragment();
-                    getActivity().getSupportFragmentManager().beginTransaction()
-                            .add(R.id.miniMapFrameLayout, mapsFragment)
-                            .commit();
+//                mapsFragment = (MapsFragment) Objects.requireNonNull(getActivity()).getSupportFragmentManager().findFragmentById(R.id.miniMapFrameLayout);
+//                if (mapsFragment == null) {
+//                    mapsFragment = new MapsFragment();
+//                    getActivity().getSupportFragmentManager().beginTransaction()
+//                            .add(R.id.miniMapFrameLayout, mapsFragment)
+//                            .commit();
                 }
             } else {
                 notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
@@ -528,20 +551,20 @@ public class DetailFragment extends BaseFragment {
                         if (id.equals(documentSnapshot.get("id"))) {
                             mPrefs.edit().putString("miniMapLocation", (String) documentSnapshot.get("location")).apply();
 
-                            mapsFragment = (MapsFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.miniMapFrameLayout);
-                            if (mapsFragment == null) {
-                                mapsFragment = new MapsFragment();
-                                getActivity().getSupportFragmentManager().beginTransaction()
-                                        .add(R.id.miniMapFrameLayout, mapsFragment)
-                                        .commit();
-                            }
+//                            mapsFragment = (MapsFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.miniMapFrameLayout);
+//                            if (mapsFragment == null) {
+//                                mapsFragment = new MapsFragment();
+//                                getActivity().getSupportFragmentManager().beginTransaction()
+//                                        .add(R.id.miniMapFrameLayout, mapsFragment)
+//                                        .commit();
+//                            }
                         }
                     }
                 });
             }
         }
 
-    }
+
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -566,4 +589,34 @@ public class DetailFragment extends BaseFragment {
 
         super.onCreateOptionsMenu(menu, inflater);
     }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        geocoder = new Geocoder(getContext(), Locale.getDefault());
+        SharedPreferences mPrefs = Objects.requireNonNull(getContext()).getSharedPreferences("SHARED", Context.MODE_PRIVATE);
+
+        try {
+            addresses = geocoder.getFromLocationName(mPrefs.getString("miniMapLocation", null), 1);
+            location = (new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude()));
+            Log.d("location", String.valueOf(addresses.get(0).getLatitude() + "," + addresses.get(0).getLongitude()));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (location != null) {
+            googleMap.addMarker(new MarkerOptions().position(location));
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 11f));
+
+
+        }
+        if (googleMap != null) {
+            if (location != null) {
+                googleMap.addMarker(new MarkerOptions().position(location));
+            }
+        }
+    }
+
+
 }
+

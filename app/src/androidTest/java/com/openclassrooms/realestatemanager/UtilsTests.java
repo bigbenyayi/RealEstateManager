@@ -70,6 +70,7 @@ public class UtilsTests {
 
 
         //Task that needs internet (if nothing then API call but cba) then internetConnection = true
+        //run url
 
         SystemClock.sleep(1000); //Waiting for internet check
         assertEquals(Utils.isInternetAvailable(appContext), internetConnection);
@@ -85,7 +86,6 @@ public class UtilsTests {
         //or write today's date manually to really check
 
         assertEquals(Utils.getTodayDate(), dateFormat.format(date));
-
     }
 
 

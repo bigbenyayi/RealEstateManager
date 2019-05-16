@@ -44,18 +44,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        geocoder = new Geocoder(getContext(), Locale.getDefault());
-        SharedPreferences mPrefs = Objects.requireNonNull(getContext()).getSharedPreferences("SHARED", Context.MODE_PRIVATE);
 
-        try {
-            addresses = geocoder.getFromLocationName(mPrefs.getString("miniMapLocation", null), 1);
-            location = (new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude()));
-            Log.d("location", String.valueOf(addresses.get(0).getLatitude() + "," + addresses.get(0).getLongitude()));
-
-            AddPinsOnMap();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private boolean checkPlayServices() {
