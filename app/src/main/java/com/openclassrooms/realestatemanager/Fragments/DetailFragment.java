@@ -67,7 +67,7 @@ public class DetailFragment extends BaseFragment implements OnMapReadyCallback {
     TextView market;
     TextView pointsOfInterest;
     Boolean editing = false;
-    MapsFragment mMap;
+    SupportMapFragment mMap;
 
     FirebaseStorage storage = FirebaseStorage.getInstance();
     List<String> pointsOfInterestValue = new ArrayList<>();
@@ -190,12 +190,12 @@ public class DetailFragment extends BaseFragment implements OnMapReadyCallback {
         sold = result.findViewById(R.id.soldTV);
         seeOnMapButton = result.findViewById(R.id.seeOnMapButton);
         mMap = (MapsFragment) getChildFragmentManager().findFragmentById(R.id.miniMapFrameLayout);
-        if (mMap == null) {
-            mMap = (MapsFragment) SupportMapFragment.newInstance();
-            mMap.getMapAsync(this);
 
+        if (mMap == null) {
+            mMap = SupportMapFragment.newInstance();
         }
 
+        mMap.getMapAsync(this);
 
         inter = result.findViewById(R.id.pointsOfInterest);
         desc = result.findViewById(R.id.description);
@@ -541,15 +541,15 @@ public class DetailFragment extends BaseFragment implements OnMapReadyCallback {
 //                    getActivity().getSupportFragmentManager().beginTransaction()
 //                            .add(R.id.miniMapFrameLayout, mapsFragment)
 //                            .commit();
-                }
-            } else {
-                notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
+            }
+        } else {
+            notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
 
-                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
 
-                        assert id != null;
-                        if (id.equals(documentSnapshot.get("id"))) {
-                            mPrefs.edit().putString("miniMapLocation", (String) documentSnapshot.get("location")).apply();
+                    assert id != null;
+                    if (id.equals(documentSnapshot.get("id"))) {
+                        mPrefs.edit().putString("miniMapLocation", (String) documentSnapshot.get("location")).apply();
 
 //                            mapsFragment = (MapsFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.miniMapFrameLayout);
 //                            if (mapsFragment == null) {
@@ -558,13 +558,11 @@ public class DetailFragment extends BaseFragment implements OnMapReadyCallback {
 //                                        .add(R.id.miniMapFrameLayout, mapsFragment)
 //                                        .commit();
 //                            }
-                        }
                     }
-                });
-            }
+                }
+            });
         }
-
-
+    }
 
 
     @SuppressLint("ClickableViewAccessibility")
