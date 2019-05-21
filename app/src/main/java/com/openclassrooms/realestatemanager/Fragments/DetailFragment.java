@@ -10,7 +10,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -21,7 +21,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -31,7 +30,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.common.collect.Maps;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -87,9 +85,9 @@ public class DetailFragment extends BaseFragment implements OnMapReadyCallback {
 
     Geocoder geocoder;
     List<Address> addresses;
-    LatLng location;
+    LatLng mapLocation;
 
-
+//    RelativeLayout mapRelativeLayout;
 //    Fragment fl;
 
     private RealEstateManagerDatabase database;
@@ -105,6 +103,7 @@ public class DetailFragment extends BaseFragment implements OnMapReadyCallback {
     private MyHorizontalPictureAdapter myOtherAdapter;
     private CollectionReference notebookRef = FirebaseFirestore.getInstance().collection("house");
     boolean isTablet;
+    GoogleMap globalMap;
 
     RelativeLayout relativeLayout;
 
@@ -135,6 +134,7 @@ public class DetailFragment extends BaseFragment implements OnMapReadyCallback {
     protected void updateDesign() {
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.fragment_detail, container, false);
@@ -152,17 +152,16 @@ public class DetailFragment extends BaseFragment implements OnMapReadyCallback {
 
         Intent iin = getActivity().getIntent();
         Bundle b = iin.getExtras();
-
         if (Utils.isInternetAvailable(getContext())) {
             configureHorizontalRecyclerView();
             seeOnMapButton.setVisibility(View.VISIBLE);
-//            fl.setVisibility(View.VISIBLE);
-//            fl.setLayoutParams(new RelativeLayout.LayoutParams(200, 200));
+//            mapRelativeLayout.setVisibility(View.VISIBLE);
+//            mapRelativeLayout.setLayoutParams(new RelativeLayout.LayoutParams(200, 200));
         } else {
             configureHorizontalRecyclerViewWhenOffline();
             seeOnMapButton.setVisibility(View.INVISIBLE);
-//            fl.setVisibility(View.INVISIBLE);
-//            fl.setLayoutParams(new RelativeLayout.LayoutParams(0, 0));
+//            mapRelativeLayout.setVisibility(View.INVISIBLE);
+//            mapRelativeLayout.setLayoutParams(new RelativeLayout.LayoutParams(0, 0));
         }
 
         media.setText("Please select a house to see the details");
@@ -188,6 +187,7 @@ public class DetailFragment extends BaseFragment implements OnMapReadyCallback {
         realtor = result.findViewById(R.id.realEstateInCharge);
         market = result.findViewById(R.id.onTheMarketSinceTV);
         sold = result.findViewById(R.id.soldTV);
+//        mapRelativeLayout = result.findViewById(R.id.mapRelativeLayout);
         seeOnMapButton = result.findViewById(R.id.seeOnMapButton);
         mMap = (MapsFragment) getChildFragmentManager().findFragmentById(R.id.miniMapFrameLayout);
 
@@ -252,8 +252,38 @@ public class DetailFragment extends BaseFragment implements OnMapReadyCallback {
                         nbrOfBedrooms, nbrOfBathrooms, location,
                         realtorValue, onMarket, soldValue, pointsOfInterestValue, pictures);
 
+                ///////Loading map at correct position
+                geocoder = new Geocoder(getContext(), Locale.getDefault());
+                SharedPreferences mPrefs = Objects.requireNonNull(getContext()).getSharedPreferences("SHARED", Context.MODE_PRIVATE);
+
+                try {
+                    addresses = geocoder.getFromLocationName(houseItem.getAddress(), 1);
+                    mapLocation = (new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude()));
+                    Log.d("location", String.valueOf(addresses.get(0).getLatitude() + "," + addresses.get(0).getLongitude()));
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                if (mapLocation != null) {
+                    globalMap.addMarker(new MarkerOptions().position(mapLocation));
+                    globalMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mapLocation, 11f));
+
+
+                }
+                if (globalMap != null) {
+                    if (mapLocation != null) {
+                        globalMap.addMarker(new MarkerOptions().position(mapLocation));
+                    }
+                }
+
                 assert houseItem != null;
                 description.setText(houseItem.getDescription());
+                if (houseItem != null) {
+//                    SharedPreferences mPrefs = getContext().getSharedPreferences("SHARED", Context.MODE_PRIVATE);
+                    mPrefs.edit().putString("miniMapLocation", houseItem.getAddress()).apply();
+
+                }
 
                 surface.setText(houseItem.getSurface() + "m²");
                 rooms.setText(houseItem.getNbrOfRooms());
@@ -401,6 +431,29 @@ public class DetailFragment extends BaseFragment implements OnMapReadyCallback {
                     houseItem = new DetailHouse(descriptionValue, surfaceValue, nbrOfRooms,
                             nbrOfBedrooms, nbrOfBathrooms, location,
                             realtorValue, onMarket, soldValue, pointsOfInterestValue, pictures);
+                    SharedPreferences mPrefs = Objects.requireNonNull(getContext()).getSharedPreferences("SHARED", Context.MODE_PRIVATE);
+                    geocoder = new Geocoder(getContext(), Locale.getDefault());
+
+                    try {
+                        addresses = geocoder.getFromLocationName(houseItem.getAddress(), 1);
+                        mapLocation = (new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude()));
+                        Log.d("location", String.valueOf(addresses.get(0).getLatitude() + "," + addresses.get(0).getLongitude()));
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (mapLocation != null) {
+                        globalMap.addMarker(new MarkerOptions().position(mapLocation));
+                        globalMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mapLocation, 11f));
+
+
+                    }
+                    if (globalMap != null) {
+                        if (mapLocation != null) {
+                            globalMap.addMarker(new MarkerOptions().position(mapLocation));
+                        }
+                    }
 
                     assert houseItem != null;
                     description.setText(houseItem.getDescription());
@@ -531,36 +584,9 @@ public class DetailFragment extends BaseFragment implements OnMapReadyCallback {
             id = mPrefs.getString("id", "0");
         }
 
-        if (isTablet) {
-            if (houseItem != null) {
-                mPrefs.edit().putString("miniMapLocation", houseItem.getAddress()).apply();
+        if (houseItem != null) {
+            mPrefs.edit().putString("miniMapLocation", houseItem.getAddress()).apply();
 
-//                mapsFragment = (MapsFragment) Objects.requireNonNull(getActivity()).getSupportFragmentManager().findFragmentById(R.id.miniMapFrameLayout);
-//                if (mapsFragment == null) {
-//                    mapsFragment = new MapsFragment();
-//                    getActivity().getSupportFragmentManager().beginTransaction()
-//                            .add(R.id.miniMapFrameLayout, mapsFragment)
-//                            .commit();
-            }
-        } else {
-            notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
-
-                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-
-                    assert id != null;
-                    if (id.equals(documentSnapshot.get("id"))) {
-                        mPrefs.edit().putString("miniMapLocation", (String) documentSnapshot.get("location")).apply();
-
-//                            mapsFragment = (MapsFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.miniMapFrameLayout);
-//                            if (mapsFragment == null) {
-//                                mapsFragment = new MapsFragment();
-//                                getActivity().getSupportFragmentManager().beginTransaction()
-//                                        .add(R.id.miniMapFrameLayout, mapsFragment)
-//                                        .commit();
-//                            }
-                    }
-                }
-            });
         }
     }
 
@@ -590,29 +616,7 @@ public class DetailFragment extends BaseFragment implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        geocoder = new Geocoder(getContext(), Locale.getDefault());
-        SharedPreferences mPrefs = Objects.requireNonNull(getContext()).getSharedPreferences("SHARED", Context.MODE_PRIVATE);
-
-        try {
-            addresses = geocoder.getFromLocationName(mPrefs.getString("miniMapLocation", null), 1);
-            location = (new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude()));
-            Log.d("location", String.valueOf(addresses.get(0).getLatitude() + "," + addresses.get(0).getLongitude()));
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if (location != null) {
-            googleMap.addMarker(new MarkerOptions().position(location));
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 11f));
-
-
-        }
-        if (googleMap != null) {
-            if (location != null) {
-                googleMap.addMarker(new MarkerOptions().position(location));
-            }
-        }
+        globalMap = googleMap;
     }
 
 

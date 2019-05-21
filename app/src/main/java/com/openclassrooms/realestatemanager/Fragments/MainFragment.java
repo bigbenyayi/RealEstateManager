@@ -307,9 +307,9 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                         Log.d("thegreatdebugger", "2nd");
                         if (mSearchObject.getRoomsMax() >= Integer.valueOf(fastGet.getNbrOfRooms()) && Integer.valueOf(fastGet.getNbrOfRooms()) >= mSearchObject.getRoomsMin()) {
                             Log.d("thegreatdebugger", "3rd " + fastGet.getCity());
-                            if (fastGet.getSaleDate() != null && mSearchObject.isSold() || !mSearchObject.isSold() && !mSearchObject.isAvailable()) {
+                            if (!(fastGet.getSaleDate().equals("")) && mSearchObject.isSold() || !mSearchObject.isSold() && !mSearchObject.isAvailable() || mSearchObject.isSold() && mSearchObject.isAvailable() || fastGet.getSaleDate() != null && mSearchObject.isSold()) {
                                 Log.d("thegreatdebugger", "4th " + fastGet.getCity());
-                                if (fastGet.getSaleDate() == null && mSearchObject.isAvailable() || !mSearchObject.isSold() && !mSearchObject.isAvailable()) {
+                                if (fastGet.getSaleDate().equals("") && mSearchObject.isAvailable() || !mSearchObject.isSold() && !mSearchObject.isAvailable() || mSearchObject.isSold() && mSearchObject.isAvailable() || fastGet.getSaleDate() == null && mSearchObject.isSold()) {
                                     Log.d("thegreatdebugger", "5th " + fastGet.getCity());
                                     if (mSearchObject.getPhotosMax() >= sizeOffline && sizeOffline >= mSearchObject.getPhotosMin()) {
                                         Log.d("thegreatdebugger", "6th " + fastGet.getCity());
