@@ -27,6 +27,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -84,6 +85,7 @@ public class EditActivity extends AppCompatActivity {
     Button addButton;
     RecyclerView horizontalRecyclerViewAdd;
     Button soldButton;
+    ProgressBar progressBar;
     //Cara
 
     EditText surfaceET;
@@ -171,6 +173,7 @@ public class EditActivity extends AppCompatActivity {
             startActivityForResult(myIntent, PICK_IMAGE_REQUEST_ADD);
         });
         addButton.setOnClickListener(v -> {
+            progressBar.setVisibility(View.VISIBLE);
             addAPictureIV.getDrawable();
             pictureDescriptionET.getText().toString();
 
@@ -205,6 +208,7 @@ public class EditActivity extends AppCompatActivity {
 
                 addAPictureButton.setEnabled(true);
                 addButton.setEnabled(true);
+                progressBar.setVisibility(View.INVISIBLE);
             }));
         });
     }
@@ -235,15 +239,14 @@ public class EditActivity extends AppCompatActivity {
         nextButton.setOnClickListener(v -> {
             int n = mPrefs.getInt("addNumber", 0);
             if (n == 3 && adapter.getUpdatedlist().size() > 0) {
-
-                ProgressDialog dialog = ProgressDialog.show(EditActivity.this, "Creating house listing",
+                ProgressDialog dialog;
+                dialog = ProgressDialog.show(EditActivity.this, "Creating house listing",
                         "Loading... Please wait", true);
 
                 CollectionReference notebookRef = FirebaseFirestore.getInstance().collection("house");
                 mCollectionReference = FirebaseFirestore.getInstance().collection("house");
 
                 notebookRef.get().addOnSuccessListener((queryDocumentSnapshots) -> {
-
 
                     // SAVE EVERYTHING TO FIRESTOOOORE HERE
 
@@ -279,29 +282,6 @@ public class EditActivity extends AppCompatActivity {
                             Objects.requireNonNull(taskSnapshot.getMetadata().getReference()).getDownloadUrl().addOnSuccessListener(uri -> {
 
                                 url = uri.toString();
-
-                                ////////////////////////// SENDING DATA TO SQL DATABASE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
-                                String onMarketSince = null;
-                                List<DatabaseHouseItem> lol = database.itemDao().getItems();
-                                for (int i = 0; i < lol.size(); i++) {
-                                    if (lol.get(i).getId().equals(id)) {
-                                        onMarketSince = lol.get(i).getOnMarket();
-
-
-                                    }
-
-                                }
-                                String stillOnMarket = null;
-                                if (soldStatusChanged) {
-                                    if (sold) {
-                                        stillOnMarket = dateFormat.format(date);
-                                    }
-                                }
-                                database.itemDao().insertItem(new DatabaseHouseItem(descriptionET.getText().toString(), surfaceET.getText().toString(), Objects.requireNonNull(id), String.valueOf(roomsNP.getValue()),
-                                        String.valueOf(bedroomsNP.getValue()), String.valueOf(bathroomsNP.getValue()), locationET.getText().toString(), mPrefs.getString("username", "Realtor"),
-                                        onMarketSince, stillOnMarket, dataPathForMainPicture, priceET.getText().toString().replace(",", ""), cityET.getText().toString(), typeET.getText().toString(),
-                                        interestsArray, arrayOfPics, arrayOfDesc));
 
                                 ////////////////////////// SENDING DATA TO FIRESTORE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
@@ -357,8 +337,6 @@ public class EditActivity extends AppCompatActivity {
                             });
                         });
                     } else {
-
-                        ////////////////////////// SENDING DATA TO SQL DATABASE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
                         String onMarketSince = null;
                         String mainPicUrlFromDatabase = null;
@@ -431,11 +409,20 @@ public class EditActivity extends AppCompatActivity {
                         }
                     }
                 });
+                if (adapter.getUpdatedlist().size() == 0) {
+                    dialog.dismiss();
+                    Toast.makeText(this, "Please add at least one additional picture", Toast.LENGTH_SHORT).show();
 
+                } else if (priceET.getText().toString().equals("") || priceET.getText().toString() == null) {
+                    dialog.dismiss();
+                    Toast.makeText(this, "Please put in a price", Toast.LENGTH_SHORT).show();
+                }
+
+                dialog.dismiss();
+                Intent myIntent = new Intent(EditActivity.this, MainActivity.class);
+                startActivity(myIntent);
                 finish();
 
-            } else if (n == 3) {
-                Toast.makeText(this, "Please choose at least one additional picture", Toast.LENGTH_SHORT).show();
             } else {
                 n++;
                 mPrefs.edit().putInt("addNumber", n).apply();
@@ -616,6 +603,7 @@ public class EditActivity extends AppCompatActivity {
         chooseMainPicButton = findViewById(R.id.choosePictureButton);
         mainPicImageView = findViewById(R.id.mainPicIV);
         soldButton = findViewById(R.id.soldButton);
+        progressBar = findViewById(R.id.progressBar);
 
         //Details
         descriptionET = findViewById(R.id.descriptionET);
@@ -699,6 +687,7 @@ public class EditActivity extends AppCompatActivity {
 
 
         TextView title = findViewById(R.id.title);
+        progressBar.setVisibility(View.INVISIBLE);
         SharedPreferences mPrefs = getSharedPreferences("SHARED", MODE_PRIVATE);
         if (mPrefs.getInt("addNumber", 1) == 1) {
             backButton.setText("Cancel");

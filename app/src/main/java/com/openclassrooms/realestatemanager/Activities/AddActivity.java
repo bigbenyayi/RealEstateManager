@@ -98,6 +98,7 @@ public class AddActivity extends AppCompatActivity {
     int numberMaxPOI = 0;
     String url;
     String urlAdd;
+    ProgressBar progressBar;
     List<String> interestsArray = new ArrayList<>();
     ArrayList<HorizontalRecyclerViewItem> listOfPicturesAndDesc = new ArrayList<>();
     List<String> arrayOfPics = new ArrayList<>();
@@ -142,45 +143,47 @@ public class AddActivity extends AppCompatActivity {
         });
 
         addButton.setOnClickListener(v -> {
-//            addAPictureIV.getDrawable();
-//            pictureDescriptionET.getText().toString();
-//
-//            addAPictureIV.setDrawingCacheEnabled(true);
-//            addAPictureIV.buildDrawingCache();
-//            Bitmap bitmap = addAPictureIV.getDrawingCache();
-//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-//            addAPictureIV.setDrawingCacheEnabled(false);
-//            byte[] data = baos.toByteArray();
-//
-//            String path = "firememes/" + UUID.randomUUID() + ".png";
-//            StorageReference firememeRef = storage.getReference(path);
-//            StorageMetadata metadata = new StorageMetadata.Builder()
-//                    .setCustomMetadata("text", descriptionET.getText().toString())
-//                    .build();
-//
-//            addAPictureButton.setEnabled(false);
-//            addButton.setEnabled(false);
-//            progressBar.setVisibility(View.VISIBLE);
-//
-//            UploadTask uploadTask = firememeRef.putBytes(data, metadata);
-//            uploadTask.addOnSuccessListener(AddActivity.this, taskSnapshot -> taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(uri -> {
-//
-//                urlAdd = uri.toString();
-            listOfPicturesAndDesc.add(new HorizontalRecyclerViewItem(urlAdd, pictureDescriptionET.getText().toString()));
+            addAPictureIV.getDrawable();
+            pictureDescriptionET.getText().toString();
 
-            addAPictureIV.setImageResource(0);
-            pictureDescriptionET.setText("");
+            addAPictureIV.setDrawingCacheEnabled(true);
+            addAPictureIV.buildDrawingCache();
+            Bitmap bitmap = addAPictureIV.getDrawingCache();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+            addAPictureIV.setDrawingCacheEnabled(false);
+            byte[] data = baos.toByteArray();
 
-            localPathsArray.add(urlAdd);
+            String path = "firememes/" + UUID.randomUUID() + ".png";
+            StorageReference firememeRef = storage.getReference(path);
+            StorageMetadata metadata = new StorageMetadata.Builder()
+                    .setCustomMetadata("text", descriptionET.getText().toString())
+                    .build();
 
-            adapter = new MyHorizontalAdapter(AddActivity.this, listOfPicturesAndDesc);
-            horizontalRecyclerViewAdd.setAdapter(adapter);
-
-            addAPictureButton.setEnabled(true);
+            addAPictureButton.setEnabled(false);
             addButton.setEnabled(false);
+            progressBar.setVisibility(View.VISIBLE);
 
+            UploadTask uploadTask = firememeRef.putBytes(data, metadata);
+            uploadTask.addOnSuccessListener(AddActivity.this, taskSnapshot -> taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(uri -> {
 
+                urlAdd = uri.toString();
+                listOfPicturesAndDesc.add(new HorizontalRecyclerViewItem(urlAdd, pictureDescriptionET.getText().toString()));
+
+                addAPictureIV.setImageResource(0);
+                pictureDescriptionET.setText("");
+
+                localPathsArray.add(urlAdd);
+
+                adapter = new MyHorizontalAdapter(AddActivity.this, listOfPicturesAndDesc);
+                horizontalRecyclerViewAdd.setAdapter(adapter);
+
+                addAPictureButton.setEnabled(true);
+                addButton.setEnabled(false);
+
+                progressBar.setVisibility(View.INVISIBLE);
+
+            }));
         });
     }
 
@@ -208,10 +211,11 @@ public class AddActivity extends AppCompatActivity {
         });
 
         nextButton.setOnClickListener(v -> {
+            ProgressDialog dialog;
             int n = mPrefs.getInt("addNumber", 0);
             if (n == 3 && localPathsArray.size() > 0) {
 
-                ProgressDialog dialog = ProgressDialog.show(AddActivity.this, "Creating house listing",
+                dialog = ProgressDialog.show(AddActivity.this, "Editing house listing",
                         "Loading... Please wait", true);
 
                 CollectionReference notebookRef = FirebaseFirestore.getInstance().collection("house");
@@ -227,33 +231,28 @@ public class AddActivity extends AppCompatActivity {
                             intId = Integer.parseInt(id);
                         }
                     }
-                    addAPictureIV.getDrawable();
-                    pictureDescriptionET.getText().toString();
-
-
                     mainPicImageView.setDrawingCacheEnabled(true);
                     mainPicImageView.buildDrawingCache();
-                    Bitmap bitmap2 = mainPicImageView.getDrawingCache();
-                    ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
-                    bitmap2.compress(Bitmap.CompressFormat.PNG, 100, baos2);
+                    Bitmap bitmap = mainPicImageView.getDrawingCache();
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
                     mainPicImageView.setDrawingCacheEnabled(false);
-                    byte[] data2 = baos2.toByteArray();
+                    byte[] data = baos.toByteArray();
 
-                    String path2 = "firememes/" + UUID.randomUUID() + ".png";
-                    StorageReference firememeRef2 = storage.getReference(path2);
-                    StorageMetadata metadata2 = new StorageMetadata.Builder()
+                    String path = "firememes/" + UUID.randomUUID() + ".png";
+                    StorageReference firememeRef = storage.getReference(path);
+                    StorageMetadata metadata = new StorageMetadata.Builder()
                             .setCustomMetadata("text", typeET.getText().toString())
                             .build();
 
-                    UploadTask uploadTask2 = firememeRef2.putBytes(data2, metadata2);
+                    UploadTask uploadTask = firememeRef.putBytes(data, metadata);
 
-                    uploadTask2.addOnSuccessListener(taskSnapshot -> {
-                        Objects.requireNonNull(taskSnapshot.getMetadata().getReference()).getDownloadUrl().addOnSuccessListener(uri -> {
+                    uploadTask.addOnSuccessListener(taskSnapshot -> {
+                        taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(uri -> {
 
                             // SAVE EVERYTHING TO FIRESTOOOORE HERE
 
                             url = uri.toString();
-                            Toast.makeText(AddActivity.this, url, Toast.LENGTH_SHORT).show();
                             DocumentReference mDocRef = FirebaseFirestore.getInstance().collection("house").document();
 
                             Map<String, Object> dataToSave = new HashMap<>();
@@ -268,54 +267,18 @@ public class AddActivity extends AppCompatActivity {
                             dataToSave.put("mainPicture", url);
                             if (adapter.getUpdatedlist().size() > 0) {
 
-                                if (localPathsArray.size() > 0) {
-                                    Picasso.get().load(adapter.getUpdatedlist().get(0).getPictureUrl()).into(addAPictureIV);
-                                }
+//                        if (localPathsArray.size() > 0) {
+//                            Picasso.get().load(adapter.getUpdatedlist().get(0).getPictureUrl()).into(addAPictureIV);
+//                        }
                                 for (int j = 0; j < adapter.getUpdatedlist().size(); j++) {
-                                    finalJ = j;
-                                    Log.d("whywhywhy", "inferiorFinalJ = " + finalJ);
 
+                                    arrayOfPics.add(adapter.getUpdatedlist().get(j).getPictureUrl());
+                                    arrayOfDesc.add(adapter.getUpdatedlist().get(j).getRoom());
 
-                                    addAPictureIV.setDrawingCacheEnabled(true);
-                                    addAPictureIV.buildDrawingCache();
-                                    Bitmap bitmap = addAPictureIV.getDrawingCache();
-                                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-                                    addAPictureIV.setDrawingCacheEnabled(false);
-                                    byte[] data = baos.toByteArray();
-
-                                    String path = "firememes/" + UUID.randomUUID() + ".png";
-                                    StorageReference firememeRef = storage.getReference(path);
-                                    StorageMetadata metadata = new StorageMetadata.Builder()
-                                            .setCustomMetadata("text", descriptionET.getText().toString())
-                                            .build();
-
-                                    addAPictureButton.setEnabled(false);
-                                    addButton.setEnabled(false);
-
-                                    UploadTask uploadTask = firememeRef.putBytes(data, metadata);
-                                    uploadTask.addOnSuccessListener(AddActivity.this, taskSnapshot2 -> Objects.requireNonNull(taskSnapshot2.getMetadata().getReference()).getDownloadUrl().addOnSuccessListener(uri2 -> {
-
-                                        urlAdd = uri2.toString();
-                                        arrayOfPics.add(uri2.toString());
-                                        arrayOfDesc.add(adapter.getUpdatedlist().get(finalJ).getRoom());
-
-                                        Log.d("whywhywhy", arrayOfPics.toString());
-                                        Log.d("whywhywhy", "finalJ = " + finalJ);
-                                        Log.d("whywhywhy", "list size = " + adapter.getUpdatedlist().size());
-
-                                        Picasso.get().load(adapter.getUpdatedlist().get(finalJ).getPictureUrl()).into(addAPictureIV);
-
-                                        if (finalJ == adapter.getUpdatedlist().size() - 1) {
-                                            dataToSave.put("pictures", arrayOfPics);
-                                            dataToSave.put("rooms", arrayOfDesc);
-
-                                            mDocRef.set(dataToSave, SetOptions.merge());
-
-                                            finish();
-                                        }
-                                    }));
                                 }
+
+                                dataToSave.put("pictures", arrayOfPics);
+                                dataToSave.put("rooms", arrayOfDesc);
                             }
 
                             interestsArray.clear();
@@ -335,58 +298,29 @@ public class AddActivity extends AppCompatActivity {
                             dataToSave.put("type", typeET.getText().toString());
                             dataToSave.put("realtor", Objects.requireNonNull(mPrefs.getString("username", "Realtor")));
 
-                            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                            @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
                             Date date = new Date();
 
                             dataToSave.put("onMarket", dateFormat.format(date));
 
-//                            mDocRef.set(dataToSave, SetOptions.merge());
+                            mDocRef.set(dataToSave, SetOptions.merge());
+
+                            if (adapter.getUpdatedlist().size() == 0) {
+                                dialog.dismiss();
+                                Toast.makeText(this, "Please add at least one additional picture", Toast.LENGTH_SHORT).show();
+
+                            } else if (priceET.getText().toString().equals("")) {
+                                dialog.dismiss();
+                                Toast.makeText(this, "Please put in a price", Toast.LENGTH_SHORT).show();
+                            }
+                            Intent myIntent = new Intent(AddActivity.this, MainActivity.class);
+                            startActivity(myIntent);
+                            finish();
 
                         });
                     });
+
                 });
-
-                ////////////////////////// SENDING DATA TO SQL DATABASE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
-                DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-                Date date = new Date();
-
-                database = Room.databaseBuilder(this,
-                        RealEstateManagerDatabase.class, "MyDatabase.db")
-                        .allowMainThreadQueries()
-                        .build();
-
-                int biggestId = 0;
-
-                List<DatabaseHouseItem> listOfItems = database.itemDao().getItems();
-                if (listOfItems != null) {
-                    for (int i = 0; i < listOfItems.size(); i++) {
-                        String id = listOfItems.get(i).getId();
-                        int idInt = Integer.parseInt(id);
-                        if (idInt > biggestId) {
-                            biggestId = Integer.parseInt(id);
-                        }
-                    }
-                }
-
-                for (int i = 0; i < adapter.getUpdatedlist().size(); i++) {
-                    arrayOfDescOffline.add(adapter.getUpdatedlist().get(i).getRoom());
-                }
-
-
-                database.itemDao().insertItem(new DatabaseHouseItem(descriptionET.getText().toString(), surfaceET.getText().toString(),
-                        String.valueOf(biggestId + 1), String.valueOf(roomsNP.getValue()), String.valueOf(bedroomsNP.getValue()),
-                        String.valueOf(bathroomsNP.getValue()), locationET.getText().toString(),
-                        mPrefs.getString("username", "Realtor"), dateFormat.format(date),
-                        null, dataPathForMainPicture, priceET.getText().toString().replace(",", ""), cityET.getText().toString(), typeET.getText().toString(), interestsArray, localPathsArray, arrayOfDescOffline));
-
-                if (!Utils.isInternetAvailable(this)) {
-                    finish();
-                }
-
-
-            } else if (n == 3) {
-                Toast.makeText(this, "Please add at least one additional picture", Toast.LENGTH_SHORT).show();
             } else {
                 n++;
                 mPrefs.edit().putInt("addNumber", n).apply();
@@ -441,6 +375,7 @@ public class AddActivity extends AppCompatActivity {
         cityET = findViewById(R.id.cityET);
         chooseMainPicButton = findViewById(R.id.choosePictureButton);
         mainPicImageView = findViewById(R.id.mainPicIV);
+        progressBar = findViewById(R.id.progressBar);
 
 
         //Details
@@ -548,6 +483,7 @@ public class AddActivity extends AppCompatActivity {
 
     private void setCorrectTVs() {
         TextView title = findViewById(R.id.title);
+        progressBar.setVisibility(View.INVISIBLE);
         SharedPreferences mPrefs = getSharedPreferences("SHARED", MODE_PRIVATE);
         if (mPrefs.getInt("addNumber", 1) == 1) {
             backButton.setText("Cancel");

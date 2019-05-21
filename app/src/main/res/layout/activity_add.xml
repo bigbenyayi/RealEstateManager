@@ -98,7 +98,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/houseTypeET"
             android:layout_centerHorizontal="true"
-            android:text="Price($):"
+            android:text="Price($)*:"
             android:textSize="20sp" />
 
         <EditText
@@ -249,7 +249,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/locationET"
             android:layout_centerHorizontal="true"
-            android:text="Additional pictures: "
+            android:text="Additional pictures:(*)"
             android:textSize="20sp" />
 
         <Button
@@ -260,7 +260,16 @@
             android:layout_centerHorizontal="true"
             android:text="Add a picture" />
 
-
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="@android:style/Widget.ProgressBar.Large"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/sidePicturesIV"
+            android:layout_alignBottom="@+id/sidePicturesIV"
+            android:layout_alignParentEnd="true"
+            android:layout_toEndOf="@+id/sidePicturesIV"
+            android:textAlignment="center" />
 
         <ImageView
             android:id="@+id/sidePicturesIV"
