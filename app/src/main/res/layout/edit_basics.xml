@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/houseTypeIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/houseTypeTV"
+        android:layout_alignBottom="@id/houseTypeTV"
+        android:layout_marginEnd="15dp"
+        android:layout_toStartOf="@+id/houseTypeTV"
+        android:src="@drawable/ic_home_black_24dp" />
+
+
+    <TextView
+        android:id="@+id/houseTypeTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="House type:"
+        android:textSize="20sp" />
+
+    <EditText
+        android:id="@+id/houseTypeET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/houseTypeTV"
+        android:layout_margin="15dp"
+        android:imeOptions="actionDone"
+        android:singleLine="true"
+        android:textAlignment="center" />
+
+    <ImageView
+        android:id="@+id/priceIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/priceTV"
+        android:layout_alignBottom="@id/priceTV"
+        android:layout_marginEnd="15dp"
+        android:layout_toStartOf="@+id/priceTV"
+        android:src="@drawable/ic_attach_money_black_24dp" />
+
+    <TextView
+        android:id="@+id/priceTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/houseTypeET"
+        android:layout_centerHorizontal="true"
+        android:text="Price($)*:"
+        android:textSize="20sp" />
+
+    <EditText
+        android:id="@+id/priceET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/priceTV"
+        android:layout_margin="15dp"
+        android:digits="0123456789.,"
+        android:imeOptions="actionDone"
+        android:inputType="number"
+        android:textAlignment="center"
+        android:textCursorDrawable="@null" />
+
+    <ImageView
+        android:id="@+id/cityIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/cityTV"
+        android:layout_alignBottom="@id/cityTV"
+        android:layout_marginEnd="15dp"
+        android:layout_toStartOf="@+id/cityTV"
+        android:src="@drawable/ic_location_on_black_24dp" />
+
+    <TextView
+        android:id="@+id/cityTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/priceET"
+        android:layout_centerHorizontal="true"
+        android:text="City"
+        android:textSize="20sp" />
+
+    <EditText
+        android:id="@+id/cityET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cityTV"
+        android:layout_margin="15dp"
+        android:imeOptions="actionDone"
+        android:singleLine="true"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/mainPictureTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cityET"
+        android:text="Upload file"
+        android:textAlignment="center"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/choosePictureButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mainPictureTV"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="50dp"
+        android:text="Choose picture" />
+
+    <ImageView
+        android:id="@+id/mainPicIV"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_below="@id/choosePictureButton"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="30dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:textAlignment="center" />
+
+</RelativeLayout>

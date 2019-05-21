@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/surfaceIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/surfaceTV"
+        android:layout_alignBottom="@+id/surfaceTV"
+        android:layout_marginEnd="15dp"
+        android:layout_toStartOf="@+id/surfaceTV"
+        android:src="@drawable/ic_surface_black_24dp" />
+
+    <TextView
+        android:id="@+id/surfaceTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="Surface (m²):"
+        android:textSize="20sp" />
+
+    <EditText
+        android:id="@+id/surfaceET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/surfaceTV"
+        android:layout_margin="15dp"
+        android:imeOptions="actionDone"
+        android:inputType="number"
+        android:singleLine="true"
+        android:textAlignment="center" />
+
+
+    <LinearLayout
+        android:id="@+id/roomsLL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/surfaceET"
+        android:orientation="horizontal"
+        android:weightSum="3">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/bathroomsIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/bathroomsTV"
+                android:layout_alignStart="@+id/bathroomsTV"
+                android:layout_alignEnd="@+id/bathroomsTV"
+                android:src="@drawable/ic_wc_black_24dp" />
+
+
+            <TextView
+                android:id="@+id/bathroomsTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="Number of bathrooms:"
+                android:textAlignment="center"
+                android:textSize="20sp" />
+
+            <NumberPicker
+                android:id="@+id/bathroomsET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/bathroomsIcon"
+                android:layout_margin="5dp"
+                android:textAlignment="center" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/bedroomsIcon"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_below="@+id/bedroomsTV"
+                android:layout_alignStart="@+id/bedroomsTV"
+                android:layout_alignEnd="@+id/bedroomsTV"
+                android:src="@drawable/ic_bed_black_24dp" />
+
+            <TextView
+                android:id="@+id/bedroomsTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="15dp"
+                android:text="Number of bedrooms:"
+                android:textAlignment="center"
+                android:textSize="20sp" />
+
+            <NumberPicker
+                android:id="@+id/bedroomsET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/bedroomsIcon"
+                android:layout_margin="5dp"
+                android:textAlignment="center" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/roomsIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/roomsTV"
+                android:layout_alignStart="@+id/roomsTV"
+                android:layout_alignEnd="@+id/roomsTV"
+                android:src="@drawable/ic_home_black_24dp" />
+
+            <TextView
+                android:id="@+id/roomsTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="Number of rooms:"
+                android:textAlignment="center"
+                android:textSize="20sp" />
+
+            <NumberPicker
+                android:id="@+id/roomsET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/roomsIcon"
+                android:layout_margin="5dp"
+                android:textAlignment="center" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/interestsIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/pointsOfInterestTV"
+        android:layout_alignBottom="@+id/pointsOfInterestTV"
+        android:layout_marginEnd="15dp"
+        android:layout_toStartOf="@+id/pointsOfInterestTV"
+        android:src="@drawable/ic_interest_black_24dp" />
+
+    <TextView
+        android:id="@+id/pointsOfInterestTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/roomsLL"
+        android:layout_centerHorizontal="true"
+        android:text="Nearby points of interests:"
+        android:textSize="20sp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/pointsOfInterestTV">
+
+        <CheckBox
+            android:id="@+id/restaurantCB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:text="Restaurant" />
+
+        <CheckBox
+            android:id="@+id/schoolCB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:text="School" />
+
+        <CheckBox
+            android:id="@+id/parkCB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:text="Park" />
+    </LinearLayout>
+
+</RelativeLayout>

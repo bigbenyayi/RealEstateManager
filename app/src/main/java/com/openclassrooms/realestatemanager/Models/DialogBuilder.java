@@ -155,7 +155,7 @@ public class DialogBuilder extends AppCompatDialogFragment {
     private void setupAlertDialogBasics() {
 
         builder.setView(view).setTitle("Search")
-                .setNegativeButton("Cancel", (dialog, which) -> {
+                .setNegativeButton("Reset", (dialog, which) -> {
                     mListener.fetchData(null, 80, 80, false, false, null, null, 80, 80, false,
                             false, false, 80, 80, 80, 80);
                     SharedPreferences mPrefs = Objects.requireNonNull(getContext()).getSharedPreferences("SHARED", MODE_PRIVATE);

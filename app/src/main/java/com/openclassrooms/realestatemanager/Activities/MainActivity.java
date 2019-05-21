@@ -105,12 +105,10 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
             case R.id.navbar_search:
                 SharedPreferences mPrefs = getSharedPreferences("SHARED", MODE_PRIVATE);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !mPrefs.getBoolean("searchBoolean", false)) {
-                    item.setIcon(getDrawable(R.drawable.ic_clear_black_24dp));
                     mPrefs.edit().putBoolean("searchBoolean", true).apply();
                     openSearchAlertDialog();
                 } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && mPrefs.getBoolean("searchBoolean", false)) {
                     mPrefs.edit().putBoolean("searchBoolean", false).apply();
-                    item.setIcon(getDrawable(R.drawable.ic_clear_black_24dp));
                     openSearchAlertDialog();
                 }
                 break;
