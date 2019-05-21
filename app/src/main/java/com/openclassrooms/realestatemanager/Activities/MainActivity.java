@@ -95,8 +95,12 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 break;
             case (R.id.navbar_add):
-                Intent addIntent = new Intent(this, AddActivity.class);
-                startActivity(addIntent);
+                if (Utils.isInternetAvailable(this)) {
+                    Intent myIntent = new Intent(MainActivity.this, AddActivity.class);
+                    startActivity(myIntent);
+                }else{
+                    Toast.makeText(this, "You must be connected to internet", Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.navbar_search:
                 SharedPreferences mPrefs = getSharedPreferences("SHARED", MODE_PRIVATE);
@@ -111,8 +115,12 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnBu
                 }
                 break;
             case R.id.navbar_edit:
-                Intent myIntent = new Intent(MainActivity.this, EditActivity.class);
-                startActivity(myIntent);
+                if (Utils.isInternetAvailable(this)) {
+                    Intent myIntent = new Intent(MainActivity.this, EditActivity.class);
+                    startActivity(myIntent);
+                }else{
+                    Toast.makeText(this, "You must be connected to internet", Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
 
