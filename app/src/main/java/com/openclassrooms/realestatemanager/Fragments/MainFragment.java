@@ -185,7 +185,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                         layoutParams.height = 0;
                         holder.relativeLayout.setLayoutParams(layoutParams);
 
-                        if (model.getSurface().equals("")){
+                        if (model.getSurface().equals("")) {
                             model.setSurface("0");
                         }
 
@@ -193,23 +193,23 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                         if (mSearchObject.getCity() == null || mSearchObject.getCity().equalsIgnoreCase(model.getCity()) || mSearchObject.getCity().equals("")) {
                             Log.d("thegreatdebugger", "2nd");
                             if (mSearchObject.getRoomsMax() >= Integer.valueOf(model.getNumberOfRooms()) && Integer.valueOf(model.getNumberOfRooms()) >= mSearchObject.getRoomsMin()) {
-                                Log.d("thegreatdebugger", "3rd " + model.getCity());
+                                Log.d("thegreatdebugger", "3rde " + model.getCity());
                                 if (model.getSold() != null && mSearchObject.isSold() || !mSearchObject.isSold() && !mSearchObject.isAvailable()) {
-                                    Log.d("thegreatdebugger", "4th " + model.getCity());
+                                    Log.d("thegreatdebugger", "4the " + model.getCity());
                                     if (model.getSold() == null && mSearchObject.isAvailable() || !mSearchObject.isSold() && !mSearchObject.isAvailable()) {
-                                        Log.d("thegreatdebugger", "5th " + model.getCity());
+                                        Log.d("thegreatdebugger", "5the " + model.getCity());
                                         if (mSearchObject.getPhotosMax() >= size && size >= mSearchObject.getPhotosMin()) {
-                                            Log.d("thegreatdebugger", "6th " + model.getCity());
+                                            Log.d("thegreatdebugger", "6the " + model.getCity());
                                             if (mSearchObject.getPriceMax() >= Integer.valueOf(model.getPrice()) && Integer.valueOf(model.getPrice()) >= mSearchObject.getPriceMin()) {
-                                                Log.d("thegreatdebugger", "7th " + model.getCity());
+                                                Log.d("thegreatdebugger", "7the " + model.getCity());
                                                 if (!mSearchObject.isPark() || model.getPointOfInterest().contains("Park")) {
-                                                    Log.d("thegreatdebugger", "8th " + model.getCity());
+                                                    Log.d("thegreatdebugger", "8the " + model.getCity());
                                                     if (!mSearchObject.isSchool() || model.getPointOfInterest().contains("School")) {
-                                                        Log.d("thegreatdebugger", "9th " + model.getCity());
+                                                        Log.d("thegreatdebugger", "9the " + model.getCity());
                                                         if (!mSearchObject.isRestaurant() || model.getPointOfInterest().contains("Restaurant")) {
-                                                            Log.d("thegreatdebugger", "10th " + model.getCity());
+                                                            Log.d("thegreatdebugger", "10the " + model.getCity());
                                                             if (mSearchObject.getSurfaceMax() >= Integer.valueOf(model.getSurface().replace("m²", "")) && Integer.valueOf(model.getSurface().replace("m²", "")) >= mSearchObject.getSurfaceMin()) {
-                                                                Log.d("thegreatdebugger", "11th " + model.getCity());
+                                                                Log.d("thegreatdebugger", "11the " + model.getCity());
                                                                 try {
                                                                     Date beginDate = format.parse(mSearchObject.getBeginDate());
                                                                     Date theDate = format.parse(model.getOnMarket());
@@ -217,7 +217,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                                                                     if (beginDate.before(theDate) && endDate.after(theDate) || beginDate.getTime() == theDate.getTime() && endDate.getTime() == theDate.getTime()) {
                                                                         layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
                                                                         holder.relativeLayout.setLayoutParams(layoutParams);
-                                                                        Log.d("thegreatdebugger", "12th " + model.getCity());
+                                                                        Log.d("thegreatdebugger", "12the " + model.getCity());
 
                                                                         String priceWithComas = String.format("%,d", Integer.valueOf(model.getPrice()));
                                                                         holder.setPrice(priceWithComas + "$");
@@ -303,44 +303,43 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                             mSearchObject.setBeginDate("01/01/1900");
                         }
                     }
+                    if (fastGet.getSaleDate() == null) {
+                        fastGet.setSaleDate("");
+                    }
                     if (mSearchObject.getCity() == null || mSearchObject.getCity().equalsIgnoreCase(fastGet.getCity()) || mSearchObject.getCity().equals("")) {
                         Log.d("thegreatdebugger", "2nd");
                         if (mSearchObject.getRoomsMax() >= Integer.valueOf(fastGet.getNbrOfRooms()) && Integer.valueOf(fastGet.getNbrOfRooms()) >= mSearchObject.getRoomsMin()) {
                             Log.d("thegreatdebugger", "3rd " + fastGet.getCity());
-                            if (!(fastGet.getSaleDate().equals("")) && mSearchObject.isSold() || !mSearchObject.isSold() && !mSearchObject.isAvailable() || mSearchObject.isSold() && mSearchObject.isAvailable() || fastGet.getSaleDate() != null && mSearchObject.isSold()) {
+                            if (fastGet.getSaleDate().equals("") && mSearchObject.isAvailable() || !(fastGet.getSaleDate().equals("")) && mSearchObject.isSold() || !mSearchObject.isSold() && !mSearchObject.isAvailable() || mSearchObject.isSold() && mSearchObject.isAvailable()) {
                                 Log.d("thegreatdebugger", "4th " + fastGet.getCity());
-                                if (fastGet.getSaleDate().equals("") && mSearchObject.isAvailable() || !mSearchObject.isSold() && !mSearchObject.isAvailable() || mSearchObject.isSold() && mSearchObject.isAvailable() || fastGet.getSaleDate() == null && mSearchObject.isSold()) {
-                                    Log.d("thegreatdebugger", "5th " + fastGet.getCity());
-                                    if (mSearchObject.getPhotosMax() >= sizeOffline && sizeOffline >= mSearchObject.getPhotosMin()) {
-                                        Log.d("thegreatdebugger", "6th " + fastGet.getCity());
-                                        if (mSearchObject.getPriceMax() >= Integer.valueOf(fastGet.getPrice()) && Integer.valueOf(fastGet.getPrice()) >= mSearchObject.getPriceMin()) {
-                                            Log.d("thegreatdebugger", "7th " + fastGet.getCity());
-                                            if (!mSearchObject.isPark() || fastGet.getPointsOfInterest().contains("Park")) {
-                                                Log.d("thegreatdebugger", "8th " + fastGet.getCity());
-                                                if (!mSearchObject.isSchool() || fastGet.getPointsOfInterest().contains("School")) {
-                                                    Log.d("thegreatdebugger", "9th " + fastGet.getCity());
-                                                    if (!mSearchObject.isRestaurant() || fastGet.getPointsOfInterest().contains("Restaurant")) {
-                                                        Log.d("thegreatdebugger", "10th " + fastGet.getCity());
-                                                        if (mSearchObject.getSurfaceMax() >= Integer.valueOf(fastGet.getSurface().replace("m²", "")) && Integer.valueOf(fastGet.getSurface().replace("m²", "")) >= mSearchObject.getSurfaceMin()) {
-                                                            Log.d("thegreatdebugger", "11th " + fastGet.getCity());
+                                if (mSearchObject.getPhotosMax() >= sizeOffline && sizeOffline >= mSearchObject.getPhotosMin()) {
+                                    Log.d("thegreatdebugger", "6th " + fastGet.getCity());
+                                    if (mSearchObject.getPriceMax() >= Integer.valueOf(fastGet.getPrice()) && Integer.valueOf(fastGet.getPrice()) >= mSearchObject.getPriceMin()) {
+                                        Log.d("thegreatdebugger", "7th " + fastGet.getCity());
+                                        if (!mSearchObject.isPark() || fastGet.getPointsOfInterest().contains("Park")) {
+                                            Log.d("thegreatdebugger", "8th " + fastGet.getCity());
+                                            if (!mSearchObject.isSchool() || fastGet.getPointsOfInterest().contains("School")) {
+                                                Log.d("thegreatdebugger", "9th " + fastGet.getCity());
+                                                if (!mSearchObject.isRestaurant() || fastGet.getPointsOfInterest().contains("Restaurant")) {
+                                                    Log.d("thegreatdebugger", "10th " + fastGet.getCity());
+                                                    if (mSearchObject.getSurfaceMax() >= Integer.valueOf(fastGet.getSurface().replace("m²", "")) && Integer.valueOf(fastGet.getSurface().replace("m²", "")) >= mSearchObject.getSurfaceMin()) {
+                                                        Log.d("thegreatdebugger", "11th " + fastGet.getCity());
+                                                        try {
+                                                            Date beginDate = format.parse(mSearchObject.getBeginDate());
+                                                            Date theDate = format.parse(fastGet.getOnMarket());
+                                                            Date endDate = format.parse(mSearchObject.getEndDate());
+                                                            if (beginDate.before(theDate) && endDate.after(theDate) || beginDate.getTime() == theDate.getTime() && endDate.getTime() == theDate.getTime()) {
 
-                                                            list3items.add(new RecyclerWith3Items(listOfItems.get(i).getId(), listOfItems.get(i).getType(),
-                                                                    listOfItems.get(i).getCity(), listOfItems.get(i).getPrice(), listOfItems.get(i).getMainPicture()));
+                                                                list3items.add(new RecyclerWith3Items(listOfItems.get(i).getId(), listOfItems.get(i).getType(),
+                                                                        listOfItems.get(i).getCity(), listOfItems.get(i).getPrice(), listOfItems.get(i).getMainPicture()));
 
-                                                            RecyclerView.Adapter offlineAdapter = new MyAdapter(list3items, getContext());
-                                                            recyclerView.setAdapter(offlineAdapter);
-                                                            offlineAdapter.notifyDataSetChanged();
-//                                                            try {
-//                                                                Date beginDate = format.parse(mSearchObject.getBeginDate());
-//                                                                Date theDate = format.parse(fastGet.getOnMarket());
-//                                                                Date endDate = format.parse(mSearchObject.getEndDate());
-//                                                                if (beginDate.before(theDate) && endDate.after(theDate)) {
-//
-//                                                                }
-//
-//                                                            }catch (ParseException e) {
-//                                                                e.printStackTrace();
-//                                                            }
+                                                                RecyclerView.Adapter offlineAdapter = new MyAdapter(list3items, getContext());
+                                                                recyclerView.setAdapter(offlineAdapter);
+                                                                offlineAdapter.notifyDataSetChanged();
+                                                            }
+
+                                                        } catch (ParseException e) {
+                                                            e.printStackTrace();
                                                         }
                                                     }
                                                 }
@@ -409,43 +408,43 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                         }
 
                         if (mSearchObject.getCity() == null || mSearchObject.getCity().equalsIgnoreCase(fastGet.getCity()) || mSearchObject.getCity().equals("")) {
-                            Log.d("thegreatdebugger", "2nd");
+                            Log.d("thegreatdebugger", "2nds");
                             if (mSearchObject.getRoomsMax() >= Integer.valueOf(fastGet.getNbrOfRooms()) && Integer.valueOf(fastGet.getNbrOfRooms()) >= mSearchObject.getRoomsMin()) {
-                                Log.d("thegreatdebugger", "3rd " + fastGet.getCity());
+                                Log.d("thegreatdebugger", "3rds " + fastGet.getCity());
                                 if (fastGet.getSaleDate() != null && mSearchObject.isSold() || !mSearchObject.isSold() && !mSearchObject.isAvailable()) {
-                                    Log.d("thegreatdebugger", "4th " + fastGet.getCity());
+                                    Log.d("thegreatdebugger", "4ths " + fastGet.getCity());
                                     if (fastGet.getSaleDate() == null && mSearchObject.isAvailable() || !mSearchObject.isSold() && !mSearchObject.isAvailable()) {
-                                        Log.d("thegreatdebugger", "5th " + fastGet.getCity());
+                                        Log.d("thegreatdebugger", "5ths " + fastGet.getCity());
                                         if (mSearchObject.getPhotosMax() >= sizeOffline && sizeOffline >= mSearchObject.getPhotosMin()) {
-                                            Log.d("thegreatdebugger", "6th " + fastGet.getCity());
+                                            Log.d("thegreatdebugger", "6ths " + fastGet.getCity());
                                             if (mSearchObject.getPriceMax() >= Integer.valueOf(fastGet.getPrice()) && Integer.valueOf(fastGet.getPrice()) >= mSearchObject.getPriceMin()) {
-                                                Log.d("thegreatdebugger", "7th " + fastGet.getCity());
+                                                Log.d("thegreatdebugger", "7ths " + fastGet.getCity());
                                                 if (!mSearchObject.isPark() || fastGet.getPointsOfInterest().contains("Park")) {
-                                                    Log.d("thegreatdebugger", "8th " + fastGet.getCity());
+                                                    Log.d("thegreatdebugger", "8ths " + fastGet.getCity());
                                                     if (!mSearchObject.isSchool() || fastGet.getPointsOfInterest().contains("School")) {
-                                                        Log.d("thegreatdebugger", "9th " + fastGet.getCity());
+                                                        Log.d("thegreatdebugger", "9ths " + fastGet.getCity());
                                                         if (!mSearchObject.isRestaurant() || fastGet.getPointsOfInterest().contains("Restaurant")) {
-                                                            Log.d("thegreatdebugger", "10th " + fastGet.getCity());
+                                                            Log.d("thegreatdebugger", "10ths " + fastGet.getCity());
                                                             if (mSearchObject.getSurfaceMax() >= Integer.valueOf(fastGet.getSurface().replace("m²", "")) && Integer.valueOf(fastGet.getSurface().replace("m²", "")) >= mSearchObject.getSurfaceMin()) {
-                                                                Log.d("thegreatdebugger", "11th " + fastGet.getCity());
+                                                                Log.d("thegreatdebugger", "11ths " + fastGet.getCity());
 
-                                                                list3items.add(new RecyclerWith3Items(listOfItems.get(i).getId(), listOfItems.get(i).getType(),
-                                                                        listOfItems.get(i).getCity(), listOfItems.get(i).getPrice(), listOfItems.get(i).getMainPicture()));
+                                                                try {
+                                                                    Date beginDate = format.parse(mSearchObject.getBeginDate());
+                                                                    Date theDate = format.parse(fastGet.getOnMarket());
+                                                                    Date endDate = format.parse(mSearchObject.getEndDate());
+                                                                    if (beginDate.before(theDate) && endDate.after(theDate) || beginDate.getTime() == theDate.getTime() && endDate.getTime() == theDate.getTime()) {
 
-                                                                RecyclerView.Adapter offlineAdapter = new MyAdapter(list3items, getContext());
-                                                                recyclerView.setAdapter(offlineAdapter);
-                                                                offlineAdapter.notifyDataSetChanged();
-//                                                            try {
-//                                                                Date beginDate = format.parse(mSearchObject.getBeginDate());
-//                                                                Date theDate = format.parse(fastGet.getOnMarket());
-//                                                                Date endDate = format.parse(mSearchObject.getEndDate());
-//                                                                if (beginDate.before(theDate) && endDate.after(theDate)) {
-//
-//                                                                }
-//
-//                                                            }catch (ParseException e) {
-//                                                                e.printStackTrace();
-//                                                            }
+                                                                        list3items.add(new RecyclerWith3Items(listOfItems.get(i).getId(), listOfItems.get(i).getType(),
+                                                                                listOfItems.get(i).getCity(), listOfItems.get(i).getPrice(), listOfItems.get(i).getMainPicture()));
+
+                                                                        RecyclerView.Adapter offlineAdapter = new MyAdapter(list3items, getContext());
+                                                                        recyclerView.setAdapter(offlineAdapter);
+                                                                        offlineAdapter.notifyDataSetChanged();
+                                                                    }
+
+                                                                } catch (ParseException e) {
+                                                                    e.printStackTrace();
+                                                                }
                                                             }
                                                         }
                                                     }
