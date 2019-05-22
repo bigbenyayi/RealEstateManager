@@ -115,4 +115,8 @@ public class RecyclerViewItem {
     public String getRealtor() {
         return realtor;
     }
+
+    public void setSold(String sold) {
+        this.sold = sold;
+    }
 }
