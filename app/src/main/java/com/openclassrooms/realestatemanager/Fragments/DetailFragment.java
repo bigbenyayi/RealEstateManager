@@ -434,27 +434,28 @@ public class DetailFragment extends BaseFragment implements OnMapReadyCallback {
                     SharedPreferences mPrefs = Objects.requireNonNull(getContext()).getSharedPreferences("SHARED", Context.MODE_PRIVATE);
                     geocoder = new Geocoder(getContext(), Locale.getDefault());
 
-                    try {
-                        addresses = geocoder.getFromLocationName(houseItem.getAddress(), 1);
-                        mapLocation = (new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude()));
-                        Log.d("location", String.valueOf(addresses.get(0).getLatitude() + "," + addresses.get(0).getLongitude()));
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    if (mapLocation != null) {
-                        globalMap.addMarker(new MarkerOptions().position(mapLocation));
-                        globalMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mapLocation, 11f));
-
-
-                    }
                     if (globalMap != null) {
+                        try {
+                            addresses = geocoder.getFromLocationName(houseItem.getAddress(), 1);
+                            mapLocation = (new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude()));
+                            Log.d("location", String.valueOf(addresses.get(0).getLatitude() + "," + addresses.get(0).getLongitude()));
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
                         if (mapLocation != null) {
                             globalMap.addMarker(new MarkerOptions().position(mapLocation));
+                            globalMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mapLocation, 11f));
+
+
+                        }
+                        if (globalMap != null) {
+                            if (mapLocation != null) {
+                                globalMap.addMarker(new MarkerOptions().position(mapLocation));
+                            }
                         }
                     }
-
                     assert houseItem != null;
                     description.setText(houseItem.getDescription());
 
